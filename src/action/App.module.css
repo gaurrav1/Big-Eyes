@@ -1,0 +1,20 @@
+/* src/action/App.module.css */
+.container {
+  background-color: var(--bg);
+  color: var(--fg);
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.title {
+  font-size: 1.5rem;
+}
+
+.button {
+  background-color: var(--accent);
+  color: var(--bg);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+}

@@ -24,4 +24,7 @@ export default defineConfig({
     },
   },
   plugins: [react(), crx( {manifest} )],
+  server: {
+    port: 3000
+  }
 })

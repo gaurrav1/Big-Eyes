@@ -1,0 +1,15 @@
+/* src/content/Content.module.css */
+.box {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px;
+  font-size: 14px;
+  z-index: 100000;
+  border-radius: 6px;
+}
+
+.light {
+  background-color: #fff;
+  color: #000;
+}
