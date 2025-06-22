@@ -1,6 +1,7 @@
 .headerWrapper {
   min-height: 38px;
   margin-bottom: 1.5rem;
+  padding: 0.3rem 0.6rem;
 }
 
 .header {
@@ -11,14 +12,18 @@
   z-index: 999;
 
   min-height: 38px;
-  width: calc(100% - 12px);
-  max-width: 490px;
 
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: center;
   
+}
+
+.company {
+  display: inline-block;
+  padding: 8px 16px;
+  gap: 0.5rem;
 }
 
 .logo {

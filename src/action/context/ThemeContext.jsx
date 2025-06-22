@@ -2,10 +2,10 @@ import { createContext, useContext, useEffect, useState } from 'react';
 
 const ThemeContext = createContext();
 
-const THEMES = {
+export const THEMES = {
   LIGHT: 'light',
   DARK: 'dark',
-  SYSTEM: 'system', // Added system option
+  SYSTEM: 'system',
 };
 
 const getSystemPreference = () =>
@@ -14,15 +14,12 @@ const getSystemPreference = () =>
     : THEMES.LIGHT;
 
 export const ThemeProvider = ({ children }) => {
-  // Initialize with stored preference or system
   const [themePreference, setThemePreference] = useState(() => 
     localStorage.getItem('themePreference') || THEMES.SYSTEM
   );
   
-  // Track system theme separately
   const [systemTheme, setSystemTheme] = useState(getSystemPreference());
 
-  // Apply theme to document and localStorage
   useEffect(() => {
     const root = document.documentElement;
     const effectiveTheme = themePreference === THEMES.SYSTEM 
@@ -33,7 +30,6 @@ export const ThemeProvider = ({ children }) => {
     localStorage.setItem('themePreference', themePreference);
   }, [themePreference, systemTheme]);
 
-  // Listen for system theme changes
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     
@@ -45,20 +41,10 @@ export const ThemeProvider = ({ children }) => {
     return () => mediaQuery.removeEventListener('change', handleSystemChange);
   }, []);
 
-  // Cycle through all three options
-  const toggleTheme = () => {
-    setThemePreference(prev => {
-      if (prev === THEMES.LIGHT) return THEMES.DARK;
-      if (prev === THEMES.DARK) return THEMES.SYSTEM;
-      return THEMES.LIGHT;
-    });
-  };
-
   return (
     <ThemeContext.Provider value={{ 
       themePreference, 
-      setThemePreference, 
-      toggleTheme 
+      setThemePreference
     }}>
       {children}
     </ThemeContext.Provider>
