@@ -10,8 +10,8 @@
     /* --location-bg: #dc3545;
     --calender-bg: #d45800; */
 
-    --location-bg: #ffffff;
-    --calender-bg: #ffffff;
+    --location-bg: var(--background-color);
+    --calender-bg: var(--background-color);
 
     --svg-color: black;
 
@@ -43,6 +43,7 @@
 }
 
 [data-theme='dark'] {
+    --background-color: #444444;
     --color-background: #121212;
     --color-text: #ffffff;
     --color-accent: #755133;
@@ -60,14 +61,12 @@
     --muted: #8e8e93;
     --toggle-bg: #2c2c2e;
 
-    --location-bg: black;
-    --calender-bg: black;
-
     --svg-color: #ffffff;
 }
 
 [data-theme='light'] {
-    --bg: #ffffff;
+    --background-color: #ffffff;
+    --bg: #f0f0f0;
     --fg: #000000;
     --accent: #0a84ff;
     --border: #e0e0e0;

@@ -124,13 +124,13 @@ export function Next({ height, width }) {
         <svg width={width} height={height} viewBox="-0.72 -0.72 25.44 25.44" fill="none"
             xmlns="http://www.w3.org/2000/svg">
             <g id="SVGRepo_bgCarrier" strokeWidth="0">
-                <rect x="-0.72" y="-0.72" width="25.44" height="25.44" rx="12.72" fill={'var(--nav-bg)'} strokeWidth="0"></rect>
+                <rect x="-0.72" y="-0.72" width="25.44" height="25.44" rx="12.72" fill={'var(--background-color)'} strokeWidth="0"></rect>
             </g>
             <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
             <g id="SVGRepo_iconCarrier">
                 <path
                     d="M9 7L15 12L9 17"
-                    stroke={'var(--color-text)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
+                    stroke={'var(--svg-color)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
             </g>
         </svg>
     )

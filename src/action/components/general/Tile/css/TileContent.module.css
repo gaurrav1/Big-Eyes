@@ -10,7 +10,7 @@
 }
 
 .tileTitle {
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: bold;
     display: flex;
     margin-bottom: 8px;
@@ -20,8 +20,8 @@
 }
 
 .tileDescription {
-    font-size: 1rem;
-    color: #666;
+    font-size: .8rem;
+    color: #919191;
     display: flex;
     flex-direction: row;
     align-items: center;
