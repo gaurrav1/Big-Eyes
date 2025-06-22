@@ -1,15 +1,21 @@
-import { LocationIcon, Next } from "../../../svgs/Svg";
 import { TileNav } from "./TileNav";
 import { TileIcon } from "./TileIcon";
 import { TileContent } from "./TileContent";
 import styles from "./css/Tile.module.css";
+import { Link } from "react-router-dom";
 
-export function Tile({tile}) {
+export function Tile({ tile }) {
+  const { icon, title, description, navIcon, locate} = tile;
+
   return (
+    <Link to={locate} className={styles.tileLink}>
     <div className={styles.tile}>
-        <TileIcon icon={<LocationIcon height={24} width={24}/>} />
-        <TileContent title={tile.title} description={tile.description} />
-        <TileNav icon={<Next height={24} width={24} />} />
+      
+      <TileIcon icon={icon} />
+      <TileContent title={title} description={description} />
+      <TileNav icon={navIcon} />
+      
     </div>
-  )
-}
+    </Link>
+  );
+};

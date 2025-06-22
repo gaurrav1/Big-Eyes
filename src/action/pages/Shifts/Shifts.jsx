@@ -1,15 +1,16 @@
 export function Shifts() {
 
-    // Add new state for shift picker
-  const [showShiftPicker, setShowShiftPicker] = React.useState(false);
+  //   // Add new state for shift picker
+  // const [showShiftPicker, setShowShiftPicker] = React.useState(false);
 
-    const handleShiftSelect = (type) => {
-    setFormData(prev => ({ ...prev, shiftType: type }));
-    shiftTypeRef.current = type;
-  };
+  //   const handleShiftSelect = (type) => {
+  //   setFormData(prev => ({ ...prev, shiftType: type }));
+  //   shiftTypeRef.current = type;
+  // };
   return (
     <div>
-       <FormField
+      Shifts Page
+       {/* <FormField
             icon={<CalendarIcon />}
             label="TYPES OF SHIFT"
             value={formData.shiftType || 'Select Shift Type'}
@@ -23,7 +24,7 @@ export function Shifts() {
               onSelect={handleShiftSelect}
               onClose={() => setShowShiftPicker(false)}
             />
-          )}
+          )} */}
     </div>
   )
 }

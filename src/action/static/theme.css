@@ -35,6 +35,7 @@
 }
 
 [data-theme='dark'] {
+    --background-color: #444444;
     --color-background: #121212;
     --color-text: #ffffff;
     --color-accent: #755133;
@@ -44,7 +45,7 @@
     --color-surface-text: #fff;
 
     --nav-bg: rgba(27, 27, 27, 0.9);
-    --bg: #121212;
+    --bg: #272727;
     --fg: #ffffff;
     --accent: #0a84ff;
     --border: #2c2c2e;
@@ -54,7 +55,8 @@
 }
 
 [data-theme='light'] {
-    --bg: #ffffff;
+    --background-color: #ffffff;
+    --bg: #f0f0f0;
     --fg: #000000;
     --accent: #0a84ff;
     --border: #e0e0e0;
