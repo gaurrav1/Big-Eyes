@@ -1,0 +1,12 @@
+.tileContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    height: 100%;
+    padding: 16px;
+    box-sizing: border-box;
+    background-color: var(--tile-content-bg-color, #f0f0f0);
+    border-radius: var(--tile-content-border-radius, 8px);
+}
