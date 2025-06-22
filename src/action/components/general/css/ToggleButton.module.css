@@ -1,0 +1,53 @@
+.toggleWrapper {
+  display: flex;
+  min-height: 60px;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggleContainer {
+  display: flex;
+  min-width: 56px;
+  align-items: center;
+  gap: 12px;
+  padding: 0.3rem;
+  background-color: rgb(138, 138, 138);
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.toggleText {
+  flex: 1;
+  text-align: left;
+  padding-right: 10px;
+  white-space: normal;
+  word-wrap: break-word;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  color: var(--fg);
+  font-weight: 500;
+}
+
+.toggleContainer.active {
+  background-color: rgb(106, 255, 92);
+}
+
+.toggleCircle {
+  width: 28px;
+  height: 24px;
+  border-radius: 50%;
+  color: cadetblue;
+  background-color: white;
+  transition: transform 0.3s ease;
+}
+
+.toggleContainer.active .toggleCircle {
+  transform: translateX(28px);
+}

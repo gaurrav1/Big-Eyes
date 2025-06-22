@@ -1,0 +1,28 @@
+
+.fieldset {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.3rem;
+  position: relative;
+}
+
+.legend {
+  position: absolute;
+  top: -10px;
+  left: 12px;
+  background: var(--bg);
+  padding: 0 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--accent);
+}
+
+.fieldContent {
+  padding: 0.8rem 0.5rem 0.5rem;
+  min-height: 24px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}

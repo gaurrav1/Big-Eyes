@@ -2,37 +2,9 @@ import React, { useRef } from 'react';
 import styles from './Main.module.css';
 import { LocationIcon, CalendarIcon, HeartIcon } from '../../svgs/Svg';
 import { ShiftPickerModal } from '../../components/ShiftPickerModel';
-import { Link } from 'react-router-dom';
-
-const FormField = ({ icon, label, onClick, value, children }) => (
-  <div className={styles.fieldset} role="button"
-    tabIndex={0}
-    onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onClick()}>
-    <div className={styles.legend}>
-      {icon}
-      <span>{label}</span>
-    </div>
-    <div className={styles.fieldContent} onClick={onClick}>
-      {value || children}
-    </div>
-  </div>
-);
-
-const ToggleButton = ({ isActive, onClick }) => (
-  <div className={styles.toggleWrapper} onClick={onClick} role="button"
-    aria-pressed={isActive}
-    tabIndex={0}
-    onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onClick()}>
-    <span className={styles.toggleText}>
-      {isActive ? "Stop Searching For Jobs" : "Start Searching For Jobs"}
-    </span>
-    <div className={`${styles.toggleContainer} ${isActive ? styles.active : ''}`}>
-      <div className={styles.toggleCircle}></div>
-    </div>
-  </div>
-);
-
-
+import { Link, Navigate } from 'react-router-dom';
+import { FormField } from '../../components/general/FormField';
+import { ToggleButton } from '../../components/general/ToggleButton';
 
 export const Main = () => {
   const locationRef = useRef(null);
@@ -46,7 +18,7 @@ export const Main = () => {
   const [showShiftPicker, setShowShiftPicker] = React.useState(false);
 
   const handleLocationClick = () => {
-    chrome.tabs.create({ url: chrome.runtime.getURL('location.html') });
+    <Navigate to="/location" replace={true} />;
   };
 
   const handleShiftSelect = (type) => {
