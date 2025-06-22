@@ -1,20 +1,152 @@
-/* src/action/App.module.css */
 .container {
   background-color: var(--bg);
   color: var(--fg);
   padding: 1rem;
-  border-radius: 8px;
+  min-height: 550px;
+  display: flex;
+  flex-direction: column;
+  font-family: "Montserrat", sans-serif;
 }
 
-.title {
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.logo {
   font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--accent);
 }
 
-.button {
-  background-color: var(--accent);
-  color: var(--bg);
+.themeButton {
+  background: none;
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
+  font-size: 1.2rem;
   cursor: pointer;
+  color: var(--fg);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.fieldset {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.8rem;
+  position: relative;
+}
+
+.legend {
+  position: absolute;
+  top: -10px;
+  left: 12px;
+  background: var(--bg);
+  padding: 0 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--accent);
+}
+
+.fieldContent {
+  padding: 0.8rem 0.5rem 0.5rem;
+  min-height: 24px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.dropdown {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.option {
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.option:hover {
+  background-color: var(--hover);
+}
+
+.option.selected {
+  background-color: var(--accent);
+  color: white;
+}
+
+.spacer {
+  flex-grow: 1;
+  min-height: 1.5rem;
+}
+
+.toggleContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.8rem 1.2rem;
+  background-color: var(--toggle-bg);
+  border-radius: 50px;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.toggleContainer.active {
+  background-color: var(--accent);
+}
+
+.toggleCircle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: white;
+  transition: transform 0.3s ease;
+}
+
+.toggleContainer.active .toggleCircle {
+  transform: translateX(28px);
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+
+.actionButton {
+  flex: 1;
+  padding: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: none;
+  color: var(--fg);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.actionButton:hover {
+  background-color: var(--hover);
+}
+
+.footer {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--muted);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
 }
