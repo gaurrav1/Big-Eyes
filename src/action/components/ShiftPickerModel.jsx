@@ -1,5 +1,4 @@
-import React, { useEffect, useRef } from 'react';
-import styles from '../App.module.css';
+import { useEffect, useRef } from 'react';
 
 export const ShiftPickerModal = ({ options, selected, onSelect, onClose }) => {
   const wheelRef = useRef(null);

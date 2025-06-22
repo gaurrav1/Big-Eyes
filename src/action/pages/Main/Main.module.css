@@ -1,40 +1,6 @@
 .container {
-  min-width: 330px;
-  max-width: 330px;
-  min-height: 550px;
-  font-family: "Montserrat", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 500;
-  font-style: normal;
-  /* position: relative; */
-  background-color: var(--bg);
-  color: var(--fg);
-  padding: 1rem;
-  min-height: 550px;
   display: flex;
   flex-direction: column;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.logo {
-  font-size: 1.5rem;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  color: var(--accent);
-}
-
-.themeButton {
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  color: var(--fg);
 }
 
 .form {

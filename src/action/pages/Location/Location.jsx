@@ -3,7 +3,7 @@ import styles from './Location.module.css'
 import { LocationIcon, CloseIcon } from '../../svgs/Svg';
 import axios from 'axios';
 
-export const LocationSettings = () => {
+export const Location = () => {
   const [zipInput, setZipInput] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);

@@ -1,0 +1,64 @@
+/* Base Light Theme */
+:root {
+    --bp-sm: 480px;
+    --bp-md: 768px;
+    --bp-lg: 1024px;
+    --bp-xl: 1440px;
+    width: 100%;
+    height: 100%;
+
+    /* Base Colors */
+    --color-background: #ffffff;
+    --color-text: #111111;
+    --color-accent: #4a90e2;
+
+    /* Nav Colors */
+    --nav-bg: rgba(255, 255, 255, 0.9);
+    --nav-text-color: var(--color-text);
+    --nav-border-color: #ddd;
+    --nav-padding: 1rem;
+
+    /* UI Elements */
+    --color-border: var(--nav-border-color);
+    --color-surface: var(--nav-bg);
+    --color-surface-text: var(--nav-text-color);
+
+    /* State Colors */
+    --color-success: #28a745;
+    --color-warning: #ffc107;
+    --color-error: #dc3545;
+
+    /* Typography */
+    --font-size-base: clamp(1rem, 2vw + 0.5rem, 1.25rem);
+    --font-weight-regular: 400;
+    --font-weight-bold: 700;
+}
+
+[data-theme='dark'] {
+    --color-background: #121212;
+    --color-text: #ffffff;
+    --color-accent: #755133;
+
+    --color-border: #444;
+    --color-surface: #333;
+    --color-surface-text: #fff;
+
+    --nav-bg: rgba(27, 27, 27, 0.9);
+    --bg: #121212;
+    --fg: #ffffff;
+    --accent: #0a84ff;
+    --border: #2c2c2e;
+    --hover: #1c1c1e;
+    --muted: #8e8e93;
+    --toggle-bg: #2c2c2e;
+}
+
+[data-theme='light'] {
+    --bg: #ffffff;
+    --fg: #000000;
+    --accent: #0a84ff;
+    --border: #e0e0e0;
+    --hover: #f5f5f7;
+    --muted: #8e8e93;
+    --toggle-bg: #f2f2f7;
+}

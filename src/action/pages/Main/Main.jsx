@@ -1,20 +1,8 @@
 import React, { useRef } from 'react';
-import { ThemeProvider, useTheme } from '../theme/ThemeContext';
-import styles from './App.module.css';
-import { LocationIcon, CalendarIcon, HeartIcon } from '../svgs/Svg';
-import { ShiftPickerModal } from './components/ShiftPickerModel';
-import { LocationSettings } from './location/LocationSettings';
-
-const ThemeSwitcher = () => {
-  const { theme, setTheme } = useTheme();
-  const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
-
-  return (
-    <button onClick={toggleTheme} className={styles.themeButton}>
-      {theme === 'light' ? '🌙' : '☀️'}
-    </button>
-  );
-};
+import styles from './Main.module.css';
+import { LocationIcon, CalendarIcon, HeartIcon } from '../../svgs/Svg';
+import { ShiftPickerModal } from '../../components/ShiftPickerModel';
+import { Link } from 'react-router-dom';
 
 const FormField = ({ icon, label, onClick, value, children }) => (
   <div className={styles.fieldset} role="button"
@@ -30,18 +18,6 @@ const FormField = ({ icon, label, onClick, value, children }) => (
   </div>
 );
 
-// const ToggleButton = ({ isActive, onClick }) => (
-//   <div className={styles.toggleWrapper}>
-//     <div 
-//       className={`${styles.toggleContainer} ${isActive ? styles.active : ''}`}
-//       onClick={onClick}
-//     >
-//       <div className={styles.toggleCircle}></div>
-
-//     </div>
-//     <span className={styles.toggleText}>{isActive ? "Stop Searching For Jobs" : "Start Searching For Jobs"}</span>
-//   </div>
-// );
 const ToggleButton = ({ isActive, onClick }) => (
   <div className={styles.toggleWrapper} onClick={onClick} role="button"
     aria-pressed={isActive}
@@ -58,7 +34,7 @@ const ToggleButton = ({ isActive, onClick }) => (
 
 
 
-export const App = () => {
+export const Main = () => {
   const locationRef = useRef(null);
   const shiftTypeRef = useRef(null);
   const [isSearching, setIsSearching] = React.useState(false);
@@ -91,13 +67,8 @@ export const App = () => {
   };
 
   return (
-    <ThemeProvider>
+    <>
       <div className={styles.container}>
-        <div className={styles.header}>
-          <h1 className={styles.logo}>Amazon Jobs</h1>
-          <ThemeSwitcher />
-        </div>
-
         <div className={styles.form}>
           <FormField
             icon={<LocationIcon />}
@@ -115,7 +86,7 @@ export const App = () => {
 
           {showShiftPicker && (
             <ShiftPickerModal
-              options={['Flex time', 'Part time', 'Full time', 'Reduced time']}
+              options={['Any shifts', 'Flex time', 'Part time', 'Full time', 'Reduced time']}
               selected={formData.shiftType}
               onSelect={handleShiftSelect}
               onClose={() => setShowShiftPicker(false)}
@@ -148,9 +119,7 @@ export const App = () => {
         <div className={styles.footer}>
           Wish you Luck <HeartIcon />
         </div>
-
-        <LocationSettings />
       </div>
-    </ThemeProvider>
+    </>
   );
 };
