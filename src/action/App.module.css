@@ -1,11 +1,18 @@
 .container {
+  min-width: 330px;
+  max-width: 330px;
+  min-height: 550px;
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  /* position: relative; */
   background-color: var(--bg);
   color: var(--fg);
   padding: 1rem;
   min-height: 550px;
   display: flex;
   flex-direction: column;
-  font-family: "Montserrat", sans-serif;
 }
 
 .header {
@@ -39,7 +46,7 @@
 .fieldset {
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 0.8rem;
+  padding: 0.3rem;
   position: relative;
 }
 
@@ -91,26 +98,52 @@
   min-height: 1.5rem;
 }
 
+.toggleWrapper {
+  display: flex;
+  min-height: 60px;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+  user-select: none;
+}
+
 .toggleContainer {
   display: flex;
+  min-width: 56px;
   align-items: center;
   gap: 12px;
-  padding: 0.8rem 1.2rem;
-  background-color: var(--toggle-bg);
+  padding: 0.3rem;
+  background-color: rgb(138, 138, 138);
   border-radius: 50px;
-  margin-bottom: 1.5rem;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
+.toggleText {
+  flex: 1;
+  text-align: left;
+  padding-right: 10px;
+  white-space: normal;
+  word-wrap: break-word;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  color: var(--fg);
+  font-weight: 500;
+}
+
 .toggleContainer.active {
-  background-color: var(--accent);
+  background-color: rgb(106, 255, 92);
 }
 
 .toggleCircle {
-  width: 24px;
+  width: 28px;
   height: 24px;
   border-radius: 50%;
+  color: cadetblue;
   background-color: white;
   transition: transform 0.3s ease;
 }
@@ -149,4 +182,79 @@
   justify-content: center;
   align-items: center;
   gap: 4px;
+}
+
+/* Add styles for shift type modal */
+.pickerOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+.pickerHeader {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.backButton {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 1rem;
+  cursor: pointer;
+  margin-right: 1rem;
+}
+
+.wheelContainer {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 1000px;
+  overflow: hidden;
+}
+
+.wheel {
+  position: relative;
+  width: 80%;
+  height: 200px;
+  transform-style: preserve-3d;
+}
+
+.wheelOption {
+  position: absolute;
+  width: 100%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transform-origin: center center;
+  backface-visibility: hidden;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  cursor: pointer;
+}
+
+.wheelOption:hover {
+  background-color: var(--hover);
+}
+
+.wheelOption.selected {
+  background-color: var(--accent);
+  color: white;
+}
+
+.instructions {
+  text-align: center;
+  padding: 1rem;
+  color: var(--muted);
+  font-size: 0.8rem;
 }

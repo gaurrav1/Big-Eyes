@@ -3,7 +3,7 @@ export const THEMES = {
   DARK: 'dark',
 };
 
-const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches 
+const systemTheme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches 
   ? THEMES.DARK 
   : THEMES.LIGHT;
 

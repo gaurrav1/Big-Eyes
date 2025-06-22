@@ -2,11 +2,12 @@ import React, { useRef } from 'react';
 import { ThemeProvider, useTheme } from '../theme/ThemeContext';
 import styles from './App.module.css';
 import { LocationIcon, CalendarIcon, HeartIcon } from '../svgs/Svg';
+import { ShiftPickerModal } from './components/ShiftPickerModel';
 
 const ThemeSwitcher = () => {
   const { theme, setTheme } = useTheme();
   const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
-  
+
   return (
     <button onClick={toggleTheme} className={styles.themeButton}>
       {theme === 'light' ? '🌙' : '☀️'}
@@ -15,7 +16,9 @@ const ThemeSwitcher = () => {
 };
 
 const FormField = ({ icon, label, onClick, value, children }) => (
-  <div className={styles.fieldset}>
+  <div className={styles.fieldset} role="button"
+    tabIndex={0}
+    onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onClick()}>
     <div className={styles.legend}>
       {icon}
       <span>{label}</span>
@@ -26,15 +29,33 @@ const FormField = ({ icon, label, onClick, value, children }) => (
   </div>
 );
 
+// const ToggleButton = ({ isActive, onClick }) => (
+//   <div className={styles.toggleWrapper}>
+//     <div 
+//       className={`${styles.toggleContainer} ${isActive ? styles.active : ''}`}
+//       onClick={onClick}
+//     >
+//       <div className={styles.toggleCircle}></div>
+
+//     </div>
+//     <span className={styles.toggleText}>{isActive ? "Stop Searching For Jobs" : "Start Searching For Jobs"}</span>
+//   </div>
+// );
 const ToggleButton = ({ isActive, onClick }) => (
-  <div 
-    className={`${styles.toggleContainer} ${isActive ? styles.active : ''}`}
-    onClick={onClick}
-  >
-    <div className={styles.toggleCircle}></div>
-    <span>Start Searching Jobs</span>
+  <div className={styles.toggleWrapper} onClick={onClick} role="button"
+    aria-pressed={isActive}
+    tabIndex={0}
+    onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onClick()}>
+    <span className={styles.toggleText}>
+      {isActive ? "Stop Searching For Jobs" : "Start Searching For Jobs"}
+    </span>
+    <div className={`${styles.toggleContainer} ${isActive ? styles.active : ''}`}>
+      <div className={styles.toggleCircle}></div>
+    </div>
   </div>
 );
+
+
 
 export const App = () => {
   const locationRef = useRef(null);
@@ -44,6 +65,8 @@ export const App = () => {
     location: '',
     shiftType: ''
   });
+  // Add new state for shift picker
+  const [showShiftPicker, setShowShiftPicker] = React.useState(false);
 
   const handleLocationClick = () => {
     chrome.tabs.create({ url: chrome.runtime.getURL('location.html') });
@@ -57,7 +80,7 @@ export const App = () => {
   const toggleSearch = () => {
     setIsSearching(!isSearching);
     if (!isSearching) {
-      chrome.storage.local.set({ 
+      chrome.storage.local.set({
         filters: {
           location: locationRef.current,
           shiftType: shiftTypeRef.current
@@ -75,53 +98,52 @@ export const App = () => {
         </div>
 
         <div className={styles.form}>
-          <FormField 
+          <FormField
             icon={<LocationIcon />}
             label="SELECT LOCATION"
             value={formData.location || 'Set Location'}
             onClick={handleLocationClick}
           />
-          
-          <FormField 
+
+          <FormField
             icon={<CalendarIcon />}
             label="TYPES OF SHIFT"
-          >
-            <div className={styles.dropdown}>
-              {['Flex time', 'Part time', 'Full time', 'Reduced time'].map(type => (
-                <div 
-                  key={type}
-                  className={`${styles.option} ${formData.shiftType === type ? styles.selected : ''}`}
-                  onClick={() => handleShiftSelect(type)}
-                >
-                  {type}
-                </div>
-              ))}
-            </div>
-          </FormField>
+            value={formData.shiftType || 'Select Shift Type'}
+            onClick={() => setShowShiftPicker(true)}
+          />
+
+          {showShiftPicker && (
+            <ShiftPickerModal
+              options={['Flex time', 'Part time', 'Full time', 'Reduced time']}
+              selected={formData.shiftType}
+              onSelect={handleShiftSelect}
+              onClose={() => setShowShiftPicker(false)}
+            />
+          )}
         </div>
 
         <div className={styles.spacer}></div>
-        
-        <ToggleButton 
-          isActive={isSearching} 
-          onClick={toggleSearch} 
+
+        <ToggleButton
+          isActive={isSearching}
+          onClick={toggleSearch}
         />
-        
+
         <div className={styles.buttonGroup}>
-          <button 
+          <button
             className={styles.actionButton}
             onClick={() => chrome.tabs.create({ url: chrome.runtime.getURL('settings.html') })}
           >
             Settings
           </button>
-          <button 
+          <button
             className={styles.actionButton}
             onClick={() => chrome.tabs.create({ url: chrome.runtime.getURL('history.html') })}
           >
             History
           </button>
         </div>
-        
+
         <div className={styles.footer}>
           Wish you Luck <HeartIcon />
         </div>
