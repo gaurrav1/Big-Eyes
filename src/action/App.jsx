@@ -3,6 +3,7 @@ import { ThemeProvider, useTheme } from '../theme/ThemeContext';
 import styles from './App.module.css';
 import { LocationIcon, CalendarIcon, HeartIcon } from '../svgs/Svg';
 import { ShiftPickerModal } from './components/ShiftPickerModel';
+import { LocationSettings } from './location/LocationSettings';
 
 const ThemeSwitcher = () => {
   const { theme, setTheme } = useTheme();
@@ -147,6 +148,8 @@ export const App = () => {
         <div className={styles.footer}>
           Wish you Luck <HeartIcon />
         </div>
+
+        <LocationSettings />
       </div>
     </ThemeProvider>
   );
