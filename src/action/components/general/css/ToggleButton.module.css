@@ -49,5 +49,5 @@
 }
 
 .toggleContainer.active .toggleCircle {
-  transform: translateX(28px);
+  transform: translateX(18px);
 }

@@ -40,37 +40,7 @@
 }
 
 
-.buttonGroup {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 1rem;
-}
 
-.actionButton {
-  flex: 1;
-  padding: 0.8rem;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: none;
-  color: var(--fg);
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.actionButton:hover {
-  background-color: var(--hover);
-}
-
-.footer {
-  text-align: center;
-  font-size: 0.9rem;
-  color: var(--muted);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 4px;
-}
 
 /* Add styles for shift type modal */
 .pickerOverlay {
