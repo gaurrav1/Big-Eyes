@@ -5,7 +5,7 @@ import styles from "./css/Lists.module.css";
 export function Lists() {
 
   const locationTile = {
-    icon: <LocationIcon height={50} width={50} />,
+    icon: <LocationIcon height={30} width={30} />,
     title: "Location",
     description: "Select a location",
     navIcon: <Next height={30} width={30} />,
@@ -16,7 +16,7 @@ export function Lists() {
     }
   };
   const shiftTypeTile = {
-    icon: <CalendarIcon height={50} width={50} />,
+    icon: <CalendarIcon height={30} width={30} />,
     title: "Shift Type",
     description: "Select a shift type",
     navIcon: <Next height={30} width={30} />,

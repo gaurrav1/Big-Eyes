@@ -2,9 +2,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2px;
-  height: 28px;
-  width: 28px;
-  border-radius: 2px;
-  border: 0.5px solid black;
+  height: 32px;
+  width: 32px;
+  border-radius: 30%;
+  border: 0.5px solid var(--location-bg);
 }
