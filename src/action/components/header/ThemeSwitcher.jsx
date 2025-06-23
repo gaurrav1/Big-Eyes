@@ -15,9 +15,9 @@ export const ThemeSwitcher = () => {
   ], []);
 
   const icons = useMemo(() => ({
-    [THEMES.LIGHT]: <Sun width={30} height={30} />,
-    [THEMES.DARK]: <Moon width={28} height={28} />,
-    [THEMES.SYSTEM]: <Contrast width={30} height={30} />,
+    [THEMES.LIGHT]: <Sun width={25} height={25} />,
+    [THEMES.DARK]: <Moon width={25} height={25} />,
+    [THEMES.SYSTEM]: <Contrast width={25} height={25} />,
   }), []);
 
   const labels = useMemo(() => ({
