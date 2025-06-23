@@ -24,3 +24,42 @@
   font-weight: 600;
   color: #1c7ed6;
 }
+
+/* Add these new styles */
+.loading {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.resetButton {
+  background: none;
+  border: 1px solid #fa5252;
+  color: #fa5252;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.resetButton:hover:not(:disabled) {
+  background: rgba(250, 82, 82, 0.1);
+}
+
+.resetButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Existing styles remain unchanged */
