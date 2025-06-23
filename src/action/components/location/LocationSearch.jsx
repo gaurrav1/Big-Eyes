@@ -8,17 +8,21 @@ const MIN_INPUT_LENGTH = 3;
 export const LocationSearch = ({
   onLocationSelect,
   placeholder = 'Search city...',
-  compact = false
+  compact = false,
+  centerCoordinates = null,
+  commuteDistance = null,
+  disabled = false,
+  error = null
 }) => {
   const [inputValue, setInputValue] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [isFocused, setIsFocused] = useState(false);
   const cancelToken = useRef(null);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const suggestionsListRef = useRef(null);
-
+  const inputRef = useRef(null);
+  const lastInteractionType = useRef(null);
 
   const fetchSuggestions = useCallback(async (query) => {
     if (!query || query.length < MIN_INPUT_LENGTH) {
@@ -32,7 +36,6 @@ export const LocationSearch = ({
 
     cancelToken.current = axios.CancelToken.source();
     setIsLoading(true);
-    setError(null);
 
     try {
       const response = await axios.post(
@@ -59,7 +62,6 @@ export const LocationSearch = ({
       setSuggestions(response.data?.data?.queryGeoInfoByAddress || []);
     } catch (err) {
       if (!axios.isCancel(err)) {
-        setError('Failed to fetch suggestions');
         console.error('API Error:', err);
       }
     } finally {
@@ -80,9 +82,10 @@ export const LocationSearch = ({
     };
   }, [inputValue, fetchSuggestions]);
 
-  const handleSelect = (location) => {
-    setInputValue(location.label);
+  const handleSelect = useCallback((location) => {
+    setInputValue('');
     setSuggestions([]);
+    setHighlightedIndex(-1);
     onLocationSelect({
       name: location.label,
       lat: location.lat,
@@ -90,24 +93,44 @@ export const LocationSearch = ({
       region: location.region,
       municipality: location.municipality,
     });
-  };
+    
+    if (inputRef.current) {
+      inputRef.current.blur();
+    }
+  }, [onLocationSelect]);
 
   useEffect(() => {
     setHighlightedIndex(-1);
   }, [suggestions]);
 
+  // Auto-scroll to highlighted item
+  useEffect(() => {
+    if (highlightedIndex >= 0 && suggestionsListRef.current) {
+      const items = suggestionsListRef.current.children;
+      if (items.length > highlightedIndex) {
+        const item = items[highlightedIndex];
+        item.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'start'
+        });
+      }
+    }
+  }, [highlightedIndex]);
 
   const handleKeyDown = (e) => {
     if (suggestions.length === 0) return;
 
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setHighlightedIndex((prev) =>
+      lastInteractionType.current = 'keyboard';
+      setHighlightedIndex(prev => 
         prev < suggestions.length - 1 ? prev + 1 : 0
       );
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setHighlightedIndex((prev) =>
+      lastInteractionType.current = 'keyboard';
+      setHighlightedIndex(prev => 
         prev > 0 ? prev - 1 : suggestions.length - 1
       );
     } else if (e.key === 'Enter') {
@@ -118,13 +141,38 @@ export const LocationSearch = ({
     }
   };
 
+  const handleMouseEnter = (index) => {
+    if (lastInteractionType.current !== 'keyboard') {
+      setHighlightedIndex(index);
+    }
+  };
+
+  const handleMouseMove = () => {
+    lastInteractionType.current = 'mouse';
+  };
+
   const handleBlur = () => {
     setTimeout(() => setIsFocused(false), 200);
   };
 
+  // Calculate distance for suggestion
+  const calculateSuggestionDistance = useCallback((suggestion) => {
+    if (!centerCoordinates || !commuteDistance) return null;
+    
+    return calculateDistance(
+      centerCoordinates.lat,
+      centerCoordinates.lng,
+      suggestion.lat,
+      suggestion.lng
+    );
+  }, [centerCoordinates, commuteDistance]);
+
   return (
     <div className={`${styles.container} ${compact ? styles.compact : ''}`}>
-      <div className={`${styles.searchContainer} ${isFocused ? styles.focused : ''}`}>
+      <div 
+        className={`${styles.searchContainer} ${isFocused ? styles.focused : ''} ${disabled ? styles.disabled : ''}`}
+        onClick={() => !disabled && inputRef.current?.focus()}
+      >
         <svg
           className={styles.searchIcon}
           viewBox="0 0 24 24"
@@ -135,53 +183,83 @@ export const LocationSearch = ({
         </svg>
 
         <input
+          ref={inputRef}
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          onFocus={() => setIsFocused(true)}
+          onFocus={() => !disabled && setIsFocused(true)}
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           className={`${styles.input} ${compact ? styles.compactInput : ''}`}
           aria-label="City search"
+          disabled={disabled}
         />
 
-        {(isLoading || error) && (
+        {isLoading && (
           <div className={styles.statusIndicator}>
-            {isLoading ? (
-              <div className={styles.spinner} />
-            ) : error ? (
-              <svg
-                className={styles.errorIcon}
-                viewBox="0 0 24 24"
-                width="20"
-                height="20"
-              >
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
-              </svg>
-            ) : null}
+            <div className={styles.spinner} />
           </div>
         )}
       </div>
 
-      {suggestions.length > 0 && isFocused && (
-        <ul className={styles.suggestionsList}>
-          {suggestions.map((location, index) => (
-            <li
-              key={`${location.label}-${index}`}
-              onMouseDown={() => handleSelect(location)}
-              className={`${styles.suggestionItem} ${highlightedIndex === index ? styles.highlighted : ''}`}
-            >
-              <div className={styles.locationLabel}>{location.label}</div>
-              <div className={styles.locationDetails}>
-                {location.municipality && <span>{location.municipality}, </span>}
-                {location.region}
-              </div>
-            </li>
-          ))}
+      {error && (
+        <div className={styles.errorText}>
+          {error}
+        </div>
+      )}
 
+      {suggestions.length > 0 && isFocused && (
+        <ul 
+          className={styles.suggestionsList}
+          ref={suggestionsListRef}
+          onMouseMove={handleMouseMove}
+        >
+          {suggestions.map((location, index) => {
+            const distance = calculateSuggestionDistance(location);
+            const isWithin = distance !== null && distance <= commuteDistance;
+            
+            return (
+              <li
+                key={`${location.label}-${index}`}
+                onMouseDown={() => handleSelect(location)}
+                onMouseEnter={() => handleMouseEnter(index)}
+                className={`${styles.suggestionItem} ${
+                  highlightedIndex === index ? styles.highlighted : ''
+                } ${
+                  distance !== null ? (isWithin ? styles.within : styles.over) : ''
+                }`}
+              >
+                <div className={styles.locationLabel}>{location.label}</div>
+                <div className={styles.locationDetails}>
+                  {location.municipality && <span>{location.municipality}, </span>}
+                  {location.region}
+                </div>
+                
+                {distance !== null && (
+                  <div className={styles.suggestionDistance}>
+                    {distance.toFixed(2)} km
+                  </div>
+                )}
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>
   );
+};
+
+// Helper function moved here for reuse
+const calculateDistance = (lat1, lon1, lat2, lon2) => {
+  const R = 6371; // Earth radius in km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * 
+    Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
 };

@@ -77,3 +77,78 @@
   color: #868e96;
   font-size: 0.95rem;
 }
+
+/* Add these new styles */
+.header {
+  padding: 1rem 1.5rem;
+  background: var(--background-color);
+  border-bottom: 1px solid #e9ecef;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.resetButton {
+  background: none;
+  border: 1px solid #fa5252;
+  color: #fa5252;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.resetButton:hover {
+  background: rgba(250, 82, 82, 0.1);
+}
+
+.warningText {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(255, 204, 0, 0.1);
+  border-radius: 8px;
+  color: #e6b400;
+  font-size: 0.9rem;
+}
+
+.priorityBadge {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #0d6efd;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-right: 0.8rem;
+  flex-shrink: 0;
+}
+
+.removeButton {
+  background: none;
+  border: none;
+  color: #868e96;
+  font-size: 1.4rem;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.removeButton:hover {
+  color: #fa5252;
+  transform: scale(1.1);
+}
+
+/* Existing styles remain unchanged */

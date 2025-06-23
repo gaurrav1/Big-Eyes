@@ -28,7 +28,7 @@ export const Location = () => {
       <h3>Center Location</h3>
       <LocationSearch
         onLocationSelect={handleCenterSelect}
-        placeholder={appData.centerOfCityCoordinates.name != '' ? appData.centerOfCityCoordinates.name : 'Search for a city...'}
+        placeholder={appData.centerOfCityCoordinates?.name || 'Search for a city...'}
       />
       {appData.centerOfCityCoordinates && (
         <div className={styles.selectedCity}>
@@ -38,7 +38,6 @@ export const Location = () => {
 
       <h3>Commute Distance</h3>
       <div className={styles.section}>
-
         <CommuteSlider
           initialValue={appData.commuteDistance}
           onChange={handleDistanceChange}
@@ -47,8 +46,6 @@ export const Location = () => {
           {appData.commuteDistance} km radius
         </div>
       </div>
-
-      <h3>Cities within Commute</h3>
 
       <CityList />
     </div>

@@ -132,3 +132,41 @@
 .highlighted .locationDetails {
   color: var(--background-color);
 }
+
+/* Add these new styles */
+.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.disabled .input {
+  cursor: not-allowed;
+}
+
+.errorText {
+  color: #ff453a;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  padding: 0 0.5rem;
+}
+
+.suggestionDistance {
+  margin-left: auto;
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: rgba(0,0,0,0.05);
+}
+
+.suggestionItem.within .suggestionDistance {
+  background-color: rgba(10, 132, 255, 0.1);
+  color: #0ca678;
+}
+
+.suggestionItem.over .suggestionDistance {
+  background-color: rgba(255, 69, 58, 0.1);
+  color: #fa5252;
+}
+
+/* Existing styles remain unchanged */
