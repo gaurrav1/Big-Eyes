@@ -1,16 +1,22 @@
-.prevNavBtn{
+.prevNavBtn {
     text-decoration: none;
     color: var(--accent);
     display: flex;
     flex-direction: row;
+    align-items: center;
     justify-content: space-between;
 }
 
-.prevNavIcon{
-    
+.prevNavIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .prevNavText {
-    font-size: 2rem;
+    font-size: 1rem;
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

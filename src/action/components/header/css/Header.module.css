@@ -1,15 +1,12 @@
-.headerWrapper {
-  min-height: 38px;
-  margin-bottom: 1.5rem;
-  padding: 0.3rem 0.6rem;
-}
-
 .header {
-  position: fixed;
+      position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 999;
+  min-height: 38px;
+  margin: 8px 0;
+  padding: 0.3rem 0.6rem;
 
   min-height: 38px;
 

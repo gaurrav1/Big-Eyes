@@ -147,7 +147,7 @@ export function Previous({ height, width }) {
             <g id="SVGRepo_iconCarrier">
                 <path
                     d="M15 7L9 12L15 17"
-                    stroke={'var(--color-text)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
+                    stroke={'var(--accent)'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path>
             </g>
         </svg>
     )

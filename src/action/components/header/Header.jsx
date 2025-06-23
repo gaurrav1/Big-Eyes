@@ -6,13 +6,11 @@ import { PrevNav } from '../button/PrevNav'
 
 export function Header() {
     const location = useLocation();
-    const showLogo = ["/main"].includes(location.pathname);
+    const isMainHeader = ["/main"].includes(location.pathname);
     return (
-        <div className={styles.headerWrapper}>
             <div className={styles.header}>
-                {showLogo ? <Logo /> : <PrevNav locate={"/main"} text={"Home"}/>}
-                <ThemeSwitcher />
+                {isMainHeader ? <Logo /> : <PrevNav locate={"/main"} text={"Home"}/>}
+                {isMainHeader ? <ThemeSwitcher /> : null}
             </div>
-        </div>
     );
 };

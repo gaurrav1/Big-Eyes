@@ -31,6 +31,7 @@ html,
 body {
   margin: 0;
   padding: 0;
+  padding-top: 46px;
   font-family: sans-serif;
   background-color: var(--bg);
   color: var(--fg);
@@ -41,7 +42,7 @@ body {
 
 .layout {
   min-width: 350px;
-  min-height: 550px;
+  min-height: 500px;
   font-family: "Montserrat", sans-serif;
   font-optical-sizing: auto;
   font-weight: 500;
