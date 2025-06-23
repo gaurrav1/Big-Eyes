@@ -33,7 +33,7 @@ export const LocationSearch = ({
 
     try {
       const response = await axios.post(
-        'https://e5mquma77feepi2apdn4d6h3mpu.appsync-api.us-east-1.amazonaws.com/graphql',
+        'https://e5mquma77feepi2bdn4d6h3mpu.appsync-api.us-east-1.amazonaws.com/graphql',
         {
           operationName: 'queryGeoInfoByAddress',
           variables: {
@@ -42,18 +42,7 @@ export const LocationSearch = ({
               countries: ['CAN'],
             },
           },
-          query: `
-            query queryGeoInfoByAddress($geoAddressQueryRequest: GeoAddressQueryRequest!) {
-              queryGeoInfoByAddress(geoAddressQueryRequest: $geoAddressQueryRequest) {
-                country
-                lat
-                lng
-                label
-                municipality
-                region
-              }
-            }
-          `,
+          query: "query queryGeoInfoByAddress($geoAddressQueryRequest: GeoAddressQueryRequest!) {\n  queryGeoInfoByAddress(geoAddressQueryRequest: $geoAddressQueryRequest) {\n    country\n    lat\n    lng\n    postalCode\n    label\n    municipality\n    region\n    subRegion\n    addressNumber\n    __typename\n  }\n}\n",
         },
         {
           headers: {

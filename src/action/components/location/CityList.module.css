@@ -24,12 +24,12 @@
   padding: 1rem 1.5rem;
   border-bottom: 1px solid #e9ecef;
   transition: all 0.2s ease;
-  background: white;
+  background: var(--background-color);
 }
 
 .cityItem.active {
-  background-color: #f1f3f5;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--background-color);
+  box-shadow: 0 2px 8px var(--fg);
 }
 
 .dragHandle {
@@ -51,7 +51,7 @@
 
 .cityDetails {
   font-size: 0.9rem;
-  color: #495057;
+  color: var(--fg);
 }
 
 .distance {
@@ -62,12 +62,12 @@
 }
 
 .within {
-  background-color: #e6f7ee;
+  background-color: var(--background-color);
   color: #0ca678;
 }
 
 .over {
-  background-color: #ffe3e3;
+  background-color: var(--background-color);
   color: #fa5252;
 }
 

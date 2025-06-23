@@ -47,7 +47,7 @@ export function Close({ height, width }) {
         <svg width={width} height={height} viewBox="-3.75 -3.75 32.50 32.50" fill="none"
             xmlns="http://www.w3.org/2000/svg">
             <g id="SVGRepo_bgCarrier" strokeWidth="0" transform="translate(0,0), scale(1)">
-                <rect x="-3.75" y="-3.75" width="32.50" height="32.50" rx="16.25" fill={'var(--nav-bg)'} strokeWidth="0"></rect>
+                <rect x="-3.75" y="-3.75" width="32.50" height="32.50" rx="16.25" fill={'var(--bg)'} strokeWidth="0"></rect>
             </g>
             <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
             <g id="SVGRepo_iconCarrier">

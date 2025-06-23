@@ -56,15 +56,15 @@ export const CityList = () => {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-
-        <LocationSearch 
+    <>
+    <LocationSearch 
           onLocationSelect={handleAddCity}
           placeholder="Add city within commute"
           compact
         />
-      </div>
+   
+    <div className={styles.container}>
+      
       
       <div className={styles.listContainer}>
         {otherCities.map((city, index) => {
@@ -114,5 +114,6 @@ export const CityList = () => {
         )}
       </div>
     </div>
+     </>
   );
 };

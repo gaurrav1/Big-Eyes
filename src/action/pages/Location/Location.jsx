@@ -26,8 +26,6 @@ export const Location = () => {
   return (
     <div className={styles.container}>
       <h3>Center Location</h3>
-      <div className={styles.section}>
-        
         <LocationSearch
           onLocationSelect={handleCenterSelect}
           placeholder="Enter center city"
@@ -37,7 +35,6 @@ export const Location = () => {
             <strong>Selected:</strong> {appData.centerOfCityCoordinates.name}
           </div>
         )}
-      </div>
 
  <h3>Commute Distance</h3>
       <div className={styles.section}>
