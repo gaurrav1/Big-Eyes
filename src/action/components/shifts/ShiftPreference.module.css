@@ -1,0 +1,461 @@
+/* Enhanced Apple-style with premium animations */
+.container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+  background: linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%);
+  border-radius: 24px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+}
+
+@media (min-width: 768px) {
+  .container {
+    grid-template-columns: 1fr 1fr;
+    padding: 30px;
+  }
+}
+
+.listContainer {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 22px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.04);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.listContainer:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.listTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1d1d1f;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.3px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #86868b;
+  font-weight: 400;
+  margin-top: 2px;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+}
+
+.editButton, .resetButton {
+  background: none;
+  border: none;
+  color: #0071e3;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 14px;
+  border-radius: 10px;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.resetButton {
+  color: #8e8e93;
+}
+
+.editButton:hover, .resetButton:hover {
+  background-color: rgba(0, 113, 227, 0.08);
+}
+
+.resetButton:hover {
+  background-color: rgba(142, 142, 147, 0.08);
+}
+
+.shiftList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  min-height: 240px;
+}
+
+.shiftItem {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  background: #ffffff;
+  border-radius: 14px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  position: relative;
+  overflow: hidden;
+}
+
+.shiftItem:last-child {
+  margin-bottom: 0;
+}
+
+.shiftItem:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 113, 227, 0.15);
+}
+
+.selectedItem {
+  background: linear-gradient(135deg, #f5f7ff 0%, #eef4ff 100%);
+  border: 1px solid rgba(0, 113, 227, 0.15);
+}
+
+.shiftContent {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 14px;
+}
+
+.shiftIcon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 113, 227, 0.1);
+  border-radius: 10px;
+  color: #0071e3;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.priorityBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #0071e3 0%, #004e9e 100%);
+  color: white;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 113, 227, 0.3);
+}
+
+.checkbox {
+  width: 22px;
+  height: 22px;
+  margin-right: 14px;
+  accent-color: #ff3b30;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.priorityControls {
+  display: flex;
+  gap: 6px;
+}
+
+.arrowButton {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.03);
+  border: none;
+  color: #0071e3;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.arrowButton:hover {
+  background: rgba(0, 113, 227, 0.1);
+  transform: scale(1.08);
+}
+
+.arrowButton.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.dragHandle {
+  display: flex;
+  flex-direction: column;
+  cursor: grab;
+  opacity: 0.4;
+  transition: opacity 0.2s;
+  padding: 4px 2px;
+  margin-left: 8px;
+}
+
+.dragHandle:hover {
+  opacity: 0.8;
+}
+
+.dragDot {
+  width: 5px;
+  height: 5px;
+  background: #8e8e93;
+  border-radius: 50%;
+  margin: 2px 0;
+}
+
+.dragging {
+  opacity: 0.6;
+  transform: scale(0.98);
+  box-shadow: 0 0 20px rgba(0, 113, 227, 0.2);
+}
+
+.dragOver {
+  box-shadow: inset 0 0 0 2px #0071e3;
+}
+
+.dragUp::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 20px;
+  right: 20px;
+  height: 2px;
+  background: #0071e3;
+  border-radius: 2px;
+}
+
+.dragDown::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 20px;
+  right: 20px;
+  height: 2px;
+  background: #0071e3;
+  border-radius: 2px;
+}
+
+.recentAdd {
+  animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.6);
+  background: linear-gradient(135deg, #e6f2ff 0%, #d1e7ff 100%);
+}
+
+@keyframes popIn {
+  0% {
+    transform: translateY(10px);
+    opacity: 0;
+    box-shadow: 0 0 0 rgba(0, 113, 227, 0);
+  }
+  70% {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 113, 227, 0.3);
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+    box-shadow: 0 4px 12px rgba(0, 113, 227, 0.1);
+  }
+}
+
+.deleteContainer {
+  margin-top: 20px;
+  text-align: center;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.deleteButton {
+  background: linear-gradient(135deg, #ff3b30 0%, #d70015 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  width: 100%;
+  box-shadow: 0 4px 12px rgba(255, 59, 48, 0.2);
+}
+
+.deleteButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 59, 48, 0.3);
+}
+
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: #8e8e93;
+  font-size: 16px;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 14px;
+  gap: 12px;
+  flex-direction: column;
+  border: 1px dashed rgba(0, 0, 0, 0.05);
+}
+
+.emptyState .shiftIcon {
+  background: rgba(142, 142, 147, 0.1);
+  color: #8e8e93;
+  font-size: 24px;
+  width: 50px;
+  height: 50px;
+}
+
+.confirmOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.confirmDialog {
+  background: white;
+  border-radius: 24px;
+  padding: 30px;
+  width: 380px;
+  max-width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.4);
+}
+
+@keyframes scaleIn {
+  0% { transform: scale(0.95); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.confirmTitle {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 10px;
+  color: #1d1d1f;
+}
+
+.confirmText {
+  font-size: 16px;
+  margin: 0 0 20px;
+  color: #1d1d1f;
+  line-height: 1.5;
+}
+
+.deleteList {
+  padding: 0;
+  margin: 0 0 24px;
+  list-style: none;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.deleteItem {
+  padding: 14px 16px;
+  background: #f5f5f7;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.deleteItem::before {
+  content: '✕';
+  color: #ff3b30;
+  font-size: 18px;
+}
+
+.warning {
+  background: #fff8f8;
+  border: 1px solid #ffd1d1;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 20px;
+  color: #ff3b30;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.confirmActions {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.cancelButton,
+.deleteConfirmButton {
+  padding: 14px 24px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  flex: 1;
+  transition: all 0.2s ease;
+}
+
+.cancelButton {
+  background: #f5f5f7;
+  color: #1d1d1f;
+}
+
+.cancelButton:hover {
+  background: #e0e0e0;
+  transform: translateY(-2px);
+}
+
+.deleteConfirmButton {
+  background: linear-gradient(135deg, #ff3b30 0%, #d70015 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(255, 59, 48, 0.3);
+}
+
+.deleteConfirmButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 59, 48, 0.4);
+}
+
+.deleteConfirmButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

@@ -9,7 +9,7 @@ const DEFAULT_APP_DATA = {
   centerOfCityCoordinates: null,
   commuteDistance: 35,
   otherCities: [],
-  shiftType: null
+  shiftPriorities: []
 };
 
 // Key for localStorage
