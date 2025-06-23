@@ -6,3 +6,10 @@
     height: 100%;
     margin-bottom: 2rem;
 }
+
+.tileTitle, .tileDescription {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}

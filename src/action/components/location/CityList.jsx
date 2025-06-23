@@ -84,7 +84,6 @@ export const CityList = () => {
     <>
       
         <div className={styles.headerRow}>
-          <h3>Cities within Commute</h3>
           {otherCities.length > 0 && (
             <button 
               className={styles.resetButton}

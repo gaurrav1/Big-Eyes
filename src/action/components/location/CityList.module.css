@@ -108,12 +108,10 @@
 }
 
 .warningText {
-  margin-top: 0.5rem;
-  padding: 0.5rem;
-  background: rgba(255, 204, 0, 0.1);
+  margin-top: .3rem;
   border-radius: 8px;
-  color: #e6b400;
-  font-size: 0.9rem;
+  color: var(--muted);
+  font-size: 0.8rem;
 }
 
 .priorityBadge {
