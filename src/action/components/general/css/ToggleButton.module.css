@@ -6,8 +6,11 @@
   flex-direction: row;
   gap: 1rem;
   margin-bottom: 1.5rem;
+  padding: 8px 16px;
+  border-radius: 15px;
   cursor: pointer;
   user-select: none;
+  background-color: var(--background-color);
 }
 
 .toggleContainer {

@@ -6,8 +6,8 @@ export function Footer() {
     return (
         <div className={styles.footerWrapper}>
             <div className={styles.buttonGroup}>
+                <NavButton location={'history'} title={'History'} />
                 <NavButton location={'settings'} title={'Settings'} />
-                <NavButton location={'history'} title={'history'} />
             </div>
 
             <div className={styles.footer}>
