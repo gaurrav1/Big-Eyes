@@ -96,13 +96,14 @@ export const CommuteSlider = ({ initialValue = 35, onChange }) => {
           style={{ width: `${calculatePosition(sliderValue)}%` }}
         />
         
-        {DISTANCE_OPTIONS.map((distance) => (
-          <div
-            key={`marker-${distance}`}
-            className={`${styles.sliderMarker} ${sliderValue === distance ? styles.activeMarker : ''}`}
-            style={{ left: `${calculatePosition(distance)}%` }}
-          />
-        ))}
+{DISTANCE_OPTIONS.map((distance) => (
+  <div
+    key={`marker-${distance}`}
+    className={`${styles.sliderMarker} ${distance <= sliderValue ? styles.activeMarker : ''}`}
+    style={{ left: `${calculatePosition(distance)}%` }}
+  />
+))}
+
         
         <input
           ref={sliderRef}

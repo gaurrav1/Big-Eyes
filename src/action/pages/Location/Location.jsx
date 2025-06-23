@@ -10,7 +10,7 @@ export const Location = () => {
   const handleCenterSelect = (location) => {
     updateAppData({
       centerOfCityCoordinates: {
-        name: location.label,
+        name: location.name,
         lat: location.lat,
         lng: location.lng,
         region: location.region,
@@ -26,29 +26,29 @@ export const Location = () => {
   return (
     <div className={styles.container}>
       <h3>Center Location</h3>
-        <LocationSearch
-          onLocationSelect={handleCenterSelect}
-          placeholder="Enter center city"
-        />
-        {appData.centerOfCityCoordinates && (
-          <div className={styles.selectedCity}>
-            <strong>Selected:</strong> {appData.centerOfCityCoordinates.name}
-          </div>
-        )}
+      <LocationSearch
+        onLocationSelect={handleCenterSelect}
+        placeholder={appData.centerOfCityCoordinates.name != '' ? appData.centerOfCityCoordinates.name : 'Search for a city...'}
+      />
+      {appData.centerOfCityCoordinates && (
+        <div className={styles.selectedCity}>
+          <strong>Selected: {appData.centerOfCityCoordinates.name}</strong>
+        </div>
+      )}
 
- <h3>Commute Distance</h3>
+      <h3>Commute Distance</h3>
       <div className={styles.section}>
-       
-        <CommuteSlider 
-          initialValue={appData.commuteDistance} 
-          onChange={handleDistanceChange} 
+
+        <CommuteSlider
+          initialValue={appData.commuteDistance}
+          onChange={handleDistanceChange}
         />
         <div className={styles.distanceDisplay}>
           {appData.commuteDistance} km radius
         </div>
       </div>
 
-        <h3>Cities within Commute</h3>
+      <h3>Cities within Commute</h3>
 
       <CityList />
     </div>

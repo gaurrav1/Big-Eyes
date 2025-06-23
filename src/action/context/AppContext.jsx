@@ -6,7 +6,7 @@ export const useAppContext = () => useContext(AppContext);
 
 export const AppContextProvider = ({ children }) => {
   const [appData, setAppData] = useState({
-    centerOfCityCoordinates: null,
+    centerOfCityCoordinates: '',
     commuteDistance: 35,
     otherCities: [],
     shiftType: null

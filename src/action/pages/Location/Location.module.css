@@ -12,9 +12,8 @@
 }
 
 .selectedCity {
-  margin-top: 1rem;
+  margin-top: .3rem;
   padding: 0.8rem;
-  background: #e7f5ff;
   border-radius: 8px;
   color: #1c7ed6;
 }
@@ -23,5 +22,5 @@
   text-align: center;
   margin-top: 1rem;
   font-weight: 600;
-  color: #339af0;
+  color: #1c7ed6;
 }

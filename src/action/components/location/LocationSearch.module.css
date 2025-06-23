@@ -76,13 +76,13 @@
   width: 100%;
   max-height: 300px;
   overflow-y: auto;
-  background: rgba(255, 255, 255, 0.98);
+  background: var(--transperent-bg);
   border-radius: 12px;
   margin-top: 8px;
   padding: 8px 0;
   box-shadow: 
-    0 10px 30px rgba(0, 0, 0, 0.15),
-    0 0 0 1px rgba(0, 0, 0, 0.05);
+    0 .5px 5px var(--fg),
+    0 0 0 1px var(--fg);
   backdrop-filter: blur(20px);
   z-index: 100;
   list-style: none;
@@ -97,19 +97,19 @@
 }
 
 .suggestionItem:hover {
-  background-color: rgba(0, 122, 255, 0.08);
+  background-color: var(--background-color);
 }
 
 .locationLabel {
   font-weight: 500;
   font-size: 16px;
-  color: #000;
+  color: var(--fg);
   margin-bottom: 2px;
 }
 
 .locationDetails {
   font-size: 14px;
-  color: #666;
+  color: var(--background-color);
   font-weight: 400;
 }
 
@@ -121,4 +121,14 @@
 .compactInput {
   font-size: 0.9rem;
   padding: 0.25rem 0.5rem;
+}
+
+.highlighted {
+  background-color: var(--fg);
+  color: var(--background-color);
+}
+
+.highlighted .locationLabel,
+.highlighted .locationDetails {
+  color: var(--background-color);
 }

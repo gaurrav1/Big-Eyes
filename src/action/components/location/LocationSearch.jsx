@@ -5,8 +5,8 @@ import styles from './LocationSearch.module.css';
 const DEBOUNCE_DELAY = 300;
 const MIN_INPUT_LENGTH = 3;
 
-export const LocationSearch = ({ 
-  onLocationSelect, 
+export const LocationSearch = ({
+  onLocationSelect,
   placeholder = 'Search city...',
   compact = false
 }) => {
@@ -16,6 +16,9 @@ export const LocationSearch = ({
   const [error, setError] = useState(null);
   const [isFocused, setIsFocused] = useState(false);
   const cancelToken = useRef(null);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const suggestionsListRef = useRef(null);
+
 
   const fetchSuggestions = useCallback(async (query) => {
     if (!query || query.length < MIN_INPUT_LENGTH) {
@@ -89,6 +92,32 @@ export const LocationSearch = ({
     });
   };
 
+  useEffect(() => {
+    setHighlightedIndex(-1);
+  }, [suggestions]);
+
+
+  const handleKeyDown = (e) => {
+    if (suggestions.length === 0) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setHighlightedIndex((prev) =>
+        prev < suggestions.length - 1 ? prev + 1 : 0
+      );
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setHighlightedIndex((prev) =>
+        prev > 0 ? prev - 1 : suggestions.length - 1
+      );
+    } else if (e.key === 'Enter') {
+      if (highlightedIndex >= 0 && highlightedIndex < suggestions.length) {
+        e.preventDefault();
+        handleSelect(suggestions[highlightedIndex]);
+      }
+    }
+  };
+
   const handleBlur = () => {
     setTimeout(() => setIsFocused(false), 200);
   };
@@ -104,18 +133,19 @@ export const LocationSearch = ({
         >
           <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
         </svg>
-        
+
         <input
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onFocus={() => setIsFocused(true)}
           onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
           placeholder={placeholder}
           className={`${styles.input} ${compact ? styles.compactInput : ''}`}
           aria-label="City search"
         />
-        
+
         {(isLoading || error) && (
           <div className={styles.statusIndicator}>
             {isLoading ? (
@@ -140,7 +170,7 @@ export const LocationSearch = ({
             <li
               key={`${location.label}-${index}`}
               onMouseDown={() => handleSelect(location)}
-              className={styles.suggestionItem}
+              className={`${styles.suggestionItem} ${highlightedIndex === index ? styles.highlighted : ''}`}
             >
               <div className={styles.locationLabel}>{location.label}</div>
               <div className={styles.locationDetails}>
@@ -149,6 +179,7 @@ export const LocationSearch = ({
               </div>
             </li>
           ))}
+
         </ul>
       )}
     </div>
