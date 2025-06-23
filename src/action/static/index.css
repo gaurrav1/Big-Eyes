@@ -30,7 +30,7 @@
 html,
 body {
   margin: 0;
-  padding: 32px 8px;
+  padding: 32px 4px 0 4px;
   font-family: sans-serif;
   background-color: var(--bg);
   color: var(--fg);

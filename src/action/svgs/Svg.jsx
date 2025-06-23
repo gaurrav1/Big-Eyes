@@ -66,7 +66,7 @@ export function Contrast({ height, width }) {
         <svg fill={'var(--color-text)'} width={width} height={height} viewBox="-1.92 -1.92 35.84 35.84" version="1.1"
             xmlns="http://www.w3.org/2000/svg">
             <g id="SVGRepo_bgCarrier" strokeWidth="0">
-                <rect x="-1.92" y="-1.92" width="35.84" height="35.84" rx="17.92" fill={'var(--nav-bg)'} strokeWidth="0"></rect>
+                <rect x="-1.92" y="-1.92" width="35.84" height="35.84" rx="17.92" fill={'var(--bg)'} strokeWidth="0"></rect>
             </g>
             <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
             <g id="SVGRepo_iconCarrier"><title>contrast</title>
@@ -83,7 +83,7 @@ export function Sun({ height, width }) {
         <svg width={height} height={width} viewBox="-0.24 -0.24 24.48 24.48" fill="none"
             xmlns="http://www.w3.org/2000/svg">
             <g id="SVGRepo_bgCarrier" strokeWidth="0">
-                <rect x="-0.24" y="-0.24" width="24.48" height="24.48" rx="12.24" fill={'var(--nav-bg)'} strokeWidth="0"></rect>
+                <rect x="-0.24" y="-0.24" width="24.48" height="24.48" rx="12.24" fill={'var(--bg)'} strokeWidth="0"></rect>
             </g>
             <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
             <g id="SVGRepo_iconCarrier">
@@ -101,7 +101,7 @@ export function Moon({ height, width }) {
         <svg width={width} height={height} viewBox="-0.72 -0.72 25.44 25.44" fill="none"
             xmlns="http://www.w3.org/2000/svg">
             <g id="SVGRepo_bgCarrier" strokeWidth="0">
-                <rect x="-0.72" y="-0.72" width="25.44" height="25.44" rx="12.72" fill={'var(--nav-bg)'} strokeWidth="0"></rect>
+                <rect x="-0.72" y="-0.72" width="25.44" height="25.44" rx="12.72" fill={'var(--bg)'} strokeWidth="0"></rect>
             </g>
             <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
             <g id="SVGRepo_iconCarrier">
@@ -141,7 +141,7 @@ export function Previous({ height, width }) {
         <svg width={width} height={height} viewBox="-0.72 -0.72 25.44 25.44" fill="none"
             xmlns="http://www.w3.org/2000/svg">
             <g id="SVGRepo_bgCarrier" strokeWidth="0">
-                <rect x="-0.72" y="-0.72" width="25.44" height="25.44" rx="12.72" fill={'var(--nav-bg)'} strokeWidth="0"></rect>
+                <rect x="-0.72" y="-0.72" width="25.44" height="25.44" rx="12.72" fill={'var(--bg)'} strokeWidth="0"></rect>
             </g>
             <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
             <g id="SVGRepo_iconCarrier">

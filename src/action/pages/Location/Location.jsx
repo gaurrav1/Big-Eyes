@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import styles from './Location.module.css'
 import { LocationIcon, CloseIcon } from '../../svgs/Svg';
+import { FormField } from '../../components/general/FormField';
 import axios from 'axios';
 
 export const Location = () => {
@@ -16,9 +17,6 @@ export const Location = () => {
   const inputRef = useRef(null);
   const citiesInputRef = useRef(null);
   
-  const handleBack = () => {
-    window.close();
-  };
 
   const fetchSuggestions = async (query) => {
     if (!query.trim()) {
@@ -132,13 +130,7 @@ export const Location = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <button className={styles.backButton} onClick={handleBack}>
-          ← Back
-        </button>
-        <h1 className={styles.logo}>Location Settings</h1>
-      </div>
-
+      <FormField icon={<LocationIcon width={16} height={16}/>} label={"location"} onClick={null} value={"location"} children={""} />
       <div className={styles.form}>
         {/* Single Location Input */}
         <div className={styles.fieldset}>
@@ -199,7 +191,7 @@ export const Location = () => {
                     className={`${styles.sliderValue} ${commuteDistance === value ? styles.active : ''}`}
                     onClick={() => handleCommuteChange(value)}
                   >
-                    {value} mi
+                    {value} km
                   </span>
                 ))}
               </div>
