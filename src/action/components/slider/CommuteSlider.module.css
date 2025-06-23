@@ -1,0 +1,112 @@
+/* CommuteSlider.module.css */
+.sliderContainer {
+  position: relative;
+  padding: 32px 16px;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.labelsContainer {
+  position: relative;
+  height: 40px;
+  margin-bottom: 20px;
+}
+
+.distanceLabel {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  text-align: center;
+  font-size: 12px;
+  font-weight: 400;
+  color: #86868b;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+.activeLabel {
+  color: #0071e3;
+  font-weight: 600;
+}
+
+.unit {
+  display: block;
+  font-size: 10px;
+  margin-top: 2px;
+}
+
+.sliderTrack {
+  position: relative;
+  height: 4px;
+  background-color: #e3e3e8;
+  border-radius: 2px;
+  overflow: visible;
+}
+
+.sliderProgress {
+  position: absolute;
+  height: 100%;
+  background-color: #0071e3;
+  border-radius: 2px;
+  transition: width 0.1s linear;
+}
+
+.sliderMarker {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background-color: #c0c0c6;
+  border-radius: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.activeMarker {
+  background-color: #0071e3;
+  width: 8px;
+  height: 8px;
+}
+
+.sliderInput {
+  position: absolute;
+  width: 100%;
+  height: 44px;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.sliderThumb {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  background-color: #0071e3;
+  border-radius: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: 
+    background-color 0.3s ease,
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.sliderThumb.dragging {
+  background-color: rgba(0, 113, 227, 0.7);
+  transform: translate(-50%, -50%) scale(1.2);
+  box-shadow: 0 4px 10px rgba(0, 113, 227, 0.3);
+}
+
+/* Focus styles for accessibility */
+.sliderInput:focus-visible + .sliderThumb {
+  outline: 2px solid #0071e3;
+  outline-offset: 2px;
+}
