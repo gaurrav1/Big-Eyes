@@ -1,0 +1,16 @@
+.prevNavBtn{
+    text-decoration: none;
+    color: var(--accent);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.prevNavIcon{
+    
+}
+
+.prevNavText {
+    font-size: 2rem;
+    font-weight: 600;
+}

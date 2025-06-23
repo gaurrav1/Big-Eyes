@@ -29,7 +29,7 @@
     }
   ],
   "permissions": [
-    "storage"
+    "storage", "location"
   ],
   "web_accessible_resources": [
     {
