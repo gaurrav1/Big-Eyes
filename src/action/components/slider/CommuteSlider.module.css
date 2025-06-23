@@ -1,7 +1,7 @@
 /* CommuteSlider.module.css */
 .sliderContainer {
   position: relative;
-  padding: 32px 16px;
+  padding: 8px;
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
@@ -10,7 +10,7 @@
 .labelsContainer {
   position: relative;
   height: 40px;
-  margin-bottom: 20px;
+  margin-bottom: 3px;
 }
 
 .distanceLabel {

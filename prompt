@@ -1,0 +1,101 @@
+I want to create apple inspired component in react
+
+Using this React component and Css module, I want to create a component which is used to select city and store its latitude and longitude provided by API, Same API want to utilize for giving user suggestion based on input... Also make sure to tune for optimization, make professional code and apply best code practices with apple's perfromance and asthetics, design component in such a way it can be reusable in various scinario as well
+
+Fine tune Styles using CSS and make it god tier
+
+Here is the API
+post: https://e5mquma77feepi2bdn4d6h3mpu.appsync-api.us-east-1.amazonaws.com/graphql
+Header: "Authorization":"Bearer token" <No need to replace token>
+Body:
+{
+    "operationName": "queryGeoInfoByAddress",
+    "variables": {
+        "geoAddressQueryRequest": {
+            "address": "Missisuaga", // <--- User provided input "Missisuaga"
+            "countries": [
+                "CAN"
+            ]
+        }
+    },
+    "query": "query queryGeoInfoByAddress($geoAddressQueryRequest: GeoAddressQueryRequest!) {\n  queryGeoInfoByAddress(geoAddressQueryRequest: $geoAddressQueryRequest) {\n    country\n    lat\n    lng\n    postalCode\n    label\n    municipality\n    region\n    subRegion\n    addressNumber\n    __typename\n  }\n}\n"
+}
+Response:
+{
+    "data": {
+        "queryGeoInfoByAddress": [
+            {
+                "country": "CAN",
+                "lat": 43.58882,
+                "lng": -79.644378,
+                "postalCode": null,
+                "label": "Mississauga, ON, CAN",
+                "municipality": "Mississauga",
+                "region": "Ontario",
+                "subRegion": "Peel Regional Municipality",
+                "addressNumber": null,
+                "__typename": "GeoInfo"
+            },
+            {
+                "country": "CAN",
+                "lat": 43.5789,
+                "lng": -79.6583,
+                "postalCode": null,
+                "label": "Mississauga, ON, CAN",
+                "municipality": "Mississauga",
+                "region": "Ontario",
+                "subRegion": null,
+                "addressNumber": null,
+                "__typename": "GeoInfo"
+            },
+            {
+                "country": "CAN",
+                "lat": 46.191616413,
+                "lng": -83.018796863,
+                "postalCode": null,
+                "label": "Mississauga, Blind River, ON, CAN",
+                "municipality": "Blind River",
+                "region": "Ontario",
+                "subRegion": "Algoma District",
+                "addressNumber": null,
+                "__typename": "GeoInfo"
+            },
+            {
+                "country": "CAN",
+                "lat": 43.25876,
+                "lng": -79.08625,
+                "postalCode": null,
+                "label": "Mississauga Beach, ON, CAN",
+                "municipality": "Mississauga Beach",
+                "region": "Ontario",
+                "subRegion": "Regional Municipality of Niagara",
+                "addressNumber": null,
+                "__typename": "GeoInfo"
+            },
+            {
+                "country": "CAN",
+                "lat": 43.59699,
+                "lng": -79.61389,
+                "postalCode": null,
+                "label": "Mississauga Valley, ON, CAN",
+                "municipality": null,
+                "region": "Ontario",
+                "subRegion": null,
+                "addressNumber": null,
+                "__typename": "GeoInfo"
+            },
+            {
+                "country": "CAN",
+                "lat": 44.699866,
+                "lng": -78.346465,
+                "postalCode": null,
+                "label": "Mississagua Landing, Trent Lakes, ON, CAN",
+                "municipality": "Trent Lakes",
+                "region": "Ontario",
+                "subRegion": "Peterborough County",
+                "addressNumber": null,
+                "__typename": "GeoInfo"
+            }
+        ]
+    }
+}

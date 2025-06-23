@@ -1,0 +1,27 @@
+.container {
+    margin-top: -18px;
+}
+
+.section {
+  margin-bottom: 2rem;
+  padding: .5rem;
+  background: var(--background-color);
+  color: var(--fg);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.selectedCity {
+  margin-top: 1rem;
+  padding: 0.8rem;
+  background: #e7f5ff;
+  border-radius: 8px;
+  color: #1c7ed6;
+}
+
+.distanceDisplay {
+  text-align: center;
+  margin-top: 1rem;
+  font-weight: 600;
+  color: #339af0;
+}

@@ -1,0 +1,79 @@
+.container {
+  margin-top: 2rem;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  background: var(--background-color);
+}
+
+.header {
+  padding: 1.5rem;
+  background: var(--background-color);
+  color: var(--fg);
+  border-bottom: 1px solid #e9ecef;
+}
+
+.listContainer {
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.cityItem {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e9ecef;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.cityItem.active {
+  background-color: #f1f3f5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dragHandle {
+  font-size: 1.5rem;
+  margin-right: 1rem;
+  color: #868e96;
+  cursor: move;
+}
+
+.cityInfo {
+  flex: 1;
+}
+
+.cityName {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.2rem;
+}
+
+.cityDetails {
+  font-size: 0.9rem;
+  color: #495057;
+}
+
+.distance {
+  font-weight: 600;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.within {
+  background-color: #e6f7ee;
+  color: #0ca678;
+}
+
+.over {
+  background-color: #ffe3e3;
+  color: #fa5252;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 2rem;
+  color: #868e96;
+  font-size: 0.95rem;
+}
