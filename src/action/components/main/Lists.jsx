@@ -1,6 +1,7 @@
 import { Tile } from "../general/Tile/Tile";
 import { CalendarIcon, LocationIcon, Next } from "../../svgs/Svg";
 import styles from "./css/Lists.module.css";
+import { Divider } from "../general/Divider";
 
 export function Lists() {
 
@@ -30,7 +31,7 @@ export function Lists() {
   return (
     <div className={styles.lists}>
       <Tile tile={locationTile} />
-      <div className={styles.divider} />
+      <Divider />
       <Tile tile={shiftTypeTile} />
     </div>
   );
