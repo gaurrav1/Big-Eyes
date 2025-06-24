@@ -1,6 +1,53 @@
 let isFetching = false;
 let appData = {};
 let latestTimestamp = 0;
+let currentTabId = null;
+// Tab registration with error handling
+function registerTab() {
+    chrome.runtime.sendMessage({ type: "REGISTER_TAB" }, (response) => {
+        if (chrome.runtime.lastError) {
+            console.warn("Registration error, retrying...", chrome.runtime.lastError);
+            setTimeout(registerTab, 2000); // Retry after 2 seconds
+            return;
+        }
+
+        console.log("Registration response:", response);
+        if (response?.isActive) {
+            startFetching();
+        }
+    });
+}
+
+// Initial registration with delay
+setTimeout(registerTab, 1000);
+console.log("Current tab id", currentTabId);
+
+// Performance-optimized fetch loop
+const fetchLoop = () => {
+    if (!isFetching) return;
+
+    const startTime = performance.now();
+
+    // Actual fetching logic
+    console.log("Fetching with:", appData);
+
+    // Use microtask scheduling for optimal performance
+    const nextFrame = () => {
+        const elapsed = performance.now() - startTime;
+        const delay = Math.max(0, 1000 - elapsed); // Target 1s intervals
+
+        if (isFetching) {
+            setTimeout(fetchLoop, delay);
+        }
+    };
+
+    requestAnimationFrame(nextFrame);
+};
+
+// Tab registration
+chrome.runtime.connect().onDisconnect.addListener(() => {
+    chrome.runtime.sendMessage({ type: "UNREGISTER_TAB" });
+});
 
 chrome.runtime.sendMessage({ type: "REGISTER_TAB" }, (response) => {
     if (response?.isActive) {
@@ -8,12 +55,11 @@ chrome.runtime.sendMessage({ type: "REGISTER_TAB" }, (response) => {
     }
 });
 
-// Handle app data updates
+// Message handling
 chrome.runtime.onMessage.addListener((msg) => {
     if (msg.type === "APP_DATA_UPDATE" && msg.timestamp > latestTimestamp) {
         latestTimestamp = msg.timestamp;
         appData = msg.payload;
-        console.log("Updated appData:", appData);
     }
 
     if (msg.type === "FETCH_STATUS_UPDATE") {
@@ -22,7 +68,6 @@ chrome.runtime.onMessage.addListener((msg) => {
     }
 });
 
-// Update startFetching
 function startFetching() {
     if (isFetching) return;
     isFetching = true;
@@ -35,16 +80,15 @@ function stopFetching() {
     console.log("🛑 Fetching stopped");
 }
 
-// Update fetchLoop to handle background page suspension
-function fetchLoop() {
-    if (!isFetching) return;
+// Tab navigation detection
+let currentUrl = location.href;
+const observer = new MutationObserver(() => {
+    if (location.href !== currentUrl) {
+        currentUrl = location.href;
+        if (!currentUrl.includes('hiring.amazon.ca/search')) {
+            chrome.runtime.sendMessage({ type: "TAB_REDIRECTED" });
+        }
+    }
+});
 
-    // Actual fetching logic
-    console.log("Fetching with:", appData);
-
-    // Use requestAnimationFrame for better resource management
-    requestAnimationFrame(fetchLoop);
-}
-
-// Initialize
-chrome.runtime.sendMessage({ type: "REGISTER_TAB" });
+observer.observe(document, { subtree: true, childList: true });

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 const AppContext = createContext();
 export const useAppContext = () => useContext(AppContext);
@@ -16,80 +16,72 @@ export const AppContextProvider = ({ children }) => {
   const [appData, setAppData] = useState(DEFAULT_APP_DATA);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load data from localStorage and sync with service worker
+  // Optimized data loading
+  const loadData = useCallback(async () => {
+    try {
+      const savedData = JSON.parse(localStorage.getItem(STORAGE_KEY) || DEFAULT_APP_DATA);
+      const initialData = {
+        ...DEFAULT_APP_DATA,
+        ...savedData,
+        centerOfCityCoordinates: savedData.centerOfCityCoordinates || null
+      };
+
+      setAppData(initialData);
+
+      chrome.runtime.sendMessage({
+        type: "INIT_APP_DATA",
+        payload: initialData
+      });
+    } finally {
+      setIsLoaded(true);
+    }
+  }, []);
+
+  // Data persistence
+  const saveData = useCallback((data) => {
+    const update = { ...data, timestamp: Date.now() };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(update));
+    chrome.runtime.sendMessage({
+      type: "UPDATE_APP_DATA",
+      payload: update
+    });
+  }, []);
+
+  // Initialization
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const savedData = localStorage.getItem(STORAGE_KEY);
-        const initialData = savedData ? JSON.parse(savedData) : DEFAULT_APP_DATA;
-
-        // Migration for centerOfCityCoordinates
-        if (initialData.centerOfCityCoordinates === '') {
-          initialData.centerOfCityCoordinates = null;
-        }
-
-        setAppData(initialData);
-
-        // Initialize service worker state
-        chrome.runtime.sendMessage({
-          type: "INIT_APP_DATA",
-          payload: initialData
-        });
-      } catch (error) {
-        console.error('Failed to load app data:', error);
-      } finally {
-        setIsLoaded(true);
-      }
-    };
-
     loadData();
 
-    // Listen for external updates
     const handleMessage = (msg) => {
-      if (msg.type === "APP_DATA_UPDATE" && msg.timestamp > appData.timestamp) {
+      if (msg.type === "APP_DATA_UPDATE" && msg.timestamp > (appData.timestamp || 0)) {
         setAppData(msg.payload);
       }
     };
 
     chrome.runtime.onMessage.addListener(handleMessage);
     return () => chrome.runtime.onMessage.removeListener(handleMessage);
-  }, []);
+  }, [loadData]);
 
-  // Save data to localStorage and broadcast changes
-  useEffect(() => {
-    if (!isLoaded) return;
+  // Efficient data updates
+  const updateAppData = useCallback((newData) => {
+    setAppData(prev => {
+      const merged = { ...prev, ...newData, timestamp: Date.now() };
 
-    // Check if data actually changed
-    const prevData = JSON.parse(localStorage.getItem(STORAGE_KEY) || DEFAULT_APP_DATA);
-    const hasChanged = JSON.stringify(prevData) !== JSON.stringify(appData);
+      // Prevent unnecessary saves
+      if (JSON.stringify(prev) !== JSON.stringify(merged)) {
+        saveData(merged);
+      }
 
-    if (hasChanged) {
-      const update = {
-        ...appData,
-        timestamp: Date.now()
-      };
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(update));
-      chrome.runtime.sendMessage({
-        type: "UPDATE_APP_DATA",
-        payload: update
-      });
-    } catch (error) {
-      console.error('Failed to save app data:', error);
-    }
-  }}, [appData, isLoaded]);
-
-  const updateAppData = (newData) => {
-    setAppData(prev => ({
-      ...prev,
-      ...newData,
-      timestamp: Date.now()
-    }));
-  };
+      return merged;
+    });
+  }, [saveData]);
 
   return (
-      <AppContext.Provider value={{ appData, updateAppData, isLoaded }}>
-        {isLoaded ? children : <div className="loading">Loading...</div>}
+      <AppContext.Provider value={{
+        appData,
+        updateAppData,
+        isLoaded
+      }}>
+        {children}
       </AppContext.Provider>
   );
 };

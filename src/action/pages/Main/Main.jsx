@@ -13,33 +13,32 @@ export const Main = () => {
 
     // Check current fetching status
     chrome.runtime.sendMessage(
-        { type: "GET_FETCH_STATUS" },
+        { type: "GET_SEARCH_STATUS" },
         (response) => setIsSearching(response?.isActive || false)
     );
 
-    // Listen for status changes
-    const handleStatusChange = (msg) => {
-      if (msg.type === "FETCH_STATUS_UPDATE") {
+    // Listen for status syncs
+    const handleStatusSync = (msg) => {
+      if (msg.type === "SEARCH_STATUS_SYNC") {
         setIsSearching(msg.isActive);
       }
     };
 
-    chrome.runtime.onMessage.addListener(handleStatusChange);
-    return () => chrome.runtime.onMessage.removeListener(handleStatusChange);
+    chrome.runtime.onMessage.addListener(handleStatusSync);
+    return () => chrome.runtime.onMessage.removeListener(handleStatusSync);
   }, []);
 
   const toggleSearch = () => {
     const newState = !isSearching;
+    setIsSearching(newState); // Optimistic update
+
     chrome.runtime.sendMessage({
-      type: "TOGGLE_FETCHING",
+      type: "TOGGLE_SEARCH",
       isActive: newState
     }, (response) => {
-      if (response?.success) {
-        setIsSearching(newState);
-      } else {
-        console.error("Failed to toggle fetching");
-        // Revert UI state if failed
-        setIsSearching(!newState);
+      if (!response?.success) {
+        console.error("Toggle failed:", response?.error);
+        setIsSearching(!newState); // Revert on failure
       }
     });
   };
