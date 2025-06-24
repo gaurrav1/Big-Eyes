@@ -44,17 +44,12 @@
 
 .resetButton {
   background: none;
-  border: 1px solid #fa5252;
-  color: #fa5252;
+  color: var(--muted);
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s ease;
-}
-
-.resetButton:hover:not(:disabled) {
-  background: rgba(250, 82, 82, 0.1);
 }
 
 .resetButton:disabled {

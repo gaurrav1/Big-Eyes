@@ -54,7 +54,7 @@ export const Location = () => {
           onClick={handleResetAll}
           disabled={!appData.centerOfCityCoordinates && appData.otherCities.length === 0}
         >
-          Reset All
+          Reset
         </button>
       </div>
 

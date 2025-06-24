@@ -13,3 +13,10 @@
   background-color: #fff;
   color: #000;
 }
+
+/* Add this to prevent flash of unstyled content */
+#extension-host {
+  all: initial !important; /* Reset all styles */
+}
+
+/* Rest of your styles... */

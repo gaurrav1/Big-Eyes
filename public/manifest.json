@@ -24,13 +24,18 @@
         "src/content/content.jsx"
       ],
       "matches": [
-        "https://www.google.com/*"
+        "https://*.hiring.amazon.ca/**"
       ]
     }
   ],
+  "background": {
+    "service_worker": "src/service-worker/main.js",
+    "type": "module"
+  },
   "permissions": [
-    "storage"
+    "storage", "geolocation", "scripting", "tabs"
   ],
+  "host_permissions": ["https://*.hiring.amazon.ca/**"],
   "web_accessible_resources": [
     {
       "resources": [

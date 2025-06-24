@@ -13,7 +13,9 @@ const ShiftPreference = () => {
   const dragNode = useRef(null);
   
   const totalShifts = ["Flex", "Full", "Part", "Reduced"];
-  const selectedShifts = appData.shiftPriorities || [];
+
+  // Needed to fix logic here
+  const selectedShifts = appData.shiftPriorities || ["Flex", "Full", "Part", "Reduced"];
   
   // Calculate available shifts
   const availableShifts = totalShifts.filter(
