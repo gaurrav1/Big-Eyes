@@ -123,186 +123,194 @@ const ShiftPreference = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.listContainer}>
+      <div>
         <div className={styles.header}>
-          <h2 className={styles.listTitle}>Available Shifts</h2>
-          <div className={styles.subtitle}>Tap to add to your priorities</div>
-        </div>
-        
-        <ul className={styles.shiftList}>
-          {availableShifts.length > 0 ? (
-            availableShifts.map(shift => (
-              <li 
-                key={shift}
-                className={`${styles.shiftItem} ${
-                  recentlyAdded.includes(shift) ? styles.recentAdd : ''
-                }`}
-                onClick={() => handleAddShift(shift)}
-              >
-                <div className={styles.shiftContent}>
-                  <div className={styles.shiftIcon}>+</div>
-                  {shift} time
-                </div>
-              </li>
-            ))
-          ) : (
-            <li className={styles.emptyState}>
-              <div className={styles.shiftIcon}>✓</div>
-              All shifts added to priorities
-            </li>
-          )}
-        </ul>
-      </div>
-
-      <div className={styles.listContainer}>
-        <div className={styles.header}>
-          <div>
+          <div className={styles.title}>
             <h2 className={styles.listTitle}>My Shift Priorities</h2>
-            <div className={styles.subtitle}>
-              {editMode ? 
-                "Select shifts to delete or drag to reorder" : 
-                "Drag to reorder or tap Edit to manage"}
-            </div>
           </div>
-          
-          <div className={styles.actions}>
-            <button 
-              className={styles.resetButton}
-              onClick={handleReset}
-            >
-              Reset
-            </button>
-            <button 
-              className={styles.editButton}
-              onClick={() => setEditMode(!editMode)}
+          <div className={styles.button}>
+            <button
+                className={styles.editButton}
+                onClick={() => setEditMode(!editMode)}
             >
               {editMode ? 'Done' : 'Edit'}
             </button>
           </div>
         </div>
-        
-        <ul className={styles.shiftList}>
-          {selectedShifts.length > 0 ? (
-            selectedShifts.map((shift, index) => (
-              <li
-                key={`${shift}-${index}`}
-                className={`${styles.shiftItem} ${styles.selectedItem} ${
-                  editMode ? styles.editMode : ''
-                } ${dragOverIndex === index ? styles.dragOver : ''}`}
-                draggable={editMode}
-                onDragStart={(e) => handleDragStart(e, index)}
-                onDragOver={(e) => handleDragOver(e, index)}
-                onDragLeave={handleDragLeave}
-                onDragEnd={(e) => handleDragEnd(e, index)}
-              >
-                {editMode && (
-                  <input
-                    type="checkbox"
-                    className={styles.checkbox}
-                    checked={selectedToDelete.includes(shift)}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setSelectedToDelete([...selectedToDelete, shift]);
-                      } else {
-                        setSelectedToDelete(selectedToDelete.filter(s => s !== shift));
-                      }
-                    }}
-                    disabled={selectedShifts.length === 1}
-                  />
-                )}
-                
-                <div className={styles.shiftContent}>
-                  <span className={styles.priorityBadge}>{index + 1}</span>
-                  {shift} time
-                </div>
-                
-                <div className={styles.controls}>
-                  {!editMode && (
-                    <div className={styles.priorityControls}>
-                      <button 
-                        className={`${styles.arrowButton} ${index === 0 ? styles.disabled : ''}`}
-                        onClick={() => handlePriorityChange(index, 'up')}
-                        aria-label="Move up"
-                      >
-                        ↑
-                      </button>
-                      <button 
-                        className={`${styles.arrowButton} ${index === selectedShifts.length - 1 ? styles.disabled : ''}`}
-                        onClick={() => handlePriorityChange(index, 'down')}
-                        aria-label="Move down"
-                      >
-                        ↓
-                      </button>
-                    </div>
-                  )}
-                  
-                  {editMode && (
-                    <div className={styles.dragHandle}>
-                      <div className={styles.dragDot}></div>
-                      <div className={styles.dragDot}></div>
-                      <div className={styles.dragDot}></div>
-                    </div>
-                  )}
-                </div>
-              </li>
-            ))
-          ) : (
-            <li className={styles.emptyState}>
-              <div className={styles.shiftIcon}>!</div>
-              No shifts selected yet
-            </li>
+        <div className={styles.subtitle}>{editMode ?
+            "Select shifts to delete or drag to reorder" :
+            "Drag to reorder or tap Edit to manage"}
+        </div>
+        <div className={styles.listContainer}>
+
+
+          <ul className={styles.shiftList}>
+            {selectedShifts.length > 0 ? (
+                selectedShifts.map((shift, index) => (
+                    <li
+                        key={`${shift}-${index}`}
+                        className={`${styles.shiftItem} ${styles.selectedItem} ${
+                            editMode ? styles.editMode : ''
+                        } ${dragOverIndex === index ? styles.dragOver : ''}`}
+                        draggable={editMode}
+                        onDragStart={(e) => handleDragStart(e, index)}
+                        onDragOver={(e) => handleDragOver(e, index)}
+                        onDragLeave={handleDragLeave}
+                        onDragEnd={(e) => handleDragEnd(e, index)}
+                    >
+                      {editMode && (
+                          <input
+                              type="checkbox"
+                              className={styles.checkbox}
+                              checked={selectedToDelete.includes(shift)}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setSelectedToDelete([...selectedToDelete, shift]);
+                                } else {
+                                  setSelectedToDelete(selectedToDelete.filter(s => s !== shift));
+                                }
+                              }}
+                              disabled={selectedShifts.length === 1}
+                          />
+                      )}
+
+                      <div className={styles.shiftContent}>
+                        <span className={styles.priorityBadge}>{index + 1}</span>
+                        {shift} time
+                      </div>
+
+                      <div className={styles.controls}>
+                        {!editMode && (
+                            <div className={styles.priorityControls}>
+                              <button
+                                  className={`${styles.arrowButton} ${index === 0 ? styles.disabled : ''}`}
+                                  onClick={() => handlePriorityChange(index, 'up')}
+                                  aria-label="Move up"
+                              >
+                                ↑
+                              </button>
+                              <button
+                                  className={`${styles.arrowButton} ${index === selectedShifts.length - 1 ? styles.disabled : ''}`}
+                                  onClick={() => handlePriorityChange(index, 'down')}
+                                  aria-label="Move down"
+                              >
+                                ↓
+                              </button>
+                            </div>
+                        )}
+
+                        {editMode && (
+                            <div className={styles.dragHandle}>
+                              <div className={styles.dragDot}></div>
+                              <div className={styles.dragDot}></div>
+                              <div className={styles.dragDot}></div>
+                            </div>
+                        )}
+                      </div>
+                    </li>
+                ))
+            ) : (
+                <li className={styles.emptyState}>
+                  <div className={styles.shiftIcon}>!</div>
+                  No shifts selected yet
+                </li>
+            )}
+          </ul>
+
+          {editMode && selectedToDelete.length > 0 && (
+              <div className={styles.deleteContainer}>
+                <button
+                    className={styles.deleteButton}
+                    onClick={() => setShowConfirm(true)}
+                >
+                  Delete Selected ({selectedToDelete.length})
+                </button>
+              </div>
           )}
-        </ul>
-        
-        {editMode && selectedToDelete.length > 0 && (
-          <div className={styles.deleteContainer}>
-            <button
-              className={styles.deleteButton}
-              onClick={() => setShowConfirm(true)}
-            >
-              Delete Selected ({selectedToDelete.length})
-            </button>
-          </div>
+        </div>
+
+        {showConfirm && (
+            <div className={styles.confirmOverlay}>
+              <div className={styles.confirmDialog}>
+                <h3 className={styles.confirmTitle}>Confirm Deletion</h3>
+                <p className={styles.confirmText}>
+                  Are you sure you want to delete {selectedToDelete.length} shift{selectedToDelete.length > 1 ? 's' : ''}?
+                </p>
+                <ul className={styles.deleteList}>
+                  {selectedToDelete.map(shift => (
+                      <li key={shift} className={styles.deleteItem}>
+                        {shift} time
+                      </li>
+                  ))}
+                </ul>
+                {selectedShifts.length - selectedToDelete.length === 0 && (
+                    <div className={styles.warning}>
+                      ⚠️ You must have at least one shift selected
+                    </div>
+                )}
+                <div className={styles.confirmActions}>
+                  <button
+                      className={styles.cancelButton}
+                      onClick={() => setShowConfirm(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                      className={styles.deleteConfirmButton}
+                      onClick={confirmDelete}
+                      disabled={selectedShifts.length - selectedToDelete.length === 0}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
         )}
       </div>
-
-      {showConfirm && (
-        <div className={styles.confirmOverlay}>
-          <div className={styles.confirmDialog}>
-            <h3 className={styles.confirmTitle}>Confirm Deletion</h3>
-            <p className={styles.confirmText}>
-              Are you sure you want to delete {selectedToDelete.length} shift{selectedToDelete.length > 1 ? 's' : ''}?
-            </p>
-            <ul className={styles.deleteList}>
-              {selectedToDelete.map(shift => (
-                <li key={shift} className={styles.deleteItem}>
-                  {shift} time
-                </li>
-              ))}
-            </ul>
-            {selectedShifts.length - selectedToDelete.length === 0 && (
-              <div className={styles.warning}>
-                ⚠️ You must have at least one shift selected
-              </div>
-            )}
-            <div className={styles.confirmActions}>
-              <button
-                className={styles.cancelButton}
-                onClick={() => setShowConfirm(false)}
-              >
-                Cancel
-              </button>
-              <button
-                className={styles.deleteConfirmButton}
-                onClick={confirmDelete}
-                disabled={selectedShifts.length - selectedToDelete.length === 0}
-              >
-                Delete
-              </button>
-            </div>
+      <div>
+        <div className={styles.header}>
+          <div className={styles.title}>
+            <h2 className={styles.listTitle}>Available Shifts</h2>
+          </div>
+          <div className={styles.button}>
+            <button
+                className={styles.resetButton}
+                onClick={handleReset}
+            >
+              Reset
+            </button>
           </div>
         </div>
-      )}
+        <div className={styles.subtitle}>
+          Tap to add to your priorities
+        </div>
+        <div className={styles.listContainer}>
+
+          <ul className={styles.shiftList}>
+            {availableShifts.length > 0 ? (
+                availableShifts.map(shift => (
+                    <li
+                        key={shift}
+                        className={`${styles.shiftItem} ${
+                            recentlyAdded.includes(shift) ? styles.recentAdd : ''
+                        }`}
+                        onClick={() => handleAddShift(shift)}
+                    >
+                      <div className={styles.shiftContent}>
+                        <div className={styles.shiftIcon}>+</div>
+                        {shift} time
+                      </div>
+                    </li>
+                ))
+            ) : (
+                <li className={styles.emptyState}>
+                  <div className={styles.shiftIcon}>✓</div>
+                  All shifts added to priorities
+                </li>
+            )}
+          </ul>
+        </div>
+      </div>
     </div>
   );
 };
