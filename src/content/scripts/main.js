@@ -36,7 +36,7 @@ let currentUrl = location.href;
 const observer = new MutationObserver(() => {
     if (location.href !== currentUrl) {
         currentUrl = location.href;
-        if (!currentUrl.includes('hiring.amazon.ca/search')) {
+        if (!currentUrl.includes('https://hiring.amazon.com/app#/jobSearch')) {
             chrome.runtime.sendMessage({ type: "TAB_REDIRECTED" });
         }
     }

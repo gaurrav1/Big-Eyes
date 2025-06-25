@@ -20,8 +20,12 @@
   },
   "content_scripts": [
     {
-      "js": ["src/content/index.jsx", "src/content/scripts/main.js"],
-      "matches": ["https://*.hiring.amazon.ca/**"]
+      "js": [
+        "src/content/index.jsx",
+        "src/content/scripts/main.js",
+        "src/content/scripts/playSoundListener.js"
+      ],
+      "matches": ["https://*.hiring.amazon.com/**"]
     }
   ],
   "background": {
@@ -29,11 +33,11 @@
     "type": "module"
   },
   "permissions": ["storage", "geolocation", "scripting", "tabs"],
-  "host_permissions": ["https://*.hiring.amazon.ca/**"],
+  "host_permissions": ["https://*.hiring.amazon.com/**"],
   "web_accessible_resources": [
     {
-      "resources": ["images/*.png", "content/*.css"],
-      "matches": []
+      "resources": ["images/*.png", "content/*.css", "sounds/*.mp3"],
+      "matches": ["https://*.hiring.amazon.com/*"]
     }
   ]
 }

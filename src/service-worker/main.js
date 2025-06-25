@@ -122,3 +122,14 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 });
 
 // ----- Network Error Handling -----
+
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg.type === "PLAY_ALERT_SOUND") {
+    for (const tabId of registeredTabs.keys()) {
+      chrome.tabs.sendMessage(tabId, { type: "PLAY_ALERT_SOUND" });
+    }
+    sendResponse({ success: true });
+    return true;
+  }
+  // ...other handlers...
+});

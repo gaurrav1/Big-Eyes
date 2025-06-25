@@ -44,7 +44,7 @@ function tryClickCreateButton(attempt = 1) {
     return;
   } else if (otherJobsBtn && isButtonClickable(otherJobsBtn)) {
     chrome.storage.local.set({ jobRedirected: false }, () => {
-      window.location.href = "https://hiring.amazon.ca/app#/jobSearch";
+      window.location.href = "https://hiring.amazon.com/app#/jobSearch";
     });
     return;
   }

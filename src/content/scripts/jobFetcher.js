@@ -18,10 +18,7 @@ export const JobFetcher = (() => {
   };
 
   function playJobFoundAlert() {
-    // Replace 'alert.mp3' with your actual sound file path
-    const audio = new Audio(chrome.runtime.getURL("content/captured.mp3"));
-    audio.volume = 1.0; // Max volume
-    audio.play().catch(() => {}); // Ignore play errors (e.g., user gesture required)
+    chrome.runtime.sendMessage({ type: "PLAY_ALERT_SOUND" });
   }
 
   const runScheduler = () => {
@@ -63,7 +60,7 @@ export const JobFetcher = (() => {
   };
 
   const redirectToApplication = (jobId, scheduleId) => {
-    const url = `https://hiring.amazon.ca/application/ca/?CS=true&jobId=${jobId}&locale=en-CA&scheduleId=${scheduleId}&ssoEnabled=1#/consent`;
+    const url = `https://hiring.amazon.com/application/us/?CS=true&jobId=${jobId}&locale=en-US&scheduleId=${scheduleId}&ssoEnabled=1#/consent`;
     window.location.href = url;
   };
 

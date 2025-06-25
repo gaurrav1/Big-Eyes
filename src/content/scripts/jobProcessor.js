@@ -11,8 +11,8 @@ export const JobProcessor = {
       operationName: "searchJobCardsByLocation",
       variables: {
         searchJobRequest: {
-          locale: "en-CA",
-          country: "Canada",
+          locale: "en-US",
+          country: "United States",
           pageSize: 100,
           dateFilters: [
             {
@@ -52,22 +52,50 @@ export const JobProcessor = {
   },
 
   buildScheduleRequest: (jobId) => ({
-    operationName: "searchScheduleCards",
-    variables: {
-      searchScheduleRequest: { jobId, pageSize: 1 },
+    "operationName": "searchScheduleCards",
+    "variables": {
+        "searchScheduleRequest": {
+            "locale": "en-US",
+            "country": "United States",
+            "keyWords": "",
+            "equalFilters": [],
+            "containFilters": [
+                {
+                    "key": "isPrivateSchedule",
+                    "val": [
+                        "false"
+                    ]
+                }
+            ],
+            "rangeFilters": [],
+            "orFilters": [],
+            "dateFilters": [
+                {
+                    "key": "firstDayOnSite",
+                    "range": {
+                        "startDate": "2025-06-20"
+                    }
+                }
+            ],
+            "sorters": [
+                {
+                    "fieldName": "totalPayRateMax",
+                    "ascending": "false"
+                }
+            ],
+            "pageSize": 1000,
+            "jobId": jobId
+        }
     },
-    query: `query searchScheduleCards($searchScheduleRequest: SearchScheduleRequest!) {
-            searchScheduleCards(searchScheduleRequest: $searchScheduleRequest) {
-                scheduleCards { scheduleId }
-            }
-        }`,
-  }),
+    "query": "query searchScheduleCards($searchScheduleRequest: SearchScheduleRequest!) {\n  searchScheduleCards(searchScheduleRequest: $searchScheduleRequest) {\n    nextToken\n    scheduleCards {\n      hireStartDate\n      address\n      basePay\n      bonusSchedule\n      city\n      currencyCode\n      dataSource\n      distance\n      employmentType\n      externalJobTitle\n      featuredSchedule\n      firstDayOnSite\n      hoursPerWeek\n      image\n      jobId\n      jobPreviewVideo\n      language\n      postalCode\n      priorityRank\n      scheduleBannerText\n      scheduleId\n      scheduleText\n      scheduleType\n      signOnBonus\n      state\n      surgePay\n      tagLine\n      geoClusterId\n      geoClusterName\n      siteId\n      scheduleBusinessCategory\n      totalPayRate\n      financeWeekStartDate\n      laborDemandAvailableCount\n      scheduleBusinessCategoryL10N\n      firstDayOnSiteL10N\n      financeWeekStartDateL10N\n      scheduleTypeL10N\n      employmentTypeL10N\n      basePayL10N\n      signOnBonusL10N\n      totalPayRateL10N\n      distanceL10N\n      requiredLanguage\n      monthlyBasePay\n      monthlyBasePayL10N\n      vendorKamName\n      vendorId\n      vendorName\n      kamPhone\n      kamCorrespondenceEmail\n      kamStreet\n      kamCity\n      kamDistrict\n      kamState\n      kamCountry\n      kamPostalCode\n      __typename\n    }\n    __typename\n  }\n}\n"
+}),
 
   fetchGraphQL: async (request) => {
     const response = await axios.post(GRAPHQL_URL, request, {
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer token",
+        "Country": "United States",
         "Cache-Control": "no-cache",
         Pragma: "no-cache",
       },

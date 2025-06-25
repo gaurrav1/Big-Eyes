@@ -26,7 +26,7 @@ export function registerTab(
   sendResponse,
   activeSearchTabId,
 ) {
-  if (!senderTab?.id || !senderTab.url.includes("hiring.amazon.ca")) {
+  if (!senderTab?.id || !senderTab.url.includes("hiring.amazon.com")) {
     console.log("TabService: Registration failed for URL:", senderTab?.url);
     sendResponse({ registered: false });
     return;
@@ -118,7 +118,7 @@ export function handleTabUpdated(
   handleTabRedirect,
 ) {
   if (changeInfo.status === "complete" && registeredTabs.has(tab.id)) {
-    if (!tab.url.includes("hiring.amazon.ca")) {
+    if (!tab.url.includes("hiring.amazon.com")) {
       handleTabRedirect(tab.id);
       return;
     }
