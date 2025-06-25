@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Reading time",
-  "version": "1.0",
-  "description": "Add the reading time to Chrome Extension documentation articles",
+  "name": "Amazon Jobs",
+  "version": "0.3.5",
+  "description": "Search for jobs on Amazon Canada",
   "action": {
     "default_popup": "index.html",
     "default_icon": {
@@ -20,29 +20,19 @@
   },
   "content_scripts": [
     {
-      "js": [
-        "src/content/index.jsx",
-        "src/content/scripts/main.js"
-      ],
-      "matches": [
-        "https://*.hiring.amazon.ca/**"
-      ]
+      "js": ["src/content/index.jsx", "src/content/scripts/main.js"],
+      "matches": ["https://*.hiring.amazon.ca/**"]
     }
   ],
   "background": {
     "service_worker": "src/service-worker/main.js",
     "type": "module"
   },
-  "permissions": [
-    "storage", "geolocation", "scripting", "tabs"
-  ],
+  "permissions": ["storage", "geolocation", "scripting", "tabs"],
   "host_permissions": ["https://*.hiring.amazon.ca/**"],
   "web_accessible_resources": [
     {
-      "resources": [
-        "images/*.png",
-        "content/*.css"
-      ],
+      "resources": ["images/*.png", "content/*.css"],
       "matches": []
     }
   ]
