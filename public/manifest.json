@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Amazon Jobs",
+  "name": "Big Eyes",
   "version": "0.3.5",
-  "description": "Search for jobs on Amazon Canada",
+  "description": "Search for jobs on Amazon Canada With Big Eyes",
   "action": {
     "default_popup": "index.html",
     "default_icon": {
