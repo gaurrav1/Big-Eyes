@@ -3,11 +3,14 @@ import { useAppContext } from "../../context/AppContext";
 import { LocationSearch } from "../location/LocationSearch";
 import { PrioritizedList } from "../common/PrioritizedList";
 import styles from "./CityList.module.css";
+import { FaSortAmountDown, FaSortAmountUp } from "react-icons/fa";
 
 export const CityList = () => {
   const { appData, updateAppData } = useAppContext();
   const { centerOfCityCoordinates, commuteDistance, otherCities } = appData;
   const [addCityError, setAddCityError] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [sortOrder, setSortOrder] = useState(null); // null, "asc", "desc"
 
   const handleAddCity = useCallback(
     (location) => {
@@ -114,6 +117,61 @@ export const CityList = () => {
     [centerOfCityCoordinates, commuteDistance],
   );
 
+  // Remove local sorting logic; sorting will update appData.otherCities directly
+
+  // UI for sort controls
+  const handleSort = (order) => {
+    if (!centerOfCityCoordinates) return;
+    if (sortOrder === order) {
+      setSortOrder(null);
+      // Optionally, you could restore to manual order if you keep a backup
+      // For now, do nothing (keeps current order)
+    } else {
+      setSortOrder(order);
+      // Sort and update appData
+      const sorted = [...otherCities].sort((a, b) => {
+        const distA = calculateDistance(
+          centerOfCityCoordinates.lat,
+          centerOfCityCoordinates.lng,
+          a.lat,
+          a.lng,
+        );
+        const distB = calculateDistance(
+          centerOfCityCoordinates.lat,
+          centerOfCityCoordinates.lng,
+          b.lat,
+          b.lng,
+        );
+        return order === "asc" ? distA - distB : distB - distA;
+      });
+      updateAppData({ otherCities: sorted });
+    }
+  };
+
+  const renderSortControls = () => (
+    <div className={styles.sortControls}>
+      <button
+        className={`${styles.sortButton} ${sortOrder === "asc" ? styles.activeSort : ""}`}
+        onClick={() => handleSort("asc")}
+        type="button"
+        aria-label="Sort by distance ascending"
+      >
+        <FaSortAmountUp /> Asc
+      </button>
+      <button
+        className={`${styles.sortButton} ${sortOrder === "desc" ? styles.activeSort : ""}`}
+        onClick={() => handleSort("desc")}
+        type="button"
+        aria-label="Sort by distance descending"
+      >
+        <FaSortAmountDown /> Desc
+      </button>
+    </div>
+  );
+
+  // Enhanced edit mode toggle to expose sort controls
+  const handleEditModeToggle = () => setEditMode((prev) => !prev);
+
   return (
     <>
       {/* Reset button now handled by PrioritizedList via onReset prop */}
@@ -135,6 +193,23 @@ export const CityList = () => {
       )}
 
       <div className={styles.container}>
+        <div className={styles.priorityListHeaderRow}>
+          <button
+            className={styles.editButton}
+            onClick={handleEditModeToggle}
+            type="button"
+          >
+            {editMode ? "Done" : "Edit"}
+          </button>
+          <button
+            className={styles.resetButton}
+            onClick={resetCities}
+            type="button"
+          >
+            Reset List
+          </button>
+          {editMode && renderSortControls()}
+        </div>
         <PrioritizedList
           items={otherCities}
           onReorder={handleReorderCities}
@@ -148,12 +223,17 @@ export const CityList = () => {
               <p>Search for cities within your commute distance</p>
             </div>
           }
-          showEditButton={true}
+          showEditButton={false}
           allowMultiDelete={true}
           className={styles.cityPriorityList}
-          onReset={resetCities}
-          resetLabel="Reset List"
         />
+        <div className={styles.disclaimer}>
+          <strong>Disclaimer:</strong> The suggestion list may show cities all
+          over Canada and the US because the API is powered by Amazon servers.
+          Only select cities where you are sure an Amazon station exists;
+          otherwise, the filter will ignore your choice if the selected city is
+          unknown during job search.
+        </div>
       </div>
     </>
   );
