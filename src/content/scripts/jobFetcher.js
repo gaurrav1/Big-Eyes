@@ -17,6 +17,13 @@ export const JobFetcher = (() => {
     intervalId = null;
   };
 
+  function playJobFoundAlert() {
+    // Replace 'alert.mp3' with your actual sound file path
+    const audio = new Audio(chrome.runtime.getURL("content/captured.mp3"));
+    audio.volume = 1.0; // Max volume
+    audio.play().catch(() => {}); // Ignore play errors (e.g., user gesture required)
+  }
+
   const runScheduler = () => {
     intervalId = setInterval(async () => {
       if (!isActive) return;
@@ -32,13 +39,19 @@ export const JobFetcher = (() => {
 
       const responses = await Promise.all(requests);
 
+      if (responses.every((r) => r === null)) {
+        chrome.runtime.sendMessage({ type: "NETWORK_ERROR" });
+      }
+
       for (const response of responses) {
         if (!response) continue;
 
         const bestJob = JobProcessor.getBestJob(response, appData);
         if (bestJob) {
           const schedule = await JobProcessor.getJobSchedule(bestJob.jobId);
+
           if (schedule) {
+            playJobFoundAlert();
             redirectToApplication(bestJob.jobId, schedule.scheduleId);
             chrome.runtime.sendMessage({ type: "TAB_REDIRECTED" });
             stop();

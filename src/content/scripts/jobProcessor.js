@@ -109,7 +109,9 @@ export const JobProcessor = {
 
   getBestJob: (response, appData) => {
     const jobs = response?.data?.searchJobCardsByLocation?.jobCards;
-    return jobs?.length ? JobProcessor.prioritizeJobs(jobs, appData)[0] : null;
+    if (!jobs?.length) return null;
+    if (jobs.length === 1) return jobs[0];
+    return JobProcessor.prioritizeJobs(jobs, appData)[0];
   },
 
   getJobSchedule: async (jobId) => {
