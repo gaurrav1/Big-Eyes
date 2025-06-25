@@ -18,6 +18,8 @@ import styles from "./PrioritizedList.module.css";
  * @param {string} props.emptyMessage - Message to display when the list is empty
  * @param {boolean} props.allowMultiDelete - Whether to allow multiple items to be deleted at once
  * @param {boolean} props.showEditButton - Whether to show the edit button
+ * @param {Function} [props.onReset] - Optional callback for a Reset button
+ * @param {string} props.resetLabel - Optional label for the Reset button
  * @param {string} props.className - Additional CSS class for the container
  */
 export const PrioritizedList = ({
@@ -33,6 +35,8 @@ export const PrioritizedList = ({
   emptyMessage = "No items in the list",
   allowMultiDelete = false,
   showEditButton = false,
+  onReset,
+  resetLabel = "Reset",
   className = "",
 }) => {
   const [editMode, setEditMode] = useState(false);
@@ -162,14 +166,25 @@ export const PrioritizedList = ({
 
   return (
     <div className={`${styles.container} ${className}`}>
-      {showEditButton && (
+      {(showEditButton || onReset) && (
         <div className={styles.header}>
-          <button
-            className={styles.editButton}
-            onClick={() => setEditMode(!editMode)}
-          >
-            {editMode ? "Done" : "Edit"}
-          </button>
+          {showEditButton && (
+            <button
+              className={styles.editButton}
+              onClick={() => setEditMode(!editMode)}
+            >
+              {editMode ? "Done" : "Edit"}
+            </button>
+          )}
+          {onReset && (
+            <button
+              className={styles.resetButton}
+              onClick={onReset}
+              type="button"
+            >
+              {resetLabel}
+            </button>
+          )}
         </div>
       )}
 

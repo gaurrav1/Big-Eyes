@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import styles from './ShiftPreference.module.css';
-import { useAppContext } from '../../context/AppContext';
-import { PrioritizedList } from '../../components/common/PrioritizedList';
+import { useState } from "react";
+import styles from "./ShiftPreference.module.css";
+import { useAppContext } from "../../context/AppContext";
+import { PrioritizedList } from "../../components/common/PrioritizedList";
 
 const ShiftPreference = () => {
   const { appData, updateAppData } = useAppContext();
@@ -10,11 +10,16 @@ const ShiftPreference = () => {
   const totalShifts = ["Flex", "Full", "Part", "Reduced"];
 
   // Needed to fix logic here
-  const selectedShifts = appData.shiftPriorities || ["Flex", "Full", "Part", "Reduced"];
+  const selectedShifts = appData.shiftPriorities || [
+    "Flex",
+    "Full",
+    "Part",
+    "Reduced",
+  ];
 
   // Calculate available shifts
   const availableShifts = totalShifts.filter(
-    shift => !selectedShifts.includes(shift)
+    (shift) => !selectedShifts.includes(shift),
   );
 
   // Handle adding a shift
@@ -33,7 +38,7 @@ const ShiftPreference = () => {
   // Handle deleting shifts
   const handleDeleteShifts = (shiftsToDelete) => {
     const newPriorities = selectedShifts.filter(
-      shift => !shiftsToDelete.includes(shift)
+      (shift) => !shiftsToDelete.includes(shift),
     );
     updateAppData({ shiftPriorities: newPriorities });
   };
@@ -45,11 +50,7 @@ const ShiftPreference = () => {
 
   // Render shift content
   const renderShiftContent = (shift) => {
-    return (
-      <div className={styles.shiftContent}>
-        {shift} time
-      </div>
-    );
+    return <div className={styles.shiftContent}>{shift} time</div>;
   };
 
   return (
@@ -60,9 +61,7 @@ const ShiftPreference = () => {
             <h2 className={styles.listTitle}>My Shift Priorities</h2>
           </div>
         </div>
-        <div className={styles.subtitle}>
-          Drag to reorder or tap to manage
-        </div>
+        <div className={styles.subtitle}>Drag to reorder or tap to manage</div>
 
         <PrioritizedList
           items={selectedShifts}
@@ -76,6 +75,8 @@ const ShiftPreference = () => {
           allowMultiDelete={true}
           showEditButton={true}
           className={styles.shiftPriorityList}
+          onReset={handleReset}
+          resetLabel="Reset"
         />
       </div>
       <div>
@@ -83,41 +84,30 @@ const ShiftPreference = () => {
           <div className={styles.title}>
             <h2 className={styles.listTitle}>Available Shifts</h2>
           </div>
-          <div className={styles.button}>
-            <button
-                className={styles.resetButton}
-                onClick={handleReset}
-            >
-              Reset
-            </button>
-          </div>
         </div>
-        <div className={styles.subtitle}>
-          Tap to add to your priorities
-        </div>
+        <div className={styles.subtitle}>Tap to add to your priorities</div>
         <div className={styles.listContainer}>
-
           <ul className={styles.shiftList}>
             {availableShifts.length > 0 ? (
-                availableShifts.map(shift => (
-                    <li
-                        key={shift}
-                        className={`${styles.shiftItem} ${
-                            recentlyAdded.includes(shift) ? styles.recentAdd : ''
-                        }`}
-                        onClick={() => handleAddShift(shift)}
-                    >
-                      <div className={styles.shiftContent}>
-                        <div className={styles.shiftIcon}>+</div>
-                        {shift} time
-                      </div>
-                    </li>
-                ))
-            ) : (
-                <li className={styles.emptyState}>
-                  <div className={styles.shiftIcon}>✓</div>
-                  All shifts added to priorities
+              availableShifts.map((shift) => (
+                <li
+                  key={shift}
+                  className={`${styles.shiftItem} ${
+                    recentlyAdded.includes(shift) ? styles.recentAdd : ""
+                  }`}
+                  onClick={() => handleAddShift(shift)}
+                >
+                  <div className={styles.shiftContent}>
+                    <div className={styles.shiftIcon}>+</div>
+                    {shift} time
+                  </div>
                 </li>
+              ))
+            ) : (
+              <li className={styles.emptyState}>
+                <div className={styles.shiftIcon}>✓</div>
+                All shifts added to priorities
+              </li>
             )}
           </ul>
         </div>
