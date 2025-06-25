@@ -169,4 +169,40 @@
   color: #fa5252;
 }
 
+.within {
+  color: #0ca678;
+}
+
+.over {
+  color: #fa5252;
+}
+
+.locationButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  margin-left: 4px;
+  border-radius: 50%;
+  color: #888;
+  transition: all 0.2s ease;
+}
+
+.locationButton:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--fg);
+}
+
+.locationButton:active {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.locationButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* Existing styles remain unchanged */

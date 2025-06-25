@@ -57,4 +57,38 @@
   cursor: not-allowed;
 }
 
+.dialogCityList {
+  margin-top: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.dialogCityItem {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dialogCityItem:last-child {
+  border-bottom: none;
+}
+
+.dialogCityName {
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.dialogCityDistance {
+  font-size: 0.9rem;
+  color: #fa5252;
+  font-weight: 600;
+  background-color: rgba(255, 69, 58, 0.1);
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+}
+
 /* Existing styles remain unchanged */

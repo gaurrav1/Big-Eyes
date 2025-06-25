@@ -18,6 +18,8 @@ export const LocationSearch = ({
   const [suggestions, setSuggestions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
+  const [locationError, setLocationError] = useState(null);
   const cancelToken = useRef(null);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const suggestionsListRef = useRef(null);
@@ -93,7 +95,7 @@ export const LocationSearch = ({
       region: location.region,
       municipality: location.municipality,
     });
-    
+
     if (inputRef.current) {
       inputRef.current.blur();
     }
@@ -155,10 +157,91 @@ export const LocationSearch = ({
     setTimeout(() => setIsFocused(false), 200);
   };
 
+  // Get current location using geolocation API
+  const getCurrentLocation = useCallback(() => {
+    setIsGettingLocation(true);
+    setLocationError(null);
+
+    if (!navigator.geolocation) {
+      setLocationError('Geolocation is not supported by your browser');
+      setIsGettingLocation(false);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+
+          // Perform reverse geocoding to get city name
+          const response = await axios.post(
+            'https://e5mquma77feepi2bdn4d6h3mpu.appsync-api.us-east-1.amazonaws.com/graphql',
+            {
+              operationName: 'queryGeoInfoByCoordinates',
+              variables: {
+                geoCoordinatesQueryRequest: {
+                  lat: latitude,
+                  lng: longitude,
+                  countries: ['CAN'],
+                },
+              },
+              query: "query queryGeoInfoByCoordinates($geoCoordinatesQueryRequest: GeoCoordinatesQueryRequest!) {\n  queryGeoInfoByCoordinates(geoCoordinatesQueryRequest: $geoCoordinatesQueryRequest) {\n    country\n    lat\n    lng\n    postalCode\n    label\n    municipality\n    region\n    subRegion\n    addressNumber\n    __typename\n  }\n}\n",
+            },
+            {
+              headers: {
+                Authorization: 'Bearer token',
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+
+          const locationData = response.data?.data?.queryGeoInfoByCoordinates;
+
+          if (locationData) {
+            handleSelect({
+              label: locationData.label,
+              lat: locationData.lat,
+              lng: locationData.lng,
+              region: locationData.region,
+              municipality: locationData.municipality,
+            });
+          } else {
+            setLocationError('Could not determine your location');
+          }
+        } catch (error) {
+          console.error('Error getting location:', error);
+          setLocationError('Error getting location information');
+        } finally {
+          setIsGettingLocation(false);
+        }
+      },
+      (error) => {
+        console.error('Geolocation error:', error);
+        let errorMessage = 'Error getting your location';
+
+        if (error.code === 1) {
+          errorMessage = 'Location access denied. Please allow location access.';
+        } else if (error.code === 2) {
+          errorMessage = 'Location unavailable. Please try again.';
+        } else if (error.code === 3) {
+          errorMessage = 'Location request timed out. Please try again.';
+        }
+
+        setLocationError(errorMessage);
+        setIsGettingLocation(false);
+      },
+      { 
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    );
+  }, [handleSelect]);
+
   // Calculate distance for suggestion
   const calculateSuggestionDistance = useCallback((suggestion) => {
     if (!centerCoordinates || !commuteDistance) return null;
-    
+
     return calculateDistance(
       centerCoordinates.lat,
       centerCoordinates.lng,
@@ -196,16 +279,38 @@ export const LocationSearch = ({
           disabled={disabled}
         />
 
-        {isLoading && (
+        {!disabled && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              getCurrentLocation();
+            }}
+            className={styles.locationButton}
+            title="Use current location"
+            disabled={isGettingLocation}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+              fill="currentColor"
+            >
+              <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z" />
+            </svg>
+          </button>
+        )}
+
+        {(isLoading || isGettingLocation) && (
           <div className={styles.statusIndicator}>
             <div className={styles.spinner} />
           </div>
         )}
       </div>
 
-      {error && (
+      {(error || locationError) && (
         <div className={styles.errorText}>
-          {error}
+          {locationError || error}
         </div>
       )}
 
@@ -218,7 +323,7 @@ export const LocationSearch = ({
           {suggestions.map((location, index) => {
             const distance = calculateSuggestionDistance(location);
             const isWithin = distance !== null && distance <= commuteDistance;
-            
+
             return (
               <li
                 key={`${location.label}-${index}`}
@@ -235,7 +340,7 @@ export const LocationSearch = ({
                   {location.municipality && <span>{location.municipality}, </span>}
                   {location.region}
                 </div>
-                
+
                 {distance !== null && (
                   <div className={styles.suggestionDistance}>
                     {distance.toFixed(2)} km
