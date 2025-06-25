@@ -31,10 +31,6 @@ export function Lists({appData}) {
     description: locationDescription,
     navIcon: <Next height={30} width={30} />,
     locate: '/location',
-    iconStyle: {
-      backgroundColor: "#E0F7FA",
-      color: "#00796B"
-    }
   };
   const shiftTypeTile = {
     icon: <CalendarIcon height={30} width={30} />,
@@ -42,10 +38,6 @@ export function Lists({appData}) {
     description: shiftDescription,
     navIcon: <Next height={30} width={30} />,
     locate: '/shifts',
-    iconStyle: {
-      backgroundColor: "#FFF3E0",
-      color: "#E65100"
-    }
   };
 
   return (

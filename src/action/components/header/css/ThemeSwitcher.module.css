@@ -15,7 +15,6 @@
     cursor: pointer;
     transition: all 0.3s;
     box-shadow: 0 2px 8px rgba(31, 38, 135, 0.08);
-    border: var(--glass-border);
     backdrop-filter: blur(var(--glass-blur));
 }
 
@@ -74,7 +73,7 @@
 }
 
 .label {
-    font-size: 1rem;
+    font-size: .8rem;
     color: var(--fg);
     font-weight: 500;
 }

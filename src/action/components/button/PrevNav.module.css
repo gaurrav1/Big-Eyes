@@ -8,9 +8,7 @@
     justify-content: flex-start;
     background: var(--background-glass);
     border-radius: 14px;
-    border: var(--glass-border);
     box-shadow: 0 2px 8px rgba(31, 38, 135, 0.08);
-    padding: 8px 18px 8px 8px;
     transition:
         background 0.2s,
         box-shadow 0.2s,
@@ -35,11 +33,10 @@
     justify-content: center;
     background: var(--background-glass);
     border-radius: 50%;
-    border: var(--glass-border);
     box-shadow: 0 1px 4px rgba(31, 38, 135, 0.06);
     width: 36px;
     height: 36px;
-    margin-right: 10px;
+    margin-right: -5px;
     transition:
         background 0.2s,
         box-shadow 0.2s;

@@ -5,8 +5,7 @@
     right: 0;
     z-index: 999;
     min-height: 48px;
-    margin: 12px 0 0 0;
-    padding: 0.5rem 2rem;
+    padding: 0.3rem 1.2rem;
     background: var(--background-glass);
     backdrop-filter: blur(var(--glass-blur));
     -webkit-backdrop-filter: blur(var(--glass-blur));
