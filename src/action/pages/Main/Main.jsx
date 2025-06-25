@@ -8,6 +8,7 @@ import { ConfirmationDialog } from "../../components/dialog/ConfirmationDialog";
 export const Main = () => {
   const [isSearching, setIsSearching] = useState(false);
   const { appData, isLoaded } = useAppContext();
+  const [toggleError, setToggleError] = useState(""); // <-- Add this line
   const [isClient, setIsClient] = useState(false);
   const [showLocationDialog, setShowLocationDialog] = useState(false);
   const navigate = useNavigate();
@@ -66,6 +67,7 @@ export const Main = () => {
 
     const newState = !isSearching;
     setIsSearching(newState); // Optimistic update
+    setToggleError(""); // Clear previous error
 
     chrome.runtime.sendMessage(
       {
@@ -74,7 +76,7 @@ export const Main = () => {
       },
       (response) => {
         if (!response?.success) {
-          console.error("Toggle failed:", response?.error);
+          setToggleError(response?.error || "Failed to toggle search.");
           setIsSearching(!newState); // Revert on failure
         }
       },
@@ -84,6 +86,10 @@ export const Main = () => {
   return (
     <div className="container">
       <ToggleButton isActive={isSearching} onClick={toggleSearch} />
+      {toggleError && (
+        <div style={{ color: "red", margin: "8px 0" }}>{toggleError}</div>
+      )}
+
       <h3>FILTERS</h3>
 
       {isClient && isLoaded ? (
