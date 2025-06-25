@@ -1,119 +1,137 @@
 .container {
-  height: 100%;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  margin-top: 16px;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-top: 24px;
+    background: var(--background-glass);
+    border-radius: 24px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: var(--glass-border);
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    transition:
+        background 0.3s,
+        box-shadow 0.3s;
 }
 
 .form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
 }
 
-
 .dropdown {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .option {
-  padding: 8px 12px;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  font-size: 0.9rem;
+    padding: 10px 16px;
+    border-radius: 12px;
+    background: var(--background-glass);
+    border: var(--glass-border);
+    font-size: 1rem;
+    transition: background 0.2s;
 }
 
 .option:hover {
-  background-color: var(--hover);
+    background: var(--hover);
 }
 
 .option.selected {
-  background-color: var(--accent);
-  color: white;
+    background: var(--accent);
+    color: #fff;
 }
 
 .spacer {
-  flex-grow: 1;
-  min-height: 1.5rem;
+    flex-grow: 1;
+    min-height: 1.5rem;
 }
 
-
-
-
-/* Add styles for shift type modal */
+/* Shift type modal styles */
 .pickerOverlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--bg);
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--background-glass);
+    backdrop-filter: blur(var(--glass-blur));
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
 }
 
 .pickerHeader {
-  display: flex;
-  align-items: center;
-  padding: 1rem;
-  border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: var(--glass-border);
+    background: var(--background-glass);
+    border-radius: 18px 18px 0 0;
+    backdrop-filter: blur(var(--glass-blur));
 }
 
 .backButton {
-  background: none;
-  border: none;
-  color: var(--accent);
-  font-size: 1rem;
-  cursor: pointer;
-  margin-right: 1rem;
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-size: 1rem;
+    cursor: pointer;
+    margin-right: 1rem;
 }
 
 .wheelContainer {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  perspective: 1000px;
-  overflow: hidden;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1000px;
+    overflow: hidden;
 }
 
 .wheel {
-  position: relative;
-  width: 80%;
-  height: 200px;
-  transform-style: preserve-3d;
+    position: relative;
+    width: 80%;
+    height: 200px;
+    transform-style: preserve-3d;
 }
 
 .wheelOption {
-  position: absolute;
-  width: 100%;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  transform-origin: center center;
-  backface-visibility: hidden;
-  transition: transform 0.3s ease, opacity 0.3s ease;
-  cursor: pointer;
+    position: absolute;
+    width: 100%;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    transform-origin: center center;
+    backface-visibility: hidden;
+    transition:
+        transform 0.3s,
+        opacity 0.3s,
+        background 0.2s;
+    cursor: pointer;
+    background: var(--background-glass);
+    border: var(--glass-border);
+    box-shadow: 0 2px 8px rgba(31, 38, 135, 0.08);
 }
 
 .wheelOption:hover {
-  background-color: var(--hover);
+    background: var(--hover);
 }
 
 .wheelOption.selected {
-  background-color: var(--accent);
-  color: white;
+    background: var(--accent);
+    color: #fff;
 }
 
 .instructions {
-  text-align: center;
-  padding: 1rem;
-  color: var(--muted);
-  font-size: 0.8rem;
+    text-align: center;
+    padding: 1rem;
+    color: var(--muted);
+    font-size: 0.9rem;
 }

@@ -1,20 +1,31 @@
-.footerWrapper{
-  justify-self: flex-end;
+.footerWrapper {
+    justify-self: flex-end;
+    width: 100%;
+    background: var(--background-glass);
+    border-radius: 18px;
+    box-shadow: 0 2px 8px rgba(31, 38, 135, 0.08);
+    border: var(--glass-border);
+    padding: 1.2rem 0 0.7rem 0;
+    margin-top: 2rem;
+    backdrop-filter: blur(var(--glass-blur));
 }
 
 .buttonGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 1.2rem;
+    padding: 0 1.5rem;
 }
 
 .footer {
-  text-align: center;
-  font-size: 0.9rem;
-  color: var(--muted);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 4px;
+    text-align: center;
+    font-size: 1rem;
+    color: var(--muted);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+    padding-bottom: 0.2rem;
 }

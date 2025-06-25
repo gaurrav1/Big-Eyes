@@ -1,0 +1,12 @@
+/* TileNav is usually just an icon, but let's give it a subtle glassy touch */
+.tileNav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    width: 32px;
+    border-radius: 10px;
+    background: var(--background-glass);
+    border: var(--glass-border);
+    box-shadow: 0 1px 4px rgba(31, 38, 135, 0.06);
+}

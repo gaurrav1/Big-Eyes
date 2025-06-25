@@ -1,6 +1,8 @@
 .tileLink {
     text-decoration: none;
     color: inherit;
+    display: block;
+    width: 100%;
 }
 
 .tile {
@@ -8,5 +10,22 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 16px;
+    padding: 14px 22px;
+    background: var(--background-glass);
+    border-radius: 18px;
+    box-shadow: 0 4px 16px rgba(31, 38, 135, 0.1);
+    border: var(--glass-border);
+    backdrop-filter: blur(var(--glass-blur));
+    transition:
+        background 0.2s,
+        box-shadow 0.2s,
+        transform 0.15s;
+    margin-bottom: 1rem;
+    cursor: pointer;
+}
+
+.tile:hover {
+    background: var(--hover);
+    transform: translateY(-2px) scale(1.015);
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.16);
 }

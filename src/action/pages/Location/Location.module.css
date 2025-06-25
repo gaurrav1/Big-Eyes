@@ -1,94 +1,129 @@
 .container {
     margin-top: -18px;
+    background: var(--background-glass);
+    border-radius: 24px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: var(--glass-border);
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    transition:
+        background 0.3s,
+        box-shadow 0.3s;
 }
 
 .section {
-  margin-bottom: 2rem;
-  padding: .5rem;
-  background: var(--background-color);
-  color: var(--fg);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: var(--background-glass);
+    color: var(--fg);
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(31, 38, 135, 0.08);
+    border: var(--glass-border);
+    backdrop-filter: blur(var(--glass-blur));
 }
 
 .selectedCity {
-  margin-top: .3rem;
-  padding: 0.8rem;
-  border-radius: 8px;
-  color: #1c7ed6;
+    margin-top: 0.5rem;
+    padding: 1rem;
+    border-radius: 12px;
+    color: #1c7ed6;
+    background: var(--background-glass);
+    border: var(--glass-border);
+    box-shadow: 0 2px 8px rgba(31, 38, 135, 0.06);
 }
 
 .distanceDisplay {
-  text-align: center;
-  margin-top: 1rem;
-  font-weight: 600;
-  color: #1c7ed6;
+    text-align: center;
+    margin-top: 1rem;
+    font-weight: 600;
+    color: #1c7ed6;
 }
 
-/* Add these new styles */
 .loading {
-  text-align: center;
-  padding: 2rem;
-  font-size: 1.2rem;
-  color: #666;
+    text-align: center;
+    padding: 2rem;
+    font-size: 1.2rem;
+    color: #666;
+    background: var(--background-glass);
+    border-radius: 18px;
+    box-shadow: 0 4px 16px rgba(31, 38, 135, 0.08);
+    border: var(--glass-border);
 }
 
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: var(--glass-border);
+    background: var(--background-glass);
+    border-radius: 18px 18px 0 0;
+    backdrop-filter: blur(var(--glass-blur));
 }
 
 .resetButton {
-  background: none;
-  color: var(--muted);
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
+    background: var(--toggle-bg);
+    color: var(--muted);
+    padding: 0.5rem 1.2rem;
+    border-radius: 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    border: var(--glass-border);
+    transition:
+        background 0.2s,
+        color 0.2s;
 }
 
 .resetButton:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .dialogCityList {
-  margin-top: 1rem;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  max-height: 200px;
-  overflow-y: auto;
+    margin-top: 1rem;
+    border: var(--glass-border);
+    border-radius: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+    background: var(--background-glass);
+    backdrop-filter: blur(var(--glass-blur));
 }
 
 .dialogCityItem {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .dialogCityItem:last-child {
-  border-bottom: none;
+    border-bottom: none;
 }
 
 .dialogCityName {
-  font-weight: 500;
-  color: var(--fg);
+    font-weight: 500;
+    color: var(--fg);
 }
 
 .dialogCityDistance {
-  font-size: 0.9rem;
-  color: #fa5252;
-  font-weight: 600;
-  background-color: rgba(255, 69, 58, 0.1);
-  padding: 0.2rem 0.5rem;
-  border-radius: 12px;
+    font-size: 0.95rem;
+    color: #fa5252;
+    font-weight: 600;
+    background-color: rgba(255, 69, 58, 0.12);
+    padding: 0.2rem 0.7rem;
+    border-radius: 12px;
 }
 
-/* Existing styles remain unchanged */
+.stickySectionHeader {
+    position: sticky;
+    top: 0; /* Or top: 56px; if you have a fixed header */
+    z-index: 10;
+    background: var(--background-glass);
+    backdrop-filter: blur(var(--glass-blur));
+    border-radius: 18px 18px 0 0;
+    box-shadow: 0 2px 8px rgba(31, 38, 135, 0.06);
+    padding: 1rem 1.5rem;
+}

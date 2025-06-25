@@ -1,9 +1,16 @@
 .tileIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 32px;
-  width: 32px;
-  border-radius: 30%;
-  border: 0.5px solid var(--location-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 40px;
+    border-radius: 14px;
+    border: var(--glass-border);
+    background: var(--background-glass);
+    box-shadow: 0 2px 8px rgba(31, 38, 135, 0.08);
+    margin-right: 12px;
+    font-size: 1.3rem;
+    transition:
+        background 0.2s,
+        box-shadow 0.2s;
 }

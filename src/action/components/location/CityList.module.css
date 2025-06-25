@@ -1,168 +1,15 @@
 .container {
     margin-top: 2rem;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    background: var(--background-color);
-}
-
-.header {
-    padding: 1.5rem;
-    background: var(--background-color);
-    color: var(--fg);
-    border-bottom: 1px solid #e9ecef;
-}
-
-.listContainer {
-    max-height: 50vh;
-    overflow-y: auto;
-}
-
-.cityItem {
-    display: flex;
-    align-items: center;
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid #e9ecef;
-    transition: all 0.2s ease;
-    background: var(--background-color);
-}
-
-.cityItem.active {
-    background-color: var(--background-color);
-    box-shadow: 0 2px 8px var(--fg);
-}
-
-.dragHandle {
-    font-size: 1.5rem;
-    margin-right: 1rem;
-    color: #868e96;
-    cursor: move;
-}
-
-.cityInfo {
-    flex: 1;
-}
-
-.cityName {
-    font-weight: 600;
-    font-size: 1.1rem;
-    margin-bottom: 0.2rem;
-}
-
-.cityDetails {
-    font-size: 0.9rem;
-    color: var(--fg);
-}
-
-.distance {
-    font-weight: 600;
-    padding: 0.3rem 0.8rem;
     border-radius: 20px;
-    font-size: 0.9rem;
-}
-
-.within {
-    background-color: var(--background-color);
-    color: #0ca678;
-}
-
-.over {
-    background-color: var(--background-color);
-    color: #fa5252;
-}
-
-.emptyState {
-    text-align: center;
-    padding: 2rem;
-    color: #868e96;
-    font-size: 0.95rem;
-}
-
-/* Add these new styles */
-.header {
-    padding: 1rem 1.5rem;
-    background: var(--background-color);
-    border-bottom: 1px solid #e9ecef;
-}
-
-.headerRow {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.resetButton {
-    background: none;
-    border: 1px solid #fa5252;
-    color: #fa5252;
-    padding: 0.3rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.resetButton:hover {
-    background: rgba(250, 82, 82, 0.1);
-}
-
-.warningText {
-    margin-top: 0.3rem;
-    border-radius: 8px;
-    color: var(--muted);
-    font-size: 0.8rem;
-}
-
-.priorityBadge {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: #0d6efd;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
-    font-weight: bold;
-    margin-right: 0.8rem;
-    flex-shrink: 0;
-}
-
-.removeButton {
-    background: none;
-    border: none;
-    color: #868e96;
-    font-size: 1.4rem;
-    cursor: pointer;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: 0.5rem;
-    transition: all 0.2s ease;
-}
-
-.removeButton:hover {
-    color: #fa5252;
-    transform: scale(1.1);
-}
-
-/* Existing styles remain unchanged */
-
-.container {
-    margin-top: 2rem;
-    border-radius: 18px;
     overflow: hidden;
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
-    background: rgba(255, 255, 255, 0.18);
-    backdrop-filter: blur(18px) saturate(180%);
-    -webkit-backdrop-filter: blur(18px) saturate(180%);
-    border: 1.5px solid rgba(255, 255, 255, 0.24);
+    background: var(--background-glass);
+    backdrop-filter: blur(var(--glass-blur));
+    border: var(--glass-border);
     transition:
         box-shadow 0.3s,
         background 0.3s;
+    padding-bottom: 1.5rem;
 }
 
 .priorityListHeaderRow {
@@ -170,18 +17,18 @@
     align-items: center;
     gap: 1rem;
     padding: 1rem 1.5rem 0.5rem 1.5rem;
-    background: rgba(255, 255, 255, 0.22);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.13);
-    backdrop-filter: blur(12px) saturate(160%);
-    -webkit-backdrop-filter: blur(12px) saturate(160%);
+    background: var(--background-glass);
+    border-bottom: var(--glass-border);
+    border-radius: 18px 18px 0 0;
+    backdrop-filter: blur(var(--glass-blur));
 }
 
 .editButton,
 .resetButton,
 .sortButton {
-    background: rgba(255, 255, 255, 0.32);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    color: #0071e3;
+    background: var(--toggle-bg);
+    border: var(--glass-border);
+    color: var(--accent);
     font-size: 15px;
     font-weight: 500;
     cursor: pointer;
@@ -192,14 +39,14 @@
         background 0.2s,
         color 0.2s,
         box-shadow 0.2s;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 2px 8px rgba(31, 38, 135, 0.06);
     outline: none;
 }
 
 .editButton:hover,
 .resetButton:hover,
 .sortButton:hover {
-    background: rgba(0, 113, 227, 0.08);
+    background: var(--hover);
     color: #005bb5;
 }
 
@@ -210,19 +57,18 @@
 }
 
 .sortButton.activeSort {
-    background: #0071e3;
+    background: var(--accent);
     color: #fff;
     box-shadow: 0 2px 8px rgba(0, 113, 227, 0.12);
 }
 
 .cityPriorityList {
-    background: rgba(255, 255, 255, 0.18);
+    background: var(--background-glass);
     border-radius: 16px;
     margin: 1rem 1.5rem;
     box-shadow: 0 4px 24px rgba(31, 38, 135, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.13);
-    backdrop-filter: blur(12px) saturate(160%);
-    -webkit-backdrop-filter: blur(12px) saturate(160%);
+    border: var(--glass-border);
+    backdrop-filter: blur(var(--glass-blur));
 }
 
 .cityInfo {
@@ -238,7 +84,7 @@
 }
 
 .cityDetails {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: #555;
 }
 
@@ -246,9 +92,10 @@
     font-weight: 600;
     padding: 0.3rem 0.8rem;
     border-radius: 20px;
-    font-size: 0.9rem;
-    background: rgba(255, 255, 255, 0.32);
+    font-size: 0.95rem;
+    background: var(--background-glass);
     box-shadow: 0 1px 4px rgba(0, 113, 227, 0.06);
+    border: var(--glass-border);
 }
 
 .within {
@@ -259,15 +106,35 @@
     color: #fa5252;
 }
 
+.emptyState {
+    text-align: center;
+    padding: 2rem;
+    color: #868e96;
+    font-size: 1rem;
+    background: var(--background-glass);
+    border-radius: 14px;
+    border: var(--glass-border);
+    box-shadow: 0 2px 8px rgba(31, 38, 135, 0.06);
+}
+
+.warningText {
+    margin-top: 0.3rem;
+    border-radius: 8px;
+    color: var(--muted);
+    font-size: 0.9rem;
+    background: var(--background-glass);
+    padding: 0.5rem 1rem;
+    border: var(--glass-border);
+}
+
 .disclaimer {
     margin: 1.5rem 1.5rem 1rem 1.5rem;
     padding: 1rem;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.22);
+    background: var(--background-glass);
     color: #8e8e93;
-    font-size: 0.95rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.13);
-    backdrop-filter: blur(8px) saturate(140%);
-    -webkit-backdrop-filter: blur(8px) saturate(140%);
+    font-size: 0.98rem;
+    box-shadow: 0 2px 8px rgba(31, 38, 135, 0.04);
+    border: var(--glass-border);
+    backdrop-filter: blur(var(--glass-blur));
 }

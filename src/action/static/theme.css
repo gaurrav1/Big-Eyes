@@ -1,35 +1,29 @@
-/* Base Light Theme */
 :root {
     --bp-sm: 480px;
     --bp-md: 768px;
     --bp-lg: 1024px;
     --bp-xl: 1440px;
-    width: 100%;
-    height: 100%;
 
-    /* --location-bg: #dc3545;
-    --calender-bg: #d45800; */
+    --location-bg: var(--background-glass);
+    --calender-bg: var(--background-glass);
 
-    --location-bg: var(--background-color);
-    --calender-bg: var(--background-color);
+    --svg-color: #222;
 
-    --svg-color: black;
+    /* Glassmorphism Base */
+    --background-glass: rgba(255, 255, 255, 0.65);
+    --background-glass-dark: rgba(30, 30, 30, 0.65);
+    --glass-blur: 18px;
+    --glass-border: 1.5px solid rgba(255, 255, 255, 0.24);
 
     /* Base Colors */
-    --color-background: #ffffff;
-    --color-text: #111111;
-    --color-accent: #4a90e2;
-
-    /* Nav Colors */
-    --nav-bg: rgba(255, 255, 255, 0.9);
-    --nav-text-color: var(--color-text);
-    --nav-border-color: #ddd;
-    --nav-padding: 1rem;
+    --color-background: #f7f7fa;
+    --color-text: #222;
+    --color-accent: #0071e3;
 
     /* UI Elements */
-    --color-border: var(--nav-border-color);
-    --color-surface: var(--nav-bg);
-    --color-surface-text: var(--nav-text-color);
+    --color-border: rgba(0, 0, 0, 0.08);
+    --color-surface: var(--background-glass);
+    --color-surface-text: var(--color-text);
 
     /* State Colors */
     --color-success: #28a745;
@@ -40,40 +34,47 @@
     --font-size-base: clamp(1rem, 2vw + 0.5rem, 1.25rem);
     --font-weight-regular: 400;
     --font-weight-bold: 700;
+
+    /* Apple Glassmorphism */
+    --bg: var(--background-glass);
+    --transperent-bg: rgba(255, 255, 255, 0.22);
+    --fg: #222;
+    --accent: #0071e3;
+    --border: rgba(0, 0, 0, 0.08);
+    --hover: rgba(0, 113, 227, 0.08);
+    --muted: #8e8e93;
+    --toggle-bg: rgba(255, 255, 255, 0.32);
 }
 
-[data-theme='dark'] {
-    --background-color: #2b2a2a;
-    --color-background: #121212;
-    --color-text: #ffffff;
-    --color-accent: #755133;
-
-    --color-border: #444;
-    --color-surface: #333;
+[data-theme="dark"] {
+    --background-glass: rgba(30, 30, 30, 0.65);
+    --background-glass-dark: rgba(20, 20, 20, 0.85);
+    --color-background: #18181a;
+    --color-text: #fff;
+    --color-accent: #0a84ff;
+    --color-border: rgba(255, 255, 255, 0.08);
+    --color-surface: var(--background-glass-dark);
     --color-surface-text: #fff;
-
-    --nav-bg: rgba(27, 27, 27, 0.9);
-    --bg: #121212;
-    --transperent-bg: #12121281;
-    --fg: #ffffff;
+    --bg: var(--background-glass-dark);
+    --transperent-bg: rgba(30, 30, 30, 0.22);
+    --fg: #fff;
     --accent: #0a84ff;
-    --border: #2c2c2e;
-    --hover: #1c1c1e;
+    --border: rgba(255, 255, 255, 0.08);
+    --hover: rgba(10, 132, 255, 0.08);
     --muted: #8e8e93;
-    --toggle-bg: #2c2c2e;
-
-    --svg-color: #ffffff;
+    --toggle-bg: rgba(30, 30, 30, 0.32);
+    --svg-color: #fff;
 }
 
-[data-theme='light'] {
-    --color-background: #121212;
-    --background-color: #ffffff;
-    --bg: #f0f0f0;
-    --transperent-bg: #f0f0f081;
-    --fg: #000000;
-    --accent: #0a84ff;
-    --border: #e0e0e0;
-    --hover: #f5f5f7;
+[data-theme="light"] {
+    --background-glass: rgba(255, 255, 255, 0.65);
+    --color-background: #f7f7fa;
+    --bg: var(--background-glass);
+    --transperent-bg: rgba(255, 255, 255, 0.22);
+    --fg: #222;
+    --accent: #0071e3;
+    --border: rgba(0, 0, 0, 0.08);
+    --hover: rgba(0, 113, 227, 0.08);
     --muted: #8e8e93;
-    --toggle-bg: #f2f2f7;
+    --toggle-bg: rgba(255, 255, 255, 0.32);
 }

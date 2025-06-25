@@ -1,112 +1,127 @@
-/* CommuteSlider.module.css */
 .sliderContainer {
-  position: relative;
-  padding: 8px;
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
+    position: relative;
+    padding: 16px 8px;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    background: var(--background-glass);
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(31, 38, 135, 0.1);
+    border: var(--glass-border);
+    backdrop-filter: blur(var(--glass-blur));
 }
 
 .labelsContainer {
-  position: relative;
-  height: 40px;
-  margin-bottom: 3px;
+    position: relative;
+    height: 40px;
+    margin-bottom: 3px;
 }
 
 .distanceLabel {
-  position: absolute;
-  top: 0;
-  transform: translateX(-50%);
-  text-align: center;
-  font-size: 12px;
-  font-weight: 400;
-  color: #86868b;
-  transition: all 0.3s ease;
-  user-select: none;
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    text-align: center;
+    font-size: 13px;
+    font-weight: 400;
+    color: #86868b;
+    transition: all 0.3s;
+    user-select: none;
+    background: var(--background-glass);
+    border-radius: 8px;
+    padding: 2px 8px;
+    border: var(--glass-border);
+    box-shadow: 0 1px 4px rgba(31, 38, 135, 0.06);
 }
 
 .activeLabel {
-  color: #0071e3;
-  font-weight: 600;
+    color: var(--accent);
+    font-weight: 600;
+    background: var(--accent);
+    color: #fff;
 }
 
 .unit {
-  display: block;
-  font-size: 10px;
-  margin-top: 2px;
+    display: block;
+    font-size: 10px;
+    margin-top: 2px;
 }
 
 .sliderTrack {
-  position: relative;
-  height: 4px;
-  background-color: #e3e3e8;
-  border-radius: 2px;
-  overflow: visible;
+    position: relative;
+    height: 6px;
+    background: var(--background-glass);
+    border-radius: 3px;
+    overflow: visible;
+    border: var(--glass-border);
+    box-shadow: 0 2px 8px rgba(31, 38, 135, 0.06);
 }
 
 .sliderProgress {
-  position: absolute;
-  height: 100%;
-  background-color: #0071e3;
-  border-radius: 2px;
-  transition: width 0.1s linear;
+    position: absolute;
+    height: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+    transition: width 0.1s linear;
 }
 
 .sliderMarker {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  background-color: #c0c0c6;
-  border-radius: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  transition: all 0.3s ease;
-  z-index: 1;
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #c0c0c6;
+    border-radius: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.3s;
+    z-index: 1;
+    border: var(--glass-border);
 }
 
 .activeMarker {
-  background-color: #0071e3;
-  width: 8px;
-  height: 8px;
+    background: var(--accent);
+    width: 10px;
+    height: 10px;
 }
 
 .sliderInput {
-  position: absolute;
-  width: 100%;
-  height: 44px;
-  top: 50%;
-  transform: translateY(-50%);
-  margin: 0;
-  opacity: 0;
-  cursor: pointer;
-  z-index: 2;
+    position: absolute;
+    width: 100%;
+    height: 44px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
 }
 
 .sliderThumb {
-  position: absolute;
-  width: 22px;
-  height: 22px;
-  background-color: #0071e3;
-  border-radius: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  transition: 
-    background-color 0.3s ease,
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
-  z-index: 3;
-  pointer-events: none;
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    background: var(--accent);
+    border-radius: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 4px 16px rgba(31, 38, 135, 0.12);
+    transition:
+        background 0.3s,
+        transform 0.3s,
+        box-shadow 0.3s;
+    z-index: 3;
+    pointer-events: none;
+    border: var(--glass-border);
 }
 
 .sliderThumb.dragging {
-  background-color: rgba(0, 113, 227, 0.7);
-  transform: translate(-50%, -50%) scale(1.2);
-  box-shadow: 0 4px 10px rgba(0, 113, 227, 0.3);
+    background: rgba(0, 113, 227, 0.7);
+    transform: translate(-50%, -50%) scale(1.15);
+    box-shadow: 0 8px 24px rgba(0, 113, 227, 0.18);
 }
 
 /* Focus styles for accessibility */
 .sliderInput:focus-visible + .sliderThumb {
-  outline: 2px solid #0071e3;
-  outline-offset: 2px;
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
 }

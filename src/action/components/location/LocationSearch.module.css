@@ -1,208 +1,204 @@
-/* LocationSearch.module.css */
 .container {
-  position: relative;
-  width: 100%;
-  max-width: 500px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    font-family: inherit;
 }
 
 .searchContainer {
-  display: flex;
-  align-items: center;
-  background-color: var(--background-color);
-  border-radius: 12px;
-  padding: 5px 10px;
-  backdrop-filter: blur(10px);
-  box-shadow: 
-    0 4px 6px rgba(0, 0, 0, 0.05),
-    inset 0 0 0 1px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    background: var(--background-glass);
+    border-radius: 14px;
+    padding: 7px 14px;
+    backdrop-filter: blur(var(--glass-blur));
+    box-shadow: 0 2px 8px rgba(31, 38, 135, 0.08);
+    border: var(--glass-border);
+    transition: all 0.3s;
 }
 
 .focused {
-  box-shadow: 
-    0 0.5px 2.5px var(--fg),
-    inset 0 0 0 1px var(--fg);
+    box-shadow:
+        0 0.5px 2.5px var(--accent),
+        0 2px 8px rgba(31, 38, 135, 0.1);
+    border: 1.5px solid var(--accent);
 }
 
 .input {
-  flex: 1;
-  border: none;
-  background: transparent;
-  padding: 8px 12px;
-  font-size: 16px;
-  color: var(--fg);
-  outline: none;
-  font-weight: 400;
-  letter-spacing: -0.01em;
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 10px 14px;
+    font-size: 17px;
+    color: var(--fg);
+    outline: none;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    border-radius: 8px;
 }
 
 .input::placeholder {
-  color: #888;
-  font-weight: 300;
+    color: #888;
+    font-weight: 300;
 }
 
 .searchIcon {
-  fill: #888;
-  margin-right: 8px;
-  flex-shrink: 0;
+    fill: #888;
+    margin-right: 10px;
+    flex-shrink: 0;
 }
 
 .statusIndicator {
-  margin-left: 8px;
-  display: flex;
-  align-items: center;
+    margin-left: 8px;
+    display: flex;
+    align-items: center;
 }
 
 .spinner {
-  width: 20px;
-  height: 20px;
-  border: 2px solid rgba(0, 0, 0, 0.1);
-  border-left-color: #0070c9;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-left-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.errorIcon {
-  fill: #ff453a;
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .suggestionsList {
-  position: absolute;
-  width: 100%;
-  max-height: 300px;
-  overflow-y: auto;
-  background: var(--transperent-bg);
-  border-radius: 12px;
-  margin-top: 8px;
-  padding: 8px 0;
-  box-shadow: 
-    0 .5px 5px var(--fg),
-    0 0 0 1px var(--fg);
-  backdrop-filter: blur(20px);
-  z-index: 100;
-  list-style: none;
+    position: absolute;
+    width: 100%;
+    max-height: 300px;
+    overflow-y: auto;
+    background: var(--background-glass);
+    border-radius: 14px;
+    margin-top: 8px;
+    padding: 8px 0;
+    box-shadow: 0 4px 24px rgba(31, 38, 135, 0.1);
+    border: var(--glass-border);
+    backdrop-filter: blur(var(--glass-blur));
+    z-index: 100;
+    list-style: none;
 }
 
 .suggestionItem {
-  padding: 12px 20px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  display: flex;
-  flex-direction: column;
+    padding: 14px 22px;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    background: transparent;
 }
 
 .suggestionItem:hover {
-  background-color: var(--background-color);
+    background: var(--hover);
 }
 
 .locationLabel {
-  font-weight: 500;
-  font-size: 16px;
-  color: var(--fg);
-  margin-bottom: 2px;
+    font-weight: 500;
+    font-size: 16px;
+    color: var(--fg);
+    margin-bottom: 2px;
 }
 
 .locationDetails {
-  font-size: 14px;
-  color: var(--background-color);
-  font-weight: 400;
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 400;
 }
 
-/* Add to existing styles */
 .compact .searchContainer {
-  padding: 0.5rem 1rem;
+    padding: 0.5rem 1rem;
 }
 
 .compactInput {
-  font-size: 0.9rem;
-  padding: 0.25rem 0.5rem;
+    font-size: 0.95rem;
+    padding: 0.25rem 0.5rem;
 }
 
 .highlighted {
-  background-color: var(--fg);
-  color: var(--background-color);
+    background: var(--accent);
+    color: #fff;
 }
 
 .highlighted .locationLabel,
 .highlighted .locationDetails {
-  color: var(--background-color);
+    color: #fff;
 }
 
-/* Add these new styles */
 .disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .disabled .input {
-  cursor: not-allowed;
+    cursor: not-allowed;
 }
 
 .errorText {
-  color: #ff453a;
-  font-size: 0.85rem;
-  margin-top: 0.5rem;
-  padding: 0 0.5rem;
+    color: #ff453a;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    padding: 0 0.5rem;
 }
 
 .suggestionDistance {
-  margin-left: auto;
-  padding: 0.2rem 0.5rem;
-  border-radius: 12px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  background: rgba(0,0,0,0.05);
+    margin-left: auto;
+    padding: 0.2rem 0.7rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    background: var(--background-glass);
+    border: var(--glass-border);
 }
 
 .suggestionItem.within .suggestionDistance {
-  background-color: rgba(10, 132, 255, 0.1);
-  color: #0ca678;
+    background: rgba(10, 132, 255, 0.1);
+    color: #0ca678;
 }
 
 .suggestionItem.over .suggestionDistance {
-  background-color: rgba(255, 69, 58, 0.1);
-  color: #fa5252;
+    background: rgba(255, 69, 58, 0.1);
+    color: #fa5252;
 }
 
 .within {
-  color: #0ca678;
+    color: #0ca678;
 }
 
 .over {
-  color: #fa5252;
+    color: #fa5252;
 }
 
 .locationButton {
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px;
-  margin-left: 4px;
-  border-radius: 50%;
-  color: #888;
-  transition: all 0.2s ease;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    margin-left: 4px;
+    border-radius: 50%;
+    color: #888;
+    transition: all 0.2s;
 }
 
 .locationButton:hover {
-  background-color: rgba(0, 0, 0, 0.05);
-  color: var(--fg);
+    background: var(--hover);
+    color: var(--fg);
 }
 
 .locationButton:active {
-  background-color: rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.1);
 }
 
 .locationButton:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+    opacity: 0.5;
+    cursor: not-allowed;
 }
-
-/* Existing styles remain unchanged */
