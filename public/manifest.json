@@ -21,7 +21,8 @@
   "content_scripts": [
     {
       "js": [
-        "src/content/content.jsx"
+        "src/content/index.jsx",
+        "src/content/scripts/main.js"
       ],
       "matches": [
         "https://*.hiring.amazon.ca/**"

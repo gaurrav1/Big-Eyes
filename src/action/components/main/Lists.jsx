@@ -5,7 +5,7 @@ import { Divider } from "../general/Divider";
 
 export function Lists({appData}) {
 
-    const { centerOfCityCoordinates, commuteDistance, otherCities } = appData || {};
+    const { centerOfCityCoordinates, commuteDistance, otherCities, shiftPriorities } = appData || {};
 
   // Compose title (with fallback)
   const locationTitle =
@@ -18,6 +18,12 @@ export function Lists({appData}) {
     Array.isArray(otherCities) && otherCities.length > 0
       ? otherCities.map(city => city.name.split(',')[0]).join(', ')
       : "Select a location";
+
+  const shiftTitle = shiftPriorities[0] + " Time";
+
+  const shiftDescription =
+      Array.isArray(shiftPriorities) && shiftPriorities.length > 0
+      ?  shiftPriorities.join(' > ') : "Select a shift type";
 
   const locationTile = {
     icon: <LocationIcon height={30} width={30} />,
@@ -32,8 +38,8 @@ export function Lists({appData}) {
   };
   const shiftTypeTile = {
     icon: <CalendarIcon height={30} width={30} />,
-    title: "Shift Type",
-    description: "Select a shift type",
+    title: shiftTitle,
+    description: shiftDescription,
     navIcon: <Next height={30} width={30} />,
     locate: '/shifts',
     iconStyle: {
