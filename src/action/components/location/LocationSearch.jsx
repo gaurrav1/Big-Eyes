@@ -176,28 +176,28 @@ export const LocationSearch = ({
           // Perform reverse geocoding to get city name
           const response = await axios.post(
             'https://e5mquma77feepi2bdn4d6h3mpu.appsync-api.us-east-1.amazonaws.com/graphql',
-            {
-              operationName: 'queryGeoInfoByCoordinates',
-              variables: {
-                geoCoordinatesQueryRequest: {
-                  lat: latitude,
-                  lng: longitude,
-                  countries: ['CAN'],
+              {
+                "operationName": "queryGeoInfoByLocation",
+                "variables": {
+                  "geoLocationQueryRequest": {
+                    "lat": latitude,
+                    "lng": longitude
+                  }
                 },
+                "query": "query queryGeoInfoByLocation($geoLocationQueryRequest: GeoLocationQueryRequest!) {\n  queryGeoInfoByLocation(geoLocationQueryRequest: $geoLocationQueryRequest) {\n    country\n    lat\n    lng\n    postalCode\n    label\n    municipality\n    region\n    subRegion\n    addressNumber\n    __typename\n  }\n}\n"
               },
-              query: "query queryGeoInfoByCoordinates($geoCoordinatesQueryRequest: GeoCoordinatesQueryRequest!) {\n  queryGeoInfoByCoordinates(geoCoordinatesQueryRequest: $geoCoordinatesQueryRequest) {\n    country\n    lat\n    lng\n    postalCode\n    label\n    municipality\n    region\n    subRegion\n    addressNumber\n    __typename\n  }\n}\n",
-            },
             {
               headers: {
-                Authorization: 'Bearer token',
+                "Authorization": 'Bearer token',
                 'Content-Type': 'application/json',
               },
             }
           );
 
-          const locationData = response.data?.data?.queryGeoInfoByCoordinates;
+          const locationData = response.data?.data?.queryGeoInfoByLocation[0];
 
           if (locationData) {
+            console.log(locationData);
             handleSelect({
               label: locationData.label,
               lat: locationData.lat,

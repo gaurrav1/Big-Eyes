@@ -1,13 +1,12 @@
 import { useState, useCallback } from 'react';
 import { useAppContext } from '../../context/AppContext';
 import { LocationSearch } from '../location/LocationSearch';
+import { PrioritizedList } from '../common/PrioritizedList';
 import styles from './CityList.module.css';
 
 export const CityList = () => {
   const { appData, updateAppData } = useAppContext();
   const { centerOfCityCoordinates, commuteDistance, otherCities } = appData;
-  const [activeIndex, setActiveIndex] = useState(null);
-  const [isDragging, setIsDragging] = useState(false);
   const [addCityError, setAddCityError] = useState(null);
 
   const handleAddCity = useCallback((location) => {
@@ -20,7 +19,7 @@ export const CityList = () => {
     const isDuplicate = otherCities.some(city => 
       city.lat === location.lat && city.lng === location.lng
     );
-    
+
     if (isDuplicate) {
       setAddCityError('This city is already added');
       return;
@@ -45,135 +44,107 @@ export const CityList = () => {
     }
   }, [centerOfCityCoordinates, commuteDistance, otherCities, updateAppData]);
 
-  const handleRemoveCity = useCallback((index) => {
-    const newCities = [...otherCities];
-    newCities.splice(index, 1);
+  // Handle reordering cities
+  const handleReorderCities = useCallback((newCities) => {
+    updateAppData({ otherCities: newCities });
+  }, [updateAppData]);
+
+  // Handle deleting cities
+  const handleDeleteCities = useCallback((citiesToDelete) => {
+    const newCities = otherCities.filter(city => 
+      !citiesToDelete.some(deleteCity => 
+        deleteCity.lat === city.lat && deleteCity.lng === city.lng
+      )
+    );
     updateAppData({ otherCities: newCities });
     setAddCityError(null);
   }, [otherCities, updateAppData]);
-
-  const handleDragStart = (index) => {
-    setActiveIndex(index);
-    setIsDragging(true);
-  };
-
-  const handleDragOver = (e, index) => {
-    e.preventDefault();
-    if (activeIndex === null || activeIndex === index) return;
-    
-    const newCities = [...otherCities];
-    const movedItem = newCities[activeIndex];
-    newCities.splice(activeIndex, 1);
-    newCities.splice(index, 0, movedItem);
-    
-    updateAppData({ otherCities: newCities });
-    setActiveIndex(index);
-  };
-
-  const handleDragEnd = () => {
-    setIsDragging(false);
-    setActiveIndex(null);
-  };
 
   const resetCities = () => {
     updateAppData({ otherCities: [] });
     setAddCityError(null);
   };
 
+  // Render city content
+  const renderCityContent = useCallback((city) => {
+    return (
+      <div className={styles.cityInfo}>
+        <div className={styles.cityName}>{city.label}</div>
+        <div className={styles.cityDetails}>
+          {city.municipality && <span>{city.municipality}, </span>}
+          {city.region}
+        </div>
+      </div>
+    );
+  }, []);
+
+  // Render city distance
+  const renderCityDistance = useCallback((city) => {
+    if (!centerOfCityCoordinates) return null;
+
+    const distance = calculateDistance(
+      centerOfCityCoordinates.lat,
+      centerOfCityCoordinates.lng,
+      city.lat,
+      city.lng
+    );
+
+    const isWithin = distance <= commuteDistance;
+
+    return (
+      <div className={`${styles.distance} ${isWithin ? styles.within : styles.over}`}>
+        {distance.toFixed(2)} km
+      </div>
+    );
+  }, [centerOfCityCoordinates, commuteDistance]);
+
   return (
     <>
-      
-        <div className={styles.headerRow}>
-          {otherCities.length > 0 && (
-            <button 
-              className={styles.resetButton}
-              onClick={resetCities}
-            >
-              Reset List
-            </button>
-          )}
-        </div>
-        
-        <LocationSearch 
-          onLocationSelect={handleAddCity}
-          placeholder="Add city within commute"
-          compact
-          centerCoordinates={centerOfCityCoordinates}
-          commuteDistance={commuteDistance}
-          disabled={!centerOfCityCoordinates}
-          error={addCityError}
-        />
-        
-        {!centerOfCityCoordinates && (
-          <div className={styles.warningText}>
-            Select center city to add optional cities
-          </div>
+      <div className={styles.headerRow}>
+        {otherCities.length > 0 && (
+          <button 
+            className={styles.resetButton}
+            onClick={resetCities}
+          >
+            Reset List
+          </button>
         )}
-      
-   
+      </div>
+
+      <LocationSearch 
+        onLocationSelect={handleAddCity}
+        placeholder="Add city within commute"
+        compact
+        centerCoordinates={centerOfCityCoordinates}
+        commuteDistance={commuteDistance}
+        disabled={!centerOfCityCoordinates}
+        error={addCityError}
+      />
+
+      {!centerOfCityCoordinates && (
+        <div className={styles.warningText}>
+          Select center city to add optional cities
+        </div>
+      )}
+
       <div className={styles.container}>
-        <div className={styles.listContainer}>
-          {otherCities.map((city, index) => {
-            const distance = centerOfCityCoordinates 
-              ? calculateDistance(
-                  centerOfCityCoordinates.lat,
-                  centerOfCityCoordinates.lng,
-                  city.lat,
-                  city.lng
-                )
-              : 0;
-            
-            const isWithin = distance <= commuteDistance;
-            const isLastItem = index === otherCities.length - 1;
-            
-            return (
-              <div 
-                key={`${city.label}-${index}`}
-                className={`${styles.cityItem} ${index === activeIndex ? styles.active : ''}`}
-                draggable
-                onDragStart={() => handleDragStart(index)}
-                onDragOver={(e) => handleDragOver(e, index)}
-                onDragEnd={handleDragEnd}
-                style={{ 
-                  cursor: isDragging ? 'grabbing' : 'grab',
-                  borderBottom: isLastItem ? 'none' : undefined
-                }}
-              >
-                <div className={styles.priorityBadge}>{index + 1}</div>
-                <div className={styles.dragHandle}>≡</div>
-                
-                <div className={styles.cityInfo}>
-                  <div className={styles.cityName}>{city.label}</div>
-                  <div className={styles.cityDetails}>
-                    {city.municipality && <span>{city.municipality}, </span>}
-                    {city.region}
-                  </div>
-                </div>
-                
-                <div className={`${styles.distance} ${isWithin ? styles.within : styles.over}`}>
-                  {distance.toFixed(2)} km
-                </div>
-                
-                <button 
-                  className={styles.removeButton}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleRemoveCity(index);
-                  }}
-                >
-                  ×
-                </button>
-              </div>
-            );
-          })}
-          
-          {otherCities.length === 0 && (
+        <PrioritizedList
+          items={otherCities}
+          onReorder={handleReorderCities}
+          onDelete={handleDeleteCities}
+          renderItemContent={renderCityContent}
+          renderItemExtra={renderCityDistance}
+          confirmDelete={false}
+          emptyMessage={
             <div className={styles.emptyState}>
               <p>No cities added yet</p>
               <p>Search for cities within your commute distance</p>
             </div>
-          )}
-        </div>
+          }
+          showEditButton={true}
+          allowMultiDelete={true}
+          className={styles.cityPriorityList}
+        />
       </div>
     </>
   );
