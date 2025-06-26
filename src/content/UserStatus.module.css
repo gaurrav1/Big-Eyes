@@ -40,3 +40,8 @@
   margin: 0;
   padding-left: 18px;
 }
+
+.statusRow b {
+  font-weight: 600;
+  margin-left: auto;
+}

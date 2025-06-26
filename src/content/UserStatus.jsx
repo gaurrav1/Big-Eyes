@@ -75,6 +75,14 @@ export const UserStatus = () => {
               ))}
         </ol>
       </div>
+      <div className={styles.statusRow}>
+        <span>Shift Priority Mode:</span>
+        <b>{preferences.shiftPrioritized ? "Strict Order" : "Any Match"}</b>
+      </div>
+      <div className={styles.statusRow}>
+        <span>City Priority Mode:</span>
+        <b>{preferences.cityPrioritized ? "Strict Order" : "Any Match"}</b>
+      </div>
     </div>
   );
 };

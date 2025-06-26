@@ -146,14 +146,20 @@ export function handleTabUpdated(
  * @param {number} [activeWindowMs=300000] - Time window in ms for recent activity (default: 5 minutes).
  * @returns {boolean} True if the tab is valid and recently active.
  */
+// ... existing code ...
+
 export function isValidContentTab(
-  tabId,
-  registeredTabs,
-  activeWindowMs = 300000,
+    tabId,
+    registeredTabs,
+    activeWindowMs = 300000,
 ) {
+  const tabData = registeredTabs.get(tabId);
   return (
-    registeredTabs.has(tabId) &&
-    registeredTabs.get(tabId).lastActive > Date.now() - activeWindowMs
+      tabData &&
+      tabData.lastActive > Date.now() - activeWindowMs &&
+      // Validate new fields exist
+      typeof tabData.appData?.shiftPrioritized === 'boolean' &&
+      typeof tabData.appData?.cityPrioritized === 'boolean'
   );
 }
 

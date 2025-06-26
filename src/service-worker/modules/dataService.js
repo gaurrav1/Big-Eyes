@@ -60,9 +60,17 @@ export function handleAppDataUpdate(msg, context, sendResponse) {
  * @param {object} appData - The current application data.
  */
 export function broadcastAppData(registeredTabs, appData) {
+
+  // Ensure new fields are included
+  const fullAppData = {
+    ...appData,
+    shiftPrioritized: appData.shiftPrioritized || false,
+    cityPrioritized: appData.cityPrioritized || false
+  };
+
   const dataMessage = {
     type: "APP_DATA_UPDATE",
-    payload: appData,
+    payload: fullAppData,
     timestamp: Date.now(),
   };
 

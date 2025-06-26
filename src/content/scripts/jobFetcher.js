@@ -4,6 +4,7 @@ export const JobFetcher = (() => {
   let isActive = false;
   let appData = {};
   let intervalId = null;
+  let cachedRequest = null;
 
   const start = () => {
     if (isActive) return;
@@ -21,44 +22,65 @@ export const JobFetcher = (() => {
     chrome.runtime.sendMessage({ type: "PLAY_ALERT_SOUND" });
   }
 
+  const updateAppData = (data) => {
+    // Only rebuild request if relevant fields change
+    const relevantFields = [
+      "centerOfCityCoordinates",
+      "commuteDistance",
+      "shiftPriorities",
+      "otherCities",
+      "shiftPrioritized",
+      "cityPrioritized",
+    ];
+
+    const needsRebuild = relevantFields.some(
+      (field) => JSON.stringify(data[field]) !== JSON.stringify(appData[field]),
+    );
+
+    appData = data;
+
+    if (needsRebuild) {
+      cachedRequest = JobProcessor.buildJobRequest(appData);
+    }
+  };
+  // Highly optimized scheduler: minimal allocations, direct logic
   const runScheduler = () => {
     intervalId = setInterval(async () => {
       if (!isActive) return;
+      if (!cachedRequest) return;
 
-      // Create 5 parallel requests
-      const requests = Array(5).fill().map(() =>
-          JobProcessor.fetchGraphQL(JobProcessor.buildJobRequest(appData))
-              .catch(e => null)
-      );
-
-      // Process responses as they complete instead of waiting for all
-      for (const request of requests) {
-        try {
-          const response = await request;
-          if (!response) continue;
-
-          const bestJob = JobProcessor.getBestJob(response, appData);
-          if (bestJob) {
-            const schedule = await JobProcessor.getJobSchedule(bestJob.jobId);
-            if (schedule) {
-              playJobFoundAlert();
-              redirectToApplication(bestJob.jobId, schedule.scheduleId);
-              chrome.runtime.sendMessage({ type: "TAB_REDIRECTED" });
-              stop();
-              return; // Exit immediately when job is found
+      // 5 parallel requests, process as soon as any returns a match
+      let found = false;
+      let pending = 5;
+      for (let i = 0; i < 5; ++i) {
+        JobProcessor.fetchGraphQL(cachedRequest)
+          .then(async (response) => {
+            if (found || !response) return;
+            const bestJob = JobProcessor.getBestJob(response, appData);
+            if (bestJob) {
+              const schedule = await JobProcessor.getJobSchedule(bestJob.jobId);
+              if (schedule && !found) {
+                found = true;
+                playJobFoundAlert();
+                redirectToApplication(bestJob.jobId, schedule.scheduleId);
+                chrome.runtime.sendMessage({ type: "TAB_REDIRECTED" });
+                stop();
+              }
             }
-          }
-        } catch (e) {
-          // Handle individual request failures silently
-        }
-      }
-
-      // Network error reporting
-      if (requests.every(r => r === null)) {
-        chrome.runtime.sendMessage({ type: "NETWORK_ERROR" });
+          })
+          .catch(() => {})
+          .finally(() => {
+            pending--;
+            if (pending === 0 && !found) {
+              chrome.runtime.sendMessage({ type: "NETWORK_ERROR" });
+            }
+          });
       }
     }, 300);
   };
+
+  // Initialize cache on first run
+  updateAppData(appData);
 
   const tld = "com";
   const extld = "us";
@@ -72,8 +94,6 @@ export const JobFetcher = (() => {
   return {
     start,
     stop,
-    updateAppData: (data) => {
-      appData = data;
-    },
+    updateAppData,
   };
 })();

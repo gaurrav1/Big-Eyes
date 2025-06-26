@@ -1,7 +1,6 @@
 import axios from "axios";
 const GRAPHQL_URL =
   "https://e5mquma77feepi2bdn4d6h3mpu.appsync-api.us-east-1.amazonaws.com/graphql";
-const PRIORITY_WEIGHTS = { location: 0.6, shiftType: 0.4 };
 export const JobProcessor = {
   getToday: () => new Date().toISOString().split("T")[0],
 
@@ -102,37 +101,6 @@ export const JobProcessor = {
     return response.data;
   },
 
-  getLocationPriority: (job, appData) => {
-    if (!appData.centerOfCityCoordinates) return 1;
-    if (job.distance <= 5) return 1.0;
-    if (appData.otherCities?.includes(job.city)) return 0.7;
-    if (job.distance <= appData.commuteDistance) return 0.4;
-    return 0;
-  },
-
-  getShiftPriority: (job, appData) => {
-    if (!appData.shiftPriorities?.length) return 1;
-    const jobType = job.jobType || job.employmentType;
-    const index = appData.shiftPriorities.indexOf(jobType);
-    return index === -1 ? 0.3 : 1 - index * 0.2;
-  },
-
-  prioritizeJobs: (jobs, appData) => {
-    return jobs
-      .map((job) => {
-        const locationScore = JobProcessor.getLocationPriority(job, appData);
-        const shiftScore = JobProcessor.getShiftPriority(job, appData);
-        return {
-          ...job,
-          score:
-            locationScore * PRIORITY_WEIGHTS.location +
-            shiftScore * PRIORITY_WEIGHTS.shiftType,
-        };
-      })
-      .filter((job) => job.score > 0)
-      .sort((a, b) => b.score - a.score);
-  },
-
   /**
    * @param {Array<Object>} jobCards
    *   Raw array from response.data.searchJobCardsByLocation.jobCards
@@ -226,9 +194,9 @@ export const JobProcessor = {
     // Build filter object from appData
     const filter = {
       shifts: appData.shiftPriorities || [],
-      isShiftPrioritized: !!appData.shiftPrioritized,
+      isShiftPrioritized: appData.shiftPrioritized || false, // UPDATED
       cities: appData.otherCities || [],
-      isCityPrioritized: !!appData.cityPrioritized,
+      isCityPrioritized: appData.cityPrioritized || false,   // UPDATED
     };
     const bestJobId = JobProcessor.selectBestJobIdRaw(jobCards || [], filter);
     if (!bestJobId) return null;

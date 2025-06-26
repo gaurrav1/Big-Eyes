@@ -11,6 +11,8 @@ let appData = {
   commuteDistance: 35,
   otherCities: [],
   shiftPriorities: ["Flex", "Full", "Part", "Reduced"],
+  shiftPrioritized: false, // NEW FIELD
+  cityPrioritized: false,  // NEW FIELD
   timestamp: 0,
 };
 let isSearchActive = false;
