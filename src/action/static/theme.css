@@ -49,6 +49,7 @@
 [data-theme="dark"] {
     --background-glass: rgba(30, 30, 30, 0.65);
     --background-glass-dark: rgba(20, 20, 20, 0.85);
+    --section-background: rgba(43, 43, 43, 0.85);
     --color-background: #18181a;
     --color-text: #fff;
     --color-accent: #0a84ff;

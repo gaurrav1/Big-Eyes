@@ -25,7 +25,7 @@ body {
     min-height: 500px;
     font-family: inherit;
     font-weight: 500;
-    padding: 1rem .1rem 0 .1rem;
+    padding: 1rem .6rem 0 .6rem;
     display: flex;
     flex-direction: column;
     user-select: none;
@@ -35,5 +35,4 @@ body {
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
     backdrop-filter: blur(var(--glass-blur));
     -webkit-backdrop-filter: blur(var(--glass-blur));
-    border: var(--glass-border);
 }

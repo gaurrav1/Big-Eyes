@@ -5,6 +5,7 @@ import { LocationSearch } from "../../components/location/LocationSearch";
 import { CityList } from "../../components/location/CityList";
 import { useAppContext } from "../../context/AppContext";
 import { ConfirmationDialog } from "../../components/dialog/ConfirmationDialog";
+import {SectionHeader} from "../../components/general/SectionHeader.jsx";
 
 export const Location = () => {
   const { appData, updateAppData, isLoaded } = useAppContext();
@@ -156,18 +157,12 @@ export const Location = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <h2>Location Preferences</h2>
-        <button
-          className={styles.resetButton}
-          onClick={handleResetAll}
-          disabled={
-            !appData.centerOfCityCoordinates && appData.otherCities.length === 0
-          }
-        >
-          Reset
-        </button>
-      </div>
+      <SectionHeader
+          title={"Location Preferences"}
+          buttonName={"Reset"}
+          disabled={!appData.centerOfCityCoordinates && appData.otherCities.length === 0}
+          buttonHandler={handleResetAll}
+      />
 
       <h3>Center Location</h3>
       <LocationSearch

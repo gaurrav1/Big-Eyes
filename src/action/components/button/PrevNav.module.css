@@ -8,7 +8,6 @@
     justify-content: flex-start;
     background: var(--background-glass);
     border-radius: 14px;
-    box-shadow: 0 2px 8px rgba(31, 38, 135, 0.08);
     transition:
         background 0.2s,
         box-shadow 0.2s,

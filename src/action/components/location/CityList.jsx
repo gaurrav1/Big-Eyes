@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { useAppContext } from "../../context/AppContext";
-import { LocationSearch } from "../location/LocationSearch";
+import { LocationSearch } from "./LocationSearch.jsx";
 import { PrioritizedList } from "../common/PrioritizedList";
 import styles from "./CityList.module.css";
 import { FaSortAmountDown, FaSortAmountUp } from "react-icons/fa";

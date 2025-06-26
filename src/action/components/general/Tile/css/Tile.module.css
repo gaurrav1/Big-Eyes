@@ -11,7 +11,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 14px 22px;
-    background: var(--background-glass);
+    background: var(--section-background);
     border-radius: 18px;
     box-shadow: 0 4px 16px rgba(31, 38, 135, 0.1);
     border: var(--glass-border);

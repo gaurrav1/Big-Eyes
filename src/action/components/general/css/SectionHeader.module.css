@@ -1,0 +1,31 @@
+.sectionHeader {
+    display: flex;
+    background: var(--background-glass);
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sectionTitle {
+    font-size: 18px;
+    color: var(--color-text);
+    font-weight: 700;
+}
+
+.sectionButton {
+    background: var(--toggle-bg);
+    color: var(--muted);
+    padding: 0.3rem .8rem;
+    border-radius: 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    transition:
+            background 0.2s,
+            color 0.2s;
+}
+
+.sectionButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

@@ -15,8 +15,6 @@
 .priorityListHeaderRow {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding: 1rem 1.5rem 0.5rem 1.5rem;
     background: var(--background-glass);
     border-bottom: var(--glass-border);
     border-radius: 18px 18px 0 0;
@@ -27,7 +25,7 @@
 .resetButton,
 .sortButton {
     background: var(--toggle-bg);
-    border: var(--glass-border);
+    border: none;
     color: var(--accent);
     font-size: 15px;
     font-weight: 500;
@@ -39,8 +37,6 @@
         background 0.2s,
         color 0.2s,
         box-shadow 0.2s;
-    box-shadow: 0 2px 8px rgba(31, 38, 135, 0.06);
-    outline: none;
 }
 
 .editButton:hover,
@@ -124,7 +120,6 @@
     font-size: 0.9rem;
     background: var(--background-glass);
     padding: 0.5rem 1rem;
-    border: var(--glass-border);
 }
 
 .disclaimer {
