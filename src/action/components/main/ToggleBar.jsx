@@ -3,13 +3,13 @@ import {useNavigate} from "react-router-dom";
 import {ToggleButton} from "../general/ToggleButton.jsx";
 import {WarningText} from "../general/WarningText.jsx";
 import {ConfirmationDialog} from "../dialog/ConfirmationDialog.jsx";
+import styles from './css/ToggleBar.module.css'
 
 export function ToggleBar({appData}) {
     const [isSearching, setIsSearching] = useState(false);
     const [toggleError, setToggleError] = useState(""); // <-- Add this line
     const [showLocationDialog, setShowLocationDialog] = useState(false);
     const navigate = useNavigate();
-    const [isClient, setIsClient] = useState(false);
 
     // Helper: check if we should show the location warning dialog
     const shouldShowLocationDialog = () => {
@@ -86,7 +86,7 @@ export function ToggleBar({appData}) {
     }, []);
 
     return (
-        <>
+        <div className={styles.toggleBar}>
         <ToggleButton isActive={isSearching} onClick={toggleSearch} />
     {toggleError && (
         <WarningText text={toggleError} isError={true} />
@@ -100,6 +100,6 @@ export function ToggleBar({appData}) {
                 onConfirm={handleChooseLocation}
                 onCancel={handleDontShowFor1Day}
             />
-        </>
+        </div>
     )
 }

@@ -10,8 +10,8 @@
     --svg-color: #222;
 
     /* Glassmorphism Base */
-    --section-background: rgb(244, 244, 244);
-    --background-glass: rgba(255, 255, 255, 0.65);
+    --background-glass: rgb(228, 228, 228);
+    --section-background: rgba(255, 255, 255, 0.80);
     --background-glass-dark: rgba(30, 30, 30, 0.65);
     --glass-blur: 18px;
     --glass-border: 1.5px solid rgba(255, 255, 255, 0.24);

@@ -174,7 +174,7 @@ export const CityList = () => {
   const handleEditModeToggle = () => setEditMode((prev) => !prev);
 
   return (
-    <>
+    <div>
       {/* Reset button now handled by PrioritizedList via onReset prop */}
 
       <LocationSearch
@@ -234,7 +234,7 @@ export const CityList = () => {
           unknown during job search.
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

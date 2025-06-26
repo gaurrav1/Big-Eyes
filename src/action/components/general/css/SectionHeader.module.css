@@ -1,5 +1,9 @@
 .sectionHeader {
+    position: sticky;
+    top: 70px; /* Or top: 56px; if you have a fixed header */
+    z-index: 10;
     display: flex;
+    width: 100%;
     background: var(--background-glass);
     flex-direction: row;
     justify-content: space-between;
@@ -8,6 +12,7 @@
 
 .sectionTitle {
     color: var(--color-text);
+    padding-left: 14px;
 }
 
 .sectionButton {
@@ -26,4 +31,8 @@
 .sectionButton:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+.isMainTitle {
+    padding-left: 0px;
 }

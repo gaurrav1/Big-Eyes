@@ -3,7 +3,7 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    margin-top: 54px;
+    margin-top: 46px;
     background: var(--background-glass);
     border-radius: 24px;
     backdrop-filter: blur(var(--glass-blur));
@@ -95,13 +95,4 @@
     border-radius: 12px;
 }
 
-.stickySectionHeader {
-    position: sticky;
-    top: 0; /* Or top: 56px; if you have a fixed header */
-    z-index: 10;
-    background: var(--background-glass);
-    backdrop-filter: blur(var(--glass-blur));
-    border-radius: 18px 18px 0 0;
-    box-shadow: 0 2px 8px rgba(31, 38, 135, 0.06);
-    padding: 1rem 1.5rem;
-}
+

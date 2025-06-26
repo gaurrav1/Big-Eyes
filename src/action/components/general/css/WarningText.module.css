@@ -3,6 +3,6 @@
     border-radius: 8px;
     font-size: 0.9rem;
     background: var(--background-glass);
-    padding: 0.5rem 1rem;
+    padding: 0 1rem;
     text-align: justify;
 }

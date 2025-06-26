@@ -159,6 +159,7 @@ export const Location = () => {
 
   const mainHeader = {
     title: "Location Preferences",
+    isMainHeader: true,
     fontSize: "H3",
     isButton: true,
     buttonName: "Reset",
@@ -182,8 +183,8 @@ export const Location = () => {
   }
 
   return (
-    <Section className={styles.container} header={mainHeader}>
-
+    <Section className={styles.container} header={mainHeader} >
+      <br />
       <Divider />
       <Section header={centerCitySection}>
         <LocationSearch

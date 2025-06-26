@@ -45,9 +45,11 @@ export function SectionHeader({ header }) {
             break;
     }
 
+    const mainHeader = header.isMainHeader ? styles.isMainTitle : "";
+
     return (
         <div className={styles.sectionHeader}>
-            <div className={styles.sectionTitle} style={fontStyle}>
+            <div className={`${styles.sectionTitle} ${mainHeader}`} style={fontStyle}>
                 {header.title}
             </div>
 
