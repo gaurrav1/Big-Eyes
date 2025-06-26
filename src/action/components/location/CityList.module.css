@@ -113,15 +113,6 @@
     box-shadow: 0 2px 8px rgba(31, 38, 135, 0.06);
 }
 
-.warningText {
-    margin-top: 0.3rem;
-    border-radius: 8px;
-    color: var(--muted);
-    font-size: 0.9rem;
-    background: var(--background-glass);
-    padding: 0.5rem 1rem;
-}
-
 .disclaimer {
     margin: 1.5rem 1.5rem 1rem 1.5rem;
     padding: 1rem;

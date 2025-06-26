@@ -6,6 +6,8 @@ import { CityList } from "../../components/location/CityList";
 import { useAppContext } from "../../context/AppContext";
 import { ConfirmationDialog } from "../../components/dialog/ConfirmationDialog";
 import {SectionHeader} from "../../components/general/SectionHeader.jsx";
+import {Section} from "../../components/general/Section.jsx";
+import {Divider} from "../../components/general/Divider.jsx";
 
 export const Location = () => {
   const { appData, updateAppData, isLoaded } = useAppContext();
@@ -155,77 +157,100 @@ export const Location = () => {
     return <div className={styles.loading}>Loading your preferences...</div>;
   }
 
+  const mainHeader = {
+    title: "Location Preferences",
+    fontSize: "H3",
+    isButton: true,
+    buttonName: "Reset",
+    disabled: !appData.centerOfCityCoordinates && appData.otherCities.length === 0,
+    buttonHandler: handleResetAll
+  }
+
+  const centerCitySection = {
+    title: "Center Location",
+    fontSize: "H4"
+  }
+
+  const commuteDistanceSection = {
+    title: "Commute Distance",
+    fontSize: "H4"
+  }
+
+  const otherCitiesSection = {
+    title: "Cities within Commute",
+    fontSize: "H4"
+  }
+
   return (
-    <div className={styles.container}>
-      <SectionHeader
-          title={"Location Preferences"}
-          buttonName={"Reset"}
-          disabled={!appData.centerOfCityCoordinates && appData.otherCities.length === 0}
-          buttonHandler={handleResetAll}
-      />
+    <Section className={styles.container} header={mainHeader}>
 
-      <h3>Center Location</h3>
-      <LocationSearch
-        onLocationSelect={handleCenterSelect}
-        placeholder={
-          appData.centerOfCityCoordinates?.name || "Search for a city..."
-        }
-      />
-      {appData.centerOfCityCoordinates && (
-        <div className={styles.selectedCity}>
-          <strong>Selected: {appData.centerOfCityCoordinates.name}</strong>
-        </div>
-      )}
-
-      <h3>Commute Distance</h3>
-      <div className={styles.section}>
-        <CommuteSlider
-          initialValue={appData.commuteDistance}
-          onChange={handleDistanceChange}
+      <Divider />
+      <Section header={centerCitySection}>
+        <LocationSearch
+            onLocationSelect={handleCenterSelect}
+            placeholder={
+                appData.centerOfCityCoordinates?.name || "Search for a city..."
+            }
         />
-        <div className={styles.distanceDisplay}>
-          {appData.commuteDistance} km radius
+        {appData.centerOfCityCoordinates && (
+            <div className={styles.selectedCity}>
+              <strong>Selected: {appData.centerOfCityCoordinates.name}</strong>
+            </div>
+        )}
+      </Section>
+
+      <Section header={commuteDistanceSection}>
+        <div className={styles.section}>
+          <CommuteSlider
+              initialValue={appData.commuteDistance}
+              onChange={handleDistanceChange}
+          />
+          <div className={styles.distanceDisplay}>
+            {appData.commuteDistance} km radius
+          </div>
         </div>
-      </div>
+      </Section>
 
-      <h3>Cities within Commute</h3>
-      <CityList />
+      <Section header={otherCitiesSection}>
+        <CityList />
 
-      {/* Confirmation Dialog for cities exceeding commute distance */}
-      <ConfirmationDialog
-        isOpen={dialogOpen}
-        title="Warning: Cities Exceed Commute Distance"
-        message={`Changing your center city will remove ${citiesExceedingDistance.length} ${
-          citiesExceedingDistance.length === 1 ? "city" : "cities"
-        } that exceed the commute distance of ${appData.commuteDistance} km.`}
-        confirmText="Continue"
-        cancelText="Cancel"
-        onConfirm={handleConfirmCenterChange}
-        onCancel={handleCancelCenterChange}
-      >
-        <div className={styles.dialogCityList}>
-          {citiesExceedingDistance.map((city, index) => {
-            const distance = calculateDistance(
-              pendingCenterCity?.lat || 0,
-              pendingCenterCity?.lng || 0,
-              city.lat,
-              city.lng,
-            );
+        {/* Confirmation Dialog for cities exceeding commute distance */}
+        <ConfirmationDialog
+            isOpen={dialogOpen}
+            title="Warning: Cities Exceed Commute Distance"
+            message={`Changing your center city will remove ${citiesExceedingDistance.length} ${
+                citiesExceedingDistance.length === 1 ? "city" : "cities"
+            } that exceed the commute distance of ${appData.commuteDistance} km.`}
+            confirmText="Continue"
+            cancelText="Cancel"
+            onConfirm={handleConfirmCenterChange}
+            onCancel={handleCancelCenterChange}
+        >
+          <div className={styles.dialogCityList}>
+            {citiesExceedingDistance.map((city, index) => {
+              const distance = calculateDistance(
+                  pendingCenterCity?.lat || 0,
+                  pendingCenterCity?.lng || 0,
+                  city.lat,
+                  city.lng,
+              );
 
-            return (
-              <div
-                key={`${city.label}-${index}`}
-                className={styles.dialogCityItem}
-              >
-                <div className={styles.dialogCityName}>{city.label}</div>
-                <div className={styles.dialogCityDistance}>
-                  {distance.toFixed(2)} km
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </ConfirmationDialog>
-    </div>
+              return (
+                  <div
+                      key={`${city.label}-${index}`}
+                      className={styles.dialogCityItem}
+                  >
+                    <div className={styles.dialogCityName}>{city.label}</div>
+                    <div className={styles.dialogCityDistance}>
+                      {distance.toFixed(2)} km
+                    </div>
+                  </div>
+              );
+            })}
+          </div>
+        </ConfirmationDialog>
+      </Section>
+
+    </Section>
   );
 };

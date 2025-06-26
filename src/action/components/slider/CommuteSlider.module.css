@@ -2,7 +2,7 @@
     position: relative;
     width: 100%;
     max-width: 600px;
-    background: var(--background-glass);
+    background: var(--section-background);
     border-radius: 18px;
     box-shadow: 0 4px 24px rgba(31, 38, 135, 0.1);
     backdrop-filter: blur(var(--glass-blur));
@@ -10,6 +10,7 @@
 
 .labelsContainer {
     position: relative;
+    background:  var(--section-background);
     height: 40px;
     margin-bottom: 3px;
 }
@@ -24,7 +25,7 @@
     color: var(--svg-color);
     transition: all 0.3s;
     user-select: none;
-    background: var(--background-glass);
+    background: var(--section-background);
     border-radius: 8px;
     padding: 2px 6px;
 }
@@ -45,7 +46,7 @@
 .sliderTrack {
     position: relative;
     height: 6px;
-    background: var(--background-glass);
+    background: var(--section-background);
     border-radius: 3px;
     overflow: visible;
     border: var(--glass-border);
@@ -62,8 +63,8 @@
 
 .sliderMarker {
     position: absolute;
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
     background: #c0c0c6;
     border-radius: 50%;
     top: 50%;
@@ -75,8 +76,8 @@
 
 .activeMarker {
     background: var(--accent);
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
 }
 
 .sliderInput {
@@ -93,8 +94,8 @@
 
 .sliderThumb {
     position: absolute;
-    width: 28px;
-    height: 28px;
+    width: 22px;
+    height: 22px;
     background: var(--accent);
     border-radius: 50%;
     top: 50%;

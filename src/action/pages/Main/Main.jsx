@@ -4,6 +4,7 @@ import { useAppContext } from "../../context/AppContext.jsx";
 import { ToggleButton } from "../../components/general/ToggleButton.jsx";
 import { Lists } from "../../components/main/Lists.jsx";
 import { ConfirmationDialog } from "../../components/dialog/ConfirmationDialog";
+import {WarningText} from "../../components/general/WarningText.jsx";
 
 export const Main = () => {
   const [isSearching, setIsSearching] = useState(false);
@@ -76,7 +77,11 @@ export const Main = () => {
       },
       (response) => {
         if (!response?.success) {
-          setToggleError(response?.error || "Failed to toggle search.");
+          if (response?.error === "No valid content tabs found") {
+            setToggleError("Please open amazon canada job portal first and then try again.");
+          } else {
+            setToggleError(response?.error || "Failed to toggle search.");
+          }
           setIsSearching(!newState); // Revert on failure
         }
       },
@@ -87,7 +92,7 @@ export const Main = () => {
     <div className="container">
       <ToggleButton isActive={isSearching} onClick={toggleSearch} />
       {toggleError && (
-        <div style={{ color: "red", margin: "8px 0" }}>{toggleError}</div>
+        <WarningText text={toggleError} isError={true} />
       )}
 
       <h3>FILTERS</h3>

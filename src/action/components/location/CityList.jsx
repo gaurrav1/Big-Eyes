@@ -4,6 +4,7 @@ import { LocationSearch } from "./LocationSearch.jsx";
 import { PrioritizedList } from "../common/PrioritizedList";
 import styles from "./CityList.module.css";
 import { FaSortAmountDown, FaSortAmountUp } from "react-icons/fa";
+import {WarningText} from "../general/WarningText.jsx";
 
 export const CityList = () => {
   const { appData, updateAppData } = useAppContext();
@@ -187,9 +188,7 @@ export const CityList = () => {
       />
 
       {!centerOfCityCoordinates && (
-        <div className={styles.warningText}>
-          Select center city to add optional cities
-        </div>
+        <WarningText text={"Select center city to add optional cities"} />
       )}
 
       <div className={styles.container}>

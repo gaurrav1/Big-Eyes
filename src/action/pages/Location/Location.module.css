@@ -14,8 +14,9 @@
 }
 
 .section {
-    background: var(--background-glass);
+    background: var(--section-background);
     padding: .8rem 1rem;
+    width:  100%;
     color: var(--fg);
     border-radius: 16px;
     box-shadow: 0 4px 16px rgba(31, 38, 135, 0.08);
