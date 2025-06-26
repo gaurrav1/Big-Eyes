@@ -2,22 +2,20 @@ import { useState } from "react";
 import styles from "./ShiftPreference.module.css";
 import { useAppContext } from "../../context/AppContext";
 import { PrioritizedList } from "../../components/common/PrioritizedList";
+import { SHIFT_LABELS, SHIFT_KEYS } from "../../constants/shifts";
+import { ToggleButton } from "../button/ToggleButton";
 
 const ShiftPreference = () => {
   const { appData, updateAppData } = useAppContext();
   const [recentlyAdded, setRecentlyAdded] = useState([]);
+  const totalShifts = SHIFT_KEYS;
 
-  const totalShifts = ["Flex", "Full", "Part", "Reduced"];
+  const handleToggleShiftPriority = () => {
+    updateAppData({ shiftPrioritized: !appData.shiftPrioritized });
+  };
 
-  // Needed to fix logic here
-  const selectedShifts = appData.shiftPriorities || [
-    "Flex",
-    "Full",
-    "Part",
-    "Reduced",
-  ];
+  const selectedShifts = appData.shiftPriorities || SHIFT_KEYS;
 
-  // Calculate available shifts
   const availableShifts = totalShifts.filter(
     (shift) => !selectedShifts.includes(shift),
   );
@@ -50,11 +48,16 @@ const ShiftPreference = () => {
 
   // Render shift content
   const renderShiftContent = (shift) => {
-    return <div className={styles.shiftContent}>{shift} time</div>;
+    return <div className={styles.shiftContent}>{SHIFT_LABELS[shift]}</div>;
   };
 
   return (
     <div className={styles.container}>
+      <ToggleButton
+        isActive={appData.shiftPrioritized}
+        onClick={handleToggleShiftPriority}
+        title="Don't select my job with priority because it's faster"
+      />
       <div>
         <div className={styles.header}>
           <div className={styles.title}>
@@ -99,7 +102,7 @@ const ShiftPreference = () => {
                 >
                   <div className={styles.shiftContent}>
                     <div className={styles.shiftIcon}>+</div>
-                    {shift} time
+                    {SHIFT_LABELS[shift]}
                   </div>
                 </li>
               ))

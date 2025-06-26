@@ -10,9 +10,9 @@ let appData = {
   centerOfCityCoordinates: null,
   commuteDistance: 35,
   otherCities: [],
-  shiftPriorities: ["Flex", "Full", "Part", "Reduced"],
+  shiftPriorities: ["FLEX_TIME", "FULL_TIME", "PART_TIME", "REDUCED_TIME"],
   shiftPrioritized: false, // NEW FIELD
-  cityPrioritized: false,  // NEW FIELD
+  cityPrioritized: false, // NEW FIELD
   timestamp: 0,
 };
 let isSearchActive = false;

@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 
 const AppContext = createContext();
 export const useAppContext = () => useContext(AppContext);
@@ -7,10 +13,12 @@ const DEFAULT_APP_DATA = {
   centerOfCityCoordinates: null,
   commuteDistance: 35,
   otherCities: [],
-  shiftPriorities: ["Flex", "Full", "Part", "Reduced"]
+  shiftPrioritized: false, // NEW FIELD
+  cityPrioritized: false, // NEW FIELD
+  shiftPriorities: ["FLEX_TIME", "FULL_TIME", "PART_TIME", "REDUCED_TIME"],
 };
 
-const STORAGE_KEY = 'appData';
+const STORAGE_KEY = "appData";
 
 export const AppContextProvider = ({ children }) => {
   const [appData, setAppData] = useState(DEFAULT_APP_DATA);
@@ -19,18 +27,20 @@ export const AppContextProvider = ({ children }) => {
   // Optimized data loading
   const loadData = useCallback(async () => {
     try {
-      const savedData = JSON.parse(localStorage.getItem(STORAGE_KEY) || DEFAULT_APP_DATA);
+      const savedData = JSON.parse(
+        localStorage.getItem(STORAGE_KEY) || DEFAULT_APP_DATA,
+      );
       const initialData = {
         ...DEFAULT_APP_DATA,
         ...savedData,
-        centerOfCityCoordinates: savedData.centerOfCityCoordinates || null
+        centerOfCityCoordinates: savedData.centerOfCityCoordinates || null,
       };
 
       setAppData(initialData);
 
       chrome.runtime.sendMessage({
         type: "INIT_APP_DATA",
-        payload: initialData
+        payload: initialData,
       });
     } finally {
       setIsLoaded(true);
@@ -43,7 +53,7 @@ export const AppContextProvider = ({ children }) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(update));
     chrome.runtime.sendMessage({
       type: "UPDATE_APP_DATA",
-      payload: update
+      payload: update,
     });
   }, []);
 
@@ -52,7 +62,10 @@ export const AppContextProvider = ({ children }) => {
     loadData();
 
     const handleMessage = (msg) => {
-      if (msg.type === "APP_DATA_UPDATE" && msg.timestamp > (appData.timestamp || 0)) {
+      if (
+        msg.type === "APP_DATA_UPDATE" &&
+        msg.timestamp > (appData.timestamp || 0)
+      ) {
         setAppData(msg.payload);
       }
     };
@@ -62,26 +75,31 @@ export const AppContextProvider = ({ children }) => {
   }, [loadData]);
 
   // Efficient data updates
-  const updateAppData = useCallback((newData) => {
-    setAppData(prev => {
-      const merged = { ...prev, ...newData, timestamp: Date.now() };
+  const updateAppData = useCallback(
+    (newData) => {
+      setAppData((prev) => {
+        const merged = { ...prev, ...newData, timestamp: Date.now() };
 
-      // Prevent unnecessary saves
-      if (JSON.stringify(prev) !== JSON.stringify(merged)) {
-        saveData(merged);
-      }
+        // Prevent unnecessary saves
+        if (JSON.stringify(prev) !== JSON.stringify(merged)) {
+          saveData(merged);
+        }
 
-      return merged;
-    });
-  }, [saveData]);
+        return merged;
+      });
+    },
+    [saveData],
+  );
 
   return (
-      <AppContext.Provider value={{
+    <AppContext.Provider
+      value={{
         appData,
         updateAppData,
-        isLoaded
-      }}>
-        {children}
-      </AppContext.Provider>
+        isLoaded,
+      }}
+    >
+      {children}
+    </AppContext.Provider>
   );
 };

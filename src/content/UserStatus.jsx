@@ -11,6 +11,8 @@ export const UserStatus = () => {
   const [preferences, setPreferences] = useState({
     location: "Unknown",
     shiftPriorities: [],
+    shiftPrioritized: false,
+    cityPrioritized: false,
   });
   const [status, setStatus] = useState("off");
 
@@ -21,6 +23,8 @@ export const UserStatus = () => {
         setPreferences({
           location: msg.payload?.location || "Unknown",
           shiftPriorities: msg.payload?.shiftPriorities || [],
+          shiftPrioritized: msg.payload?.shiftPrioritized || false,
+          cityPrioritized: msg.payload?.cityPrioritized || false,
         });
       }
       if (msg.type === "FETCH_STATUS_UPDATE") {
@@ -68,11 +72,13 @@ export const UserStatus = () => {
       <div className={styles.statusRow}>
         <span>Shift Priority:</span>
         <ol className={styles.shiftList}>
-          {preferences.shiftPriorities.length === 0
-            ? <li>Any</li>
-            : preferences.shiftPriorities.map((shift, i) => (
-                <li key={shift}>{shift}</li>
-              ))}
+          {preferences.shiftPriorities.length === 0 ? (
+            <li>Any</li>
+          ) : (
+            preferences.shiftPriorities.map((shift, i) => (
+              <li key={shift}>{shift}</li>
+            ))
+          )}
         </ol>
       </div>
       <div className={styles.statusRow}>
