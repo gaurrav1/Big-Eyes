@@ -12,20 +12,19 @@
 
 .sectionTitle {
     color: var(--color-text);
-    padding-left: 14px;
 }
 
 .sectionButton {
     background: var(--toggle-bg);
     color: var(--muted);
-    padding: 0.3rem .8rem;
+    padding: 0.3rem 0.8rem;
     border-radius: 20px;
-    font-size: 16px;
+    font-size: 17px;
     cursor: pointer;
     border: none;
     transition:
-            background 0.2s,
-            color 0.2s;
+        background 0.2s,
+        color 0.2s;
 }
 
 .sectionButton:disabled {

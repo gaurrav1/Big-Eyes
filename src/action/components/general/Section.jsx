@@ -1,11 +1,11 @@
-import {SectionHeader} from "./SectionHeader.jsx";
-import styles from './css/Section.module.css'
+import { SectionHeader } from "./SectionHeader.jsx";
+import styles from "./css/Section.module.css";
 
 export function Section({ children, className = "", header }) {
-    return (
-        <div className={`${styles.section} ${className}`}>
-            <SectionHeader header={header} />
-            {children}
-        </div>
-    )
+  return (
+    <div className={`${styles.section} ${className}`}>
+      <SectionHeader header={header} />
+      <div className={styles.sectionChildren}>{children}</div>
+    </div>
+  );
 }

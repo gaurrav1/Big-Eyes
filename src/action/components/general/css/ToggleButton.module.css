@@ -38,7 +38,7 @@
     padding-right: 10px;
     white-space: normal;
     word-wrap: break-word;
-    font-size: 1rem;
+    font-size: var(--h4-size);
     display: flex;
     align-items: center;
     color: var(--fg);

@@ -10,10 +10,6 @@ const ShiftPreference = () => {
   const [recentlyAdded, setRecentlyAdded] = useState([]);
   const totalShifts = SHIFT_KEYS;
 
-  const handleToggleShiftPriority = () => {
-    updateAppData({ shiftPrioritized: !appData.shiftPrioritized });
-  };
-
   const selectedShifts = appData.shiftPriorities || SHIFT_KEYS;
 
   const availableShifts = totalShifts.filter(
@@ -53,11 +49,6 @@ const ShiftPreference = () => {
 
   return (
     <div className={styles.container}>
-      <ToggleButton
-        isActive={appData.shiftPrioritized}
-        onClick={handleToggleShiftPriority}
-        title="Don't select my job with priority because it's faster"
-      />
       <div>
         <div className={styles.header}>
           <div className={styles.title}>

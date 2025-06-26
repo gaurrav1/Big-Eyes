@@ -9,14 +9,14 @@
     backdrop-filter: blur(var(--glass-blur));
     -webkit-backdrop-filter: blur(var(--glass-blur));
     transition:
-            background 0.3s,
-            box-shadow 0.3s;
+        background 0.3s,
+        box-shadow 0.3s;
 }
 
 .section {
     background: var(--section-background);
-    padding: .8rem 1rem;
-    width:  100%;
+    padding: 0.8rem 1rem;
+    width: 100%;
     color: var(--fg);
     border-radius: 16px;
     border: var(--glass-border);
@@ -94,5 +94,3 @@
     padding: 0.2rem 0.7rem;
     border-radius: 12px;
 }
-
-

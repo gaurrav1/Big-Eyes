@@ -1,9 +1,8 @@
 // src/action/components/general/ToggleButton.jsx
 import styles from "./css/ToggleButton.module.css";
 
-export const ToggleButton = ({ isActive, onClick, title }) => (
+export const ToggleButton = ({ isActive, onClick, title = "Strict Order" }) => (
   <div>
-    {title && <div className={styles.toggleTitle}>{title}</div>}
     <div
       className={styles.toggleWrapper}
       onClick={onClick}
@@ -12,9 +11,7 @@ export const ToggleButton = ({ isActive, onClick, title }) => (
       tabIndex={0}
       onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onClick()}
     >
-      <span className={styles.toggleText}>
-        {isActive ? "Stop Searching For Jobs" : "Start Searching For Jobs"}
-      </span>
+      <span className={styles.toggleText}>{title}</span>
       <div
         className={`${styles.toggleContainer} ${isActive ? styles.active : ""}`}
       >

@@ -9,7 +9,7 @@
     height: 8px;
 }
 
-::-webkit-scrollbar:hover{
+::-webkit-scrollbar:hover {
     width: 10px;
 }
 
@@ -31,6 +31,7 @@ html,
 body {
     margin: 0;
     padding: 0;
+    overflow-y: scroll;
     min-width: 350px;
     min-height: 500px;
     font-family: "Montserrat", sans-serif;
@@ -47,10 +48,9 @@ body {
 }
 
 .layout {
-
     font-family: inherit;
     font-weight: 500;
-    padding: 1rem .6rem 0 .6rem;
+    padding: 1rem 0.6rem 0 0.6rem;
     display: flex;
     flex-direction: column;
     user-select: none;
