@@ -26,41 +26,46 @@ export const JobFetcher = (() => {
       if (!isActive) return;
 
       // Create 5 parallel requests
-      const requests = Array(5)
-        .fill()
-        .map(() =>
-          JobProcessor.fetchGraphQL(
-            JobProcessor.buildJobRequest(appData),
-          ).catch((e) => null),
-        );
+      const requests = Array(5).fill().map(() =>
+          JobProcessor.fetchGraphQL(JobProcessor.buildJobRequest(appData))
+              .catch(e => null)
+      );
 
-      const responses = await Promise.all(requests);
+      // Process responses as they complete instead of waiting for all
+      for (const request of requests) {
+        try {
+          const response = await request;
+          if (!response) continue;
 
-      if (responses.every((r) => r === null)) {
-        chrome.runtime.sendMessage({ type: "NETWORK_ERROR" });
-      }
-
-      for (const response of responses) {
-        if (!response) continue;
-
-        const bestJob = JobProcessor.getBestJob(response, appData);
-        if (bestJob) {
-          const schedule = await JobProcessor.getJobSchedule(bestJob.jobId);
-
-          if (schedule) {
-            playJobFoundAlert();
-            redirectToApplication(bestJob.jobId, schedule.scheduleId);
-            chrome.runtime.sendMessage({ type: "TAB_REDIRECTED" });
-            stop();
-            return;
+          const bestJob = JobProcessor.getBestJob(response, appData);
+          if (bestJob) {
+            const schedule = await JobProcessor.getJobSchedule(bestJob.jobId);
+            if (schedule) {
+              playJobFoundAlert();
+              redirectToApplication(bestJob.jobId, schedule.scheduleId);
+              chrome.runtime.sendMessage({ type: "TAB_REDIRECTED" });
+              stop();
+              return; // Exit immediately when job is found
+            }
           }
+        } catch (e) {
+          // Handle individual request failures silently
         }
       }
-    }, 500); // Run every 0.5s (10 reqs/sec)
+
+      // Network error reporting
+      if (requests.every(r => r === null)) {
+        chrome.runtime.sendMessage({ type: "NETWORK_ERROR" });
+      }
+    }, 300);
   };
 
+  const tld = "com";
+  const extld = "us";
+  const locale = "en-US";
+
   const redirectToApplication = (jobId, scheduleId) => {
-    const url = `https://hiring.amazon.com/application/us/?CS=true&jobId=${jobId}&locale=en-US&scheduleId=${scheduleId}&ssoEnabled=1#/consent`;
+    const url = `https://hiring.amazon.${tld}/application/${extld}/?CS=true&jobId=${jobId}&locale=${locale}&scheduleId=${scheduleId}&ssoEnabled=1#/consent?CS=true&jobId=${jobId}&locale=${locale}&scheduleId=${scheduleId}&ssoEnabled=1`;
     window.location.href = url;
   };
 
