@@ -34,6 +34,11 @@ export const CommuteSlider = ({ initialValue = 35, onChange }) => {
     }
   }, []);
 
+  const handleLabelClick = useCallback((distance) => {
+    setSliderValue(distance);
+    onChange?.(distance);
+  }, [onChange]);
+
   // Handle snap on release
   const handleRelease = useCallback(() => {
     const snappedValue = snapToNearest(sliderValue);
@@ -80,10 +85,19 @@ export const CommuteSlider = ({ initialValue = 35, onChange }) => {
     <div className={styles.sliderContainer}>
       <div className={styles.labelsContainer}>
         {DISTANCE_OPTIONS.map((distance) => (
-          <div 
+          <div
             key={distance}
             className={`${styles.distanceLabel} ${sliderValue === distance ? styles.activeLabel : ''}`}
             style={{ left: `${calculatePosition(distance)}%` }}
+            onClick={() => handleLabelClick(distance)} // <-- Add this line
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                handleLabelClick(distance);
+                e.preventDefault();
+              }
+            }}
           >
             {distance}<span className={styles.unit}>km</span>
           </div>

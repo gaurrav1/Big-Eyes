@@ -38,15 +38,28 @@ export const PrioritizedList = ({
   onReset,
   resetLabel = "Reset",
   className = "",
-    children,
+  children,
+  editMode: controlledEditMode,
+  onEditModeChange,
 }) => {
-  const [editMode, setEditMode] = useState(false);
+  const [internalEditMode, setInternalEditMode] = useState(false);
+  const editMode = controlledEditMode !== undefined ? controlledEditMode : internalEditMode;
   const [selectedToDelete, setSelectedToDelete] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
   const [dragOverIndex, setDragOverIndex] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const dragItem = useRef(null);
   const dragNode = useRef(null);
+
+
+  const handleEditButtonClick = () => {
+    if (controlledEditMode === undefined) {
+      setInternalEditMode((prev) => !prev);
+    }
+    if (onEditModeChange) {
+      onEditModeChange(!editMode);
+    }
+  };
 
   // Handle drag start
   const handleDragStart = (e, index) => {
@@ -174,7 +187,7 @@ export const PrioritizedList = ({
                 {showEditButton && (
                     <button
                         className={styles.editButton}
-                        onClick={() => setEditMode(!editMode)}
+                        onClick={handleEditButtonClick}
                     >
                       {editMode ? "Done" : "Edit"}
                     </button>
@@ -235,15 +248,6 @@ export const PrioritizedList = ({
                                   </div>
                               )}
 
-                              {editMode && (
-                                  <button
-                                      className={styles.deleteButton}
-                                      onClick={() => handleDeleteItem(item)}
-                                      aria-label="Delete item"
-                                  >
-                                    ×
-                                  </button>
-                              )}
                             </div>
                         )}
                       </li>

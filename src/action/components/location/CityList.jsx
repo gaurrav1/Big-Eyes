@@ -206,6 +206,7 @@ export const CityList = () => {
           showEditButton={false}
           allowMultiDelete={true}
           className={styles.cityPriorityList}
+          editMode={editMode}
         >
             { (otherCities.length > 0) && (
                 <div className={styles.priorityListHeaderRow}>

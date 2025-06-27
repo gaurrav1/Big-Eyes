@@ -158,17 +158,6 @@ export const Location = () => {
     return <div className={styles.loading}>Loading your preferences...</div>;
   }
 
-  const mainHeader = {
-    title: "Location Preferences",
-    isMainHeader: true,
-    fontSize: "H3",
-    isButton: true,
-    buttonName: "Reset",
-    disabled:
-      !appData.centerOfCityCoordinates && appData.otherCities.length === 0,
-    buttonHandler: handleResetAll,
-  };
-
   const centerCitySection = {
     title: "Center Location",
     fontSize: "H4",
@@ -184,12 +173,25 @@ export const Location = () => {
     fontSize: "H4",
   };
 
+  const mainHeader = {
+    title: "Location Preferences",
+    isMainHeader: true,
+    fontSize: "H3",
+    isButton: true,
+    buttonName: "Reset",
+    disabled:
+        !appData.centerOfCityCoordinates && appData.otherCities.length === 0,
+    buttonHandler: handleResetAll,
+  };
+
   return (
     <>
-      <Section className={styles.container} header={mainHeader}>
+      <div className={styles.container} >
         <br />
+        <br/>
+        <br/>
+        <SectionHeader header={mainHeader} />
 
-        <Divider />
         <Section header={centerCitySection}>
           <LocationSearch
             onLocationSelect={handleCenterSelect}
@@ -256,7 +258,7 @@ export const Location = () => {
             </div>
           </ConfirmationDialog>
         </Section>
-      </Section>
+      </div>
     </>
   );
 };
