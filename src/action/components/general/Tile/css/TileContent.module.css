@@ -25,7 +25,5 @@
     font-weight: 500;
     letter-spacing: 0.01em;
     opacity: 0.92;
-    white-space: nowrap;
-    overflow: hidden;
     text-overflow: ellipsis;
 }

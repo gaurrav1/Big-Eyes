@@ -174,7 +174,7 @@ export const CityList = () => {
   const handleEditModeToggle = () => setEditMode((prev) => !prev);
 
   return (
-    <div>
+    <div className={styles.otherCitiesContainer}>
       {/* Reset button now handled by PrioritizedList via onReset prop */}
 
       <LocationSearch
@@ -191,24 +191,10 @@ export const CityList = () => {
         <WarningText text={"Select center city to add optional cities"} />
       )}
 
-      <div className={styles.container}>
-        <div className={styles.priorityListHeaderRow}>
-          <button
-            className={styles.editButton}
-            onClick={handleEditModeToggle}
-            type="button"
-          >
-            {editMode ? "Done" : "Edit"}
-          </button>
-          <button
-            className={styles.resetButton}
-            onClick={resetCities}
-            type="button"
-          >
-            Reset List
-          </button>
-          {editMode && renderSortControls()}
-        </div>
+      <div className={styles.cityListContainer}>
+
+
+
         <PrioritizedList
           items={otherCities}
           onReorder={handleReorderCities}
@@ -220,7 +206,27 @@ export const CityList = () => {
           showEditButton={false}
           allowMultiDelete={true}
           className={styles.cityPriorityList}
-        />
+        >
+            { (otherCities.length > 0) && (
+                <div className={styles.priorityListHeaderRow}>
+                    <button
+                        className={styles.editButton}
+                        onClick={handleEditModeToggle}
+                        type="button"
+                    >
+                        {editMode ? "Done" : "Edit"}
+                    </button>
+                    <button
+                        className={styles.resetButton}
+                        onClick={resetCities}
+                        type="button"
+                    >
+                        Reset List
+                    </button>
+                    {editMode && renderSortControls()}
+                </div>
+            ) }
+        </PrioritizedList>
         {/*<div className={styles.disclaimer}>*/}
         {/*  <strong>Disclaimer:</strong> The suggestion list may show cities all*/}
         {/*  over Canada and the US because the API is powered by Amazon servers.*/}

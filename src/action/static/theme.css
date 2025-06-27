@@ -15,7 +15,7 @@
     --section-background: rgba(255, 255, 255, 0.9);
     --background-glass-dark: rgba(30, 30, 30, 0.65);
     --glass-blur: 18px;
-    --glass-border: 1.5px solid rgba(255, 255, 255, 0.24);
+    --glass-border: 1.5px solid rgba(37, 37, 37, 0.24);
 
     /* Base Colors */
     --color-background: #f7f7fa;
@@ -45,14 +45,13 @@
     --border: rgba(0, 0, 0, 0.08);
     --hover: rgba(0, 113, 227, 0.08);
     --muted: #8e8e93;
-    --toggle-bg: rgba(255, 255, 255, 0.32);
 
     /* Headings */
     --h1-size: 2rem;
     --h2-size: 1.625rem;
     --h3-size: 1.25rem;
     --h4-size: 1rem;
-    --h5-size: 0.875rem;
+    --h5-size: 0.855rem;
     --h6-size: 0.75rem;
 
     --h1-weight: 800;
@@ -65,6 +64,7 @@
 
 [data-theme="dark"] {
     --background-glass: rgba(30, 30, 30, 0.65);
+    --glass-border: 1.5px solid rgba(255, 255, 255, 0.24);
     --background-glass-dark: rgba(20, 20, 20, 0.85);
     --section-background: rgba(43, 43, 43, 0.85);
     --color-background: #18181a;
@@ -80,13 +80,13 @@
     --border: rgba(255, 255, 255, 0.08);
     --hover: rgba(10, 132, 255, 0.08);
     --muted: #8e8e93;
-    --toggle-bg: rgba(30, 30, 30, 0.32);
     --svg-color: #fff;
 }
 
 [data-theme="light"] {
     --background-glass: #efefef;
     --color-background: #f7f7fa;
+    --background-glass-dark: rgba(234, 234, 234, 0.85);
     --bg: var(--background-glass);
     --transperent-bg: rgba(255, 255, 255, 0.22);
     --fg: #222;

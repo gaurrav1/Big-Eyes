@@ -12,6 +12,7 @@ export const LocationSearch = ({
   centerCoordinates = null,
   commuteDistance = null,
   disabled = false,
+  currentLocation = false,
   error = null
 }) => {
   const [inputValue, setInputValue] = useState('');
@@ -47,7 +48,7 @@ export const LocationSearch = ({
           variables: {
             geoAddressQueryRequest: {
               address: query,
-              countries: ['USA'],
+              countries: ['CAN'],
             },
           },
           query: "query queryGeoInfoByAddress($geoAddressQueryRequest: GeoAddressQueryRequest!) {\n  queryGeoInfoByAddress(geoAddressQueryRequest: $geoAddressQueryRequest) {\n    country\n    lat\n    lng\n    postalCode\n    label\n    municipality\n    region\n    subRegion\n    addressNumber\n    __typename\n  }\n}\n",
@@ -279,7 +280,7 @@ export const LocationSearch = ({
           disabled={disabled}
         />
 
-        {!disabled && (
+        {(currentLocation && !disabled) && (
           <button
             type="button"
             onClick={(e) => {

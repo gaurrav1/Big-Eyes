@@ -38,6 +38,7 @@ export const PrioritizedList = ({
   onReset,
   resetLabel = "Reset",
   className = "",
+    children,
 }) => {
   const [editMode, setEditMode] = useState(false);
   const [selectedToDelete, setSelectedToDelete] = useState([]);
@@ -165,124 +166,128 @@ export const PrioritizedList = ({
   };
 
   return (
-    <div className={`${styles.container} ${className}`}>
-      {(showEditButton || onReset) && (
-        <div className={styles.header}>
-          {showEditButton && (
-            <button
-              className={styles.editButton}
-              onClick={() => setEditMode(!editMode)}
-            >
-              {editMode ? "Done" : "Edit"}
-            </button>
-          )}
-          {onReset && (
-            <button
-              className={styles.resetButton}
-              onClick={onReset}
-              type="button"
-            >
-              {resetLabel}
-            </button>
-          )}
-        </div>
-      )}
-
-      <div className={styles.listContainer}>
-        {items.length > 0 ? (
-          <ul className={styles.itemList}>
-            {items.map((item, index) => (
-              <li
-                key={`item-${index}`}
-                className={`${styles.itemWrapper} ${index === dragOverIndex ? styles.dragOver : ""}`}
-                draggable={true}
-                onDragStart={(e) => handleDragStart(e, index)}
-                onDragOver={(e) => handleDragOver(e, index)}
-                onDragLeave={handleDragLeave}
-                onDrop={(e) => handleDrop(e, index)}
-                onDragEnd={handleDragEnd}
-              >
-                {renderItem ? (
-                  renderItem(item, index, isDragging)
-                ) : (
-                  <div
-                    className={`${styles.item} ${editMode ? styles.editMode : ""} ${editMode && selectedToDelete.includes(item) ? styles.selectedItem : ""}`}
-                    onClick={() => {
-                      if (editMode) {
-                        handleSelectItem(
-                          item,
-                          !selectedToDelete.includes(item),
-                        );
-                      }
-                    }}
-                  >
-                    <div className={styles.priorityBadge}>{index + 1}</div>
-
-                    {editMode && <div className={styles.dragHandle}>≡</div>}
-
-                    <div className={styles.itemContent}>
-                      {renderItemContent
-                        ? renderItemContent(item, index)
-                        : JSON.stringify(item)}
-                    </div>
-
-                    {renderItemExtra && (
-                      <div className={styles.itemExtra}>
-                        {renderItemExtra(item, index)}
-                      </div>
-                    )}
-
-                    {editMode && (
-                      <button
-                        className={styles.deleteButton}
-                        onClick={() => handleDeleteItem(item)}
-                        aria-label="Delete item"
-                      >
-                        ×
-                      </button>
-                    )}
-                  </div>
+      <>
+        {children}
+        <div className={`${styles.container} ${className}`}>
+          {(showEditButton || onReset) && (
+              <div className={styles.header}>
+                {showEditButton && (
+                    <button
+                        className={styles.editButton}
+                        onClick={() => setEditMode(!editMode)}
+                    >
+                      {editMode ? "Done" : "Edit"}
+                    </button>
                 )}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <div className={styles.emptyState}>{emptyMessage}</div>
-        )}
-      </div>
+                {onReset && (
+                    <button
+                        className={styles.resetButton}
+                        onClick={onReset}
+                        type="button"
+                    >
+                      {resetLabel}
+                    </button>
+                )}
+              </div>
+          )}
 
-      {editMode && allowMultiDelete && selectedToDelete.length > 0 && (
-        <div className={styles.deleteContainer}>
-          <button
-            className={styles.deleteSelectedButton}
-            onClick={handleDeleteSelected}
+          <div className={styles.listContainer}>
+            {items.length > 0 ? (
+                <ul className={styles.itemList}>
+                  {items.map((item, index) => (
+                      <li
+                          key={`item-${index}`}
+                          className={`${styles.itemWrapper} ${index === dragOverIndex ? styles.dragOver : ""}`}
+                          draggable={true}
+                          onDragStart={(e) => handleDragStart(e, index)}
+                          onDragOver={(e) => handleDragOver(e, index)}
+                          onDragLeave={handleDragLeave}
+                          onDrop={(e) => handleDrop(e, index)}
+                          onDragEnd={handleDragEnd}
+                      >
+                        {renderItem ? (
+                            renderItem(item, index, isDragging)
+                        ) : (
+                            <div
+                                className={`${styles.item} ${editMode ? styles.editMode : ""} ${editMode && selectedToDelete.includes(item) ? styles.selectedItem : ""}`}
+                                onClick={() => {
+                                  if (editMode) {
+                                    handleSelectItem(
+                                        item,
+                                        !selectedToDelete.includes(item),
+                                    );
+                                  }
+                                }}
+                            >
+                              <div className={styles.priorityBadge}>{index + 1}</div>
+
+                              {editMode && <div className={styles.dragHandle}>≡</div>}
+
+                              <div className={styles.itemContent}>
+                                {renderItemContent
+                                    ? renderItemContent(item, index)
+                                    : JSON.stringify(item)}
+                              </div>
+
+                              {renderItemExtra && (
+                                  <div className={styles.itemExtra}>
+                                    {renderItemExtra(item, index)}
+                                  </div>
+                              )}
+
+                              {editMode && (
+                                  <button
+                                      className={styles.deleteButton}
+                                      onClick={() => handleDeleteItem(item)}
+                                      aria-label="Delete item"
+                                  >
+                                    ×
+                                  </button>
+                              )}
+                            </div>
+                        )}
+                      </li>
+                  ))}
+                </ul>
+            ) : (
+                <div className={styles.emptyState}>{emptyMessage}</div>
+            )}
+          </div>
+
+          {editMode && allowMultiDelete && selectedToDelete.length > 0 && (
+              <div className={styles.deleteContainer}>
+                <button
+                    className={styles.deleteSelectedButton}
+                    onClick={handleDeleteSelected}
+                >
+                  Delete Selected ({selectedToDelete.length})
+                </button>
+              </div>
+          )}
+
+          <ConfirmationDialog
+              isOpen={showConfirm}
+              title={confirmTitle}
+              message={`${confirmMessage} (${selectedToDelete.length} item${selectedToDelete.length > 1 ? "s" : ""})`}
+              confirmText="Delete"
+              cancelText="Cancel"
+              onConfirm={confirmDeleteItems}
+              onCancel={() => setShowConfirm(false)}
           >
-            Delete Selected ({selectedToDelete.length})
-          </button>
+            {selectedToDelete.length > 0 && (
+                <ul className={styles.deleteList}>
+                  {selectedToDelete.map((item, index) => (
+                      <li key={`delete-${index}`} className={styles.deleteItem}>
+                        {renderItemContent
+                            ? renderItemContent(item, index)
+                            : JSON.stringify(item)}
+                      </li>
+                  ))}
+                </ul>
+            )}
+          </ConfirmationDialog>
         </div>
-      )}
+      </>
 
-      <ConfirmationDialog
-        isOpen={showConfirm}
-        title={confirmTitle}
-        message={`${confirmMessage} (${selectedToDelete.length} item${selectedToDelete.length > 1 ? "s" : ""})`}
-        confirmText="Delete"
-        cancelText="Cancel"
-        onConfirm={confirmDeleteItems}
-        onCancel={() => setShowConfirm(false)}
-      >
-        {selectedToDelete.length > 0 && (
-          <ul className={styles.deleteList}>
-            {selectedToDelete.map((item, index) => (
-              <li key={`delete-${index}`} className={styles.deleteItem}>
-                {renderItemContent
-                  ? renderItemContent(item, index)
-                  : JSON.stringify(item)}
-              </li>
-            ))}
-          </ul>
-        )}
-      </ConfirmationDialog>
-    </div>
   );
 };

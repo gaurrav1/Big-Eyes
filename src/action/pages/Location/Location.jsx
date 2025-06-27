@@ -196,6 +196,7 @@ export const Location = () => {
             placeholder={
               appData.centerOfCityCoordinates?.name || "Search for a city..."
             }
+            currentLocation={true}
           />
           {appData.centerOfCityCoordinates && (
             <div className={styles.selectedCity}>
