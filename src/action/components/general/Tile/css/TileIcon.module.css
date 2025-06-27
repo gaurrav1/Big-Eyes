@@ -6,8 +6,6 @@
     width: 40px;
     border-radius: 14px;
     border: var(--glass-border);
-    background: var(--background-glass);
-    box-shadow: 0 2px 8px rgba(31, 38, 135, 0.08);
     font-size: 1.3rem;
     transition:
         background 0.2s,

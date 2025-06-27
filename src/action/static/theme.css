@@ -4,7 +4,7 @@
     --bp-lg: 1024px;
     --bp-xl: 1440px;
 
-    --location-bg: var(--background-glass);
+    --location-bg: var(--section-background);
     --calender-bg: var(--background-glass);
 
     --svg-color: #222;
