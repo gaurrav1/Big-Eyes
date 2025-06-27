@@ -74,6 +74,7 @@ export function unregisterTab(
   }
 }
 
+let newTabCooldown = false;
 /**
  * Handles tab removal event.
  * Cleans up the registeredTabs map and triggers activation if needed.
@@ -87,6 +88,7 @@ export function handleTabRemoved(
   tabId,
   registeredTabs,
   activeSearchTabId,
+  isSearchActive,
   activateNextAvailableTab,
 ) {
   registeredTabs.delete(tabId);
@@ -129,6 +131,28 @@ export function handleTabUpdated(
       timestamp: Date.now(),
     });
 
+    if (activeSearchTabId === tabId) {
+      // Prevent multiple redirects
+      if (newTabCooldown) return;
+      newTabCooldown = true;
+
+      chrome.tabs
+        .sendMessage(tabId, {
+          type: "FETCH_STATUS_UPDATE",
+          isActive: false,
+        })
+        .catch(() => {});
+
+      registeredTabs.delete(tabId);
+      activateNextAvailableTab();
+
+      // Open new tab with cooldown
+      setTimeout(() => {
+        openNewSearchTab();
+        newTabCooldown = false;
+      }, 5000); // 5-second cooldown
+    }
+
     if (activeSearchTabId === tab.id && isSearchActive) {
       chrome.tabs.sendMessage(tab.id, {
         type: "FETCH_STATUS_UPDATE",
@@ -149,17 +173,17 @@ export function handleTabUpdated(
 // ... existing code ...
 
 export function isValidContentTab(
-    tabId,
-    registeredTabs,
-    activeWindowMs = 300000,
+  tabId,
+  registeredTabs,
+  activeWindowMs = 300000,
 ) {
   const tabData = registeredTabs.get(tabId);
   return (
-      tabData &&
-      tabData.lastActive > Date.now() - activeWindowMs &&
-      // Validate new fields exist
-      typeof tabData.appData?.shiftPrioritized === 'boolean' &&
-      typeof tabData.appData?.cityPrioritized === 'boolean'
+    tabData &&
+    tabData.lastActive > Date.now() - activeWindowMs &&
+    // Validate new fields exist
+    typeof tabData.appData?.shiftPrioritized === "boolean" &&
+    typeof tabData.appData?.cityPrioritized === "boolean"
   );
 }
 
@@ -269,4 +293,19 @@ export function activateNextAvailableTab(
       isActive: isSearchActive,
     })
     .catch(() => {});
+}
+
+// Update openNewSearchTab to accept appData
+export function openNewSearchTab(appData) {
+  chrome.tabs.create({ url: "https://hiring.amazon.com/" }, (tab) => {
+    chrome.tabs.onUpdated.addListener(function listener(tabId, info) {
+      if (tabId === tab.id && info.status === "complete") {
+        chrome.tabs.sendMessage(tabId, {
+          type: "INIT_SEARCH",
+          appData,
+        });
+        chrome.tabs.onUpdated.removeListener(listener);
+      }
+    });
+  });
 }

@@ -3,7 +3,6 @@
     font-family:
         -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue",
         sans-serif;
-    background: var(--background-glass);
     border-radius: 22px;
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
     border: var(--glass-border);
@@ -21,7 +20,6 @@
 }
 
 .editButton {
-    background: var(--toggle-bg);
     color: var(--accent);
     font-size: 15px;
     font-weight: 500;
@@ -41,14 +39,12 @@
 }
 
 .listContainer {
-    background: var(--background-glass);
     border-radius: 18px;
     box-shadow: 0 4px 24px rgba(31, 38, 135, 0.1);
     overflow: hidden;
     transition:
         transform 0.3s,
         box-shadow 0.3s;
-    backdrop-filter: blur(var(--glass-blur));
 }
 
 .listContainer:hover {
@@ -76,7 +72,6 @@
     align-items: center;
     padding: 16px 22px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-    background: var(--background-glass);
     transition:
         background 0.18s,
         box-shadow 0.18s;
@@ -86,7 +81,6 @@
 }
 
 .editMode {
-    background: var(--background-glass);
     cursor: pointer;
 }
 
@@ -198,17 +192,6 @@
     background: rgba(255, 59, 48, 0.13);
 }
 
-.emptyState {
-    padding: 32px 0;
-    text-align: center;
-    color: #8e8e93;
-    font-size: 1.08rem;
-    background: var(--background-glass);
-    border-radius: 14px;
-    box-shadow: 0 1px 4px rgba(31, 38, 135, 0.06);
-    margin: 1.2rem 0;
-}
-
 .deleteContainer {
     margin-top: 20px;
     text-align: center;
@@ -314,105 +297,11 @@
     opacity: 0.9;
 }
 
-
-.editButton,
-.resetButton,
-.sortButton {
-    background: var(--toggle-bg);
-    border: none;
-    color: var(--accent);
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    padding: 8px 18px;
-    border-radius: 12px;
-    margin-right: 8px;
-    transition:
-            background 0.2s,
-            color 0.2s,
-            box-shadow 0.2s;
-}
-
-.editButton:hover,
-.resetButton:hover,
-.sortButton:hover {
-    background: var(--hover);
-    color: #005bb5;
-}
-
-.sortControls {
-    display: flex;
-    gap: 0.5rem;
-    margin-left: auto;
-}
-
-.sortButton.activeSort {
-    background: var(--accent);
-    color: #fff;
-    box-shadow: 0 2px 8px rgba(0, 113, 227, 0.12);
-}
-
-.cityPriorityList {
-    background: var(--background-glass);
-    border-radius: 16px;
-    box-shadow: 0 4px 24px rgba(31, 38, 135, 0.08);
-    border: var(--glass-border);
-    backdrop-filter: blur(var(--glass-blur));
-}
-
-.cityInfo {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.cityName {
-    font-weight: 600;
-    font-size: 1.1rem;
-    color: #222;
-}
-
-.cityDetails {
-    font-size: 0.95rem;
-    color: #555;
-}
-
-.distance {
-    font-weight: 600;
-    padding: 0.3rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.95rem;
-    background: var(--background-glass);
-    box-shadow: 0 1px 4px rgba(0, 113, 227, 0.06);
-    border: var(--glass-border);
-}
-
-.within {
-    color: #0ca678;
-}
-
-.over {
-    color: #fa5252;
-}
-
 .emptyState {
     text-align: center;
     padding: 2rem;
     color: #868e96;
     font-size: 1rem;
-    background: var(--background-glass);
     border-radius: 14px;
     box-shadow: 0 2px 8px rgba(31, 38, 135, 0.06);
-}
-
-.disclaimer {
-    margin: 1.5rem 1.5rem 1rem 1.5rem;
-    padding: 1rem;
-    border-radius: 12px;
-    background: var(--background-glass);
-    color: #8e8e93;
-    font-size: 0.98rem;
-    box-shadow: 0 2px 8px rgba(31, 38, 135, 0.04);
-    border: var(--glass-border);
-    backdrop-filter: blur(var(--glass-blur));
 }

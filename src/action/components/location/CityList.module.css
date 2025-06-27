@@ -1,9 +1,6 @@
 .container {
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
-    background: var(--background-glass);
-    backdrop-filter: blur(var(--glass-blur));
     transition:
         box-shadow 0.3s,
         background 0.3s;
@@ -13,9 +10,7 @@
     display: flex;
     align-items: center;
     padding: 8px 0;
-    background: var(--background-glass);
     border-radius: 18px 18px 0 0;
-    backdrop-filter: blur(var(--glass-blur));
 }
 
 .editButton,
@@ -56,11 +51,11 @@
 }
 
 .cityPriorityList {
-    background: var(--background-glass);
+    background: var(--section-background);
+    backdrop-filter: blur(var(--glass-blur));
     border-radius: 16px;
     box-shadow: 0 4px 24px rgba(31, 38, 135, 0.08);
     border: var(--glass-border);
-    backdrop-filter: blur(var(--glass-blur));
 }
 
 .cityInfo {
@@ -96,26 +91,4 @@
 
 .over {
     color: #fa5252;
-}
-
-.emptyState {
-    text-align: center;
-    padding: 2rem;
-    color: #868e96;
-    font-size: 1rem;
-    background: var(--background-glass);
-    border-radius: 14px;
-    box-shadow: 0 2px 8px rgba(31, 38, 135, 0.06);
-}
-
-.disclaimer {
-    margin: 1.5rem 1.5rem 1rem 1.5rem;
-    padding: 1rem;
-    border-radius: 12px;
-    background: var(--background-glass);
-    color: #8e8e93;
-    font-size: 0.98rem;
-    box-shadow: 0 2px 8px rgba(31, 38, 135, 0.04);
-    border: var(--glass-border);
-    backdrop-filter: blur(var(--glass-blur));
 }

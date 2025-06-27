@@ -86,7 +86,7 @@ export const JobFetcher = (() => {
                 found = true;
                 controllers.forEach((c) => c.abort()); // Cancel others
                 playJobFoundAlert();
-                chrome.runtime.sendMessage({ type: "TAB_REDIRECTED" });
+
                 redirectToApplication(bestJob.jobId, schedule.scheduleId);
 
                 stop(); // Stop scheduler
@@ -117,6 +117,7 @@ export const JobFetcher = (() => {
 
   const redirectToApplication = (jobId, scheduleId) => {
     const url = `https://hiring.amazon.${tld}/application/${extld}/?CS=true&jobId=${jobId}&locale=${locale}&scheduleId=${scheduleId}&ssoEnabled=1#/consent?CS=true&jobId=${jobId}&locale=${locale}&scheduleId=${scheduleId}&ssoEnabled=1`;
+    chrome.runtime.sendMessage({ type: "TAB_REDIRECTED" });
     // window.location.href = url;
   };
 

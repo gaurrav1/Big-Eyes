@@ -216,23 +216,18 @@ export const CityList = () => {
           renderItemContent={renderCityContent}
           renderItemExtra={renderCityDistance}
           confirmDelete={false}
-          emptyMessage={
-            <div className={styles.emptyState}>
-              <p>No cities added yet</p>
-              <p>Search for cities within your commute distance</p>
-            </div>
-          }
+          emptyMessage="No cities selected yet"
           showEditButton={false}
           allowMultiDelete={true}
           className={styles.cityPriorityList}
         />
-        <div className={styles.disclaimer}>
-          <strong>Disclaimer:</strong> The suggestion list may show cities all
-          over Canada and the US because the API is powered by Amazon servers.
-          Only select cities where you are sure an Amazon station exists;
-          otherwise, the filter will ignore your choice if the selected city is
-          unknown during job search.
-        </div>
+        {/*<div className={styles.disclaimer}>*/}
+        {/*  <strong>Disclaimer:</strong> The suggestion list may show cities all*/}
+        {/*  over Canada and the US because the API is powered by Amazon servers.*/}
+        {/*  Only select cities where you are sure an Amazon station exists;*/}
+        {/*  otherwise, the filter will ignore your choice if the selected city is*/}
+        {/*  unknown during job search.*/}
+        {/*</div>*/}
       </div>
     </div>
   );

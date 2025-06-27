@@ -67,7 +67,10 @@ export function handleMessage(msg, sender, sendResponse, context) {
           context.activeSearchTabId,
           context.isSearchActive,
           context.activateNextAvailableTab,
+          context.appData,
         );
+        // Open a new tab to continue searching
+        tabService.openNewSearchTab(context.appData);
       }
       sendResponse({ success: true });
       break;
