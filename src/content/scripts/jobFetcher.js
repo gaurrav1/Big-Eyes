@@ -51,43 +51,60 @@ export const JobFetcher = (() => {
   };
   // Highly optimized scheduler: minimal allocations, direct logic
   const runScheduler = () => {
-    intervalId = setInterval(async () => {
-      if (!isActive) return;
-      if (!cachedRequest) return;
+    intervalId = setInterval(() => {
+      if (!isActive || !cachedRequest) return;
 
-      // Log appData before fetching jobs
-      console.log(
-        "[JobFetcher] Using appData for fetch:",
-        JSON.stringify(appData, null, 2),
-      );
-
-      // 5 parallel requests, process as soon as any returns a match
       let found = false;
-      let pending = 5;
-      for (let i = 0; i < 5; ++i) {
-        JobProcessor.fetchGraphQL(cachedRequest)
+      const controllers = Array.from(
+        { length: 5 },
+        () => new AbortController(),
+      );
+      let pending = controllers.length;
+
+      controllers.forEach((controller, index) => {
+        JobProcessor.fetchGraphQL(cachedRequest, controller.signal)
           .then(async (response) => {
             if (found || !response) return;
             const bestJob = JobProcessor.getBestJob(response, appData);
+            if (!bestJob) {
+              console.log("[JobFetcher] No suitable job found by getBestJob.");
+              return;
+            }
             if (bestJob) {
+              console.log("[JobFetcher] Best job found:", bestJob);
+
               const schedule = await JobProcessor.getJobSchedule(bestJob.jobId);
+
+              if (!schedule) {
+                console.log(
+                  "[JobFetcher] No schedule found for jobId:",
+                  bestJob.jobId,
+                );
+                return;
+              }
               if (schedule && !found) {
                 found = true;
+                controllers.forEach((c) => c.abort()); // Cancel others
                 playJobFoundAlert();
-                redirectToApplication(bestJob.jobId, schedule.scheduleId);
                 chrome.runtime.sendMessage({ type: "TAB_REDIRECTED" });
-                stop();
+                redirectToApplication(bestJob.jobId, schedule.scheduleId);
+
+                stop(); // Stop scheduler
               }
             }
           })
-          .catch(() => {})
+          .catch((err) => {
+            if (err.name !== "AbortError") {
+              console.error(`[FetchError] on index ${index}:`, err);
+            }
+          })
           .finally(() => {
             pending--;
             if (pending === 0 && !found) {
               chrome.runtime.sendMessage({ type: "NETWORK_ERROR" });
             }
           });
-      }
+      });
     }, 300);
   };
 

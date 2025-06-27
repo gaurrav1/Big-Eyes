@@ -98,7 +98,7 @@ export const JobProcessor = {
       "query searchScheduleCards($searchScheduleRequest: SearchScheduleRequest!) {\n  searchScheduleCards(searchScheduleRequest: $searchScheduleRequest) {\n    nextToken\n    scheduleCards {\n      hireStartDate\n      address\n      basePay\n      bonusSchedule\n      city\n      currencyCode\n      dataSource\n      distance\n      employmentType\n      externalJobTitle\n      featuredSchedule\n      firstDayOnSite\n      hoursPerWeek\n      image\n      jobId\n      jobPreviewVideo\n      language\n      postalCode\n      priorityRank\n      scheduleBannerText\n      scheduleId\n      scheduleText\n      scheduleType\n      signOnBonus\n      state\n      surgePay\n      tagLine\n      geoClusterId\n      geoClusterName\n      siteId\n      scheduleBusinessCategory\n      totalPayRate\n      financeWeekStartDate\n      laborDemandAvailableCount\n      scheduleBusinessCategoryL10N\n      firstDayOnSiteL10N\n      financeWeekStartDateL10N\n      scheduleTypeL10N\n      employmentTypeL10N\n      basePayL10N\n      signOnBonusL10N\n      totalPayRateL10N\n      distanceL10N\n      requiredLanguage\n      monthlyBasePay\n      monthlyBasePayL10N\n      vendorKamName\n      vendorId\n      vendorName\n      kamPhone\n      kamCorrespondenceEmail\n      kamStreet\n      kamCity\n      kamDistrict\n      kamState\n      kamCountry\n      kamPostalCode\n      __typename\n    }\n    __typename\n  }\n}\n",
   }),
 
-  fetchGraphQL: async (request) => {
+  fetchGraphQL: async (request, signal = undefined) => {
     const response = await axios.post(GRAPHQL_URL, request, {
       headers: {
         "Content-Type": "application/json",
@@ -108,6 +108,7 @@ export const JobProcessor = {
         Pragma: "no-cache",
       },
       timeout: 2000,
+      signal, // NEW: for cancellation support
     });
     return response.data;
   },
@@ -212,6 +213,27 @@ export const JobProcessor = {
     });
 
     // After loop, log the final selection
+    console.log(
+      `[JobScoring] Selected jobId=${best.jobId} with score=${JSON.stringify(best.score)}`,
+    );
+    // Fallback logic: If shiftScore was never improved, no job matches shifts
+    if (best.score[0] === Number.MAX_SAFE_INTEGER && filter.shifts.length > 0) {
+      for (const job of jobCards) {
+        const jobShifts = job.jobType?.split(";").map((s) => s.trim()) ?? [];
+        if (jobShifts.some((s) => filter.shifts.includes(s))) {
+          console.log(
+            "[JobScoring] Fallback selected job with valid shift:",
+            job.jobId,
+          );
+          return job.jobId;
+        }
+      }
+      console.log(
+        "[JobScoring] No job matched required shift types in fallback.",
+      );
+      return null;
+    }
+
     console.log(
       `[JobScoring] Selected jobId=${best.jobId} with score=${JSON.stringify(best.score)}`,
     );
