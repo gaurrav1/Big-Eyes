@@ -67,6 +67,9 @@ dataService.loadState({
   saveState,
 });
 
+// Add this after loading state:
+broadcastAppData();
+
 // --- Tab lifecycle events ---
 chrome.tabs.onRemoved.addListener((tabId) => {
   tabService.handleTabRemoved(

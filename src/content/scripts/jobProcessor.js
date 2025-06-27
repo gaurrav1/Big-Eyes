@@ -11,30 +11,41 @@ export const JobProcessor = {
         searchJobRequest: {
           locale: "en-US",
           country: "United States",
-          pageSize: 1,
-          dateFilters: [
+          keyWords: "",
+          equalFilters: [],
+          containFilters: [
             {
-              key: "firstDayOnSite",
-              range: { startDate: JobProcessor.getToday() },
+              key: "isPrivateSchedule",
+              val: ["false"],
             },
           ],
-          sorters: [{ fieldName: "totalPayRateMax", ascending: "false" }],
+          rangeFilters: [
+            {
+              key: "hoursPerWeek",
+              range: {
+                minimum: 0,
+                maximum: 80,
+              },
+            },
+          ],
+          sorters: [
+            {
+              fieldName: "totalPayRateMax",
+              ascending: "false",
+            },
+          ],
+          // geoQueryClause: {
+          //   lat: 43.685271,
+          //   lng: -79.759924,
+          //   unit: "km",
+          //   distance: 15000,
+          // },
+          pageSize: 200,
+          consolidateSchedule: true,
         },
       },
-      query: `query searchJobCardsByLocation($searchJobRequest: SearchJobRequest!) {
-                searchJobCardsByLocation(searchJobRequest: $searchJobRequest) {
-                    jobCards {
-                        jobId
-                        jobTitle
-                        jobType
-                        employmentType
-                        city
-                        state
-                        distance
-                        totalPayRateMax
-                    }
-                }
-            }`,
+      query:
+        "query searchJobCardsByLocation($searchJobRequest: SearchJobRequest!) {\n  searchJobCardsByLocation(searchJobRequest: $searchJobRequest) {\n    nextToken\n    jobCards {\n      jobId\n      language\n      dataSource\n      requisitionType\n      jobTitle\n      jobType\n      employmentType\n      city\n      state\n      postalCode\n      locationName\n      totalPayRateMin\n      totalPayRateMax\n      tagLine\n      bannerText\n      image\n      jobPreviewVideo\n      distance\n      featuredJob\n      bonusJob\n      bonusPay\n      scheduleCount\n      currencyCode\n      geoClusterDescription\n      surgePay\n      jobTypeL10N\n      employmentTypeL10N\n      bonusPayL10N\n      surgePayL10N\n      totalPayRateMinL10N\n      totalPayRateMaxL10N\n      distanceL10N\n      monthlyBasePayMin\n      monthlyBasePayMinL10N\n      monthlyBasePayMax\n      monthlyBasePayMaxL10N\n      jobContainerJobMetaL1\n      virtualLocation\n      poolingEnabled\n      __typename\n    }\n    __typename\n  }\n}\n",
     };
 
     if (appData.centerOfCityCoordinates) {
@@ -146,7 +157,9 @@ export const JobProcessor = {
 
     jobCards.forEach((job, idx) => {
       // 1. Turn the semicolon-list into an actual array:
-      const jobShifts = job.jobType.split(";");
+      const jobShifts = job.jobType.split(";").map((s) => s.trim());
+
+      console.log("jobShifts:", jobShifts, "filter.shifts:", filter.shifts);
 
       // 2. Compute shiftScore:
       let shiftScore;
@@ -177,15 +190,31 @@ export const JobProcessor = {
       }
 
       const candidateScore = [shiftScore, cityScore, idx];
+
+      // Log all scoring details for this job
+      console.log(
+        `[JobScoring] idx=${idx}, jobId=${job.jobId}, jobTitle=${job.jobTitle}, jobShifts=${JSON.stringify(jobShifts)}, city=${job.city}, shiftScore=${shiftScore}, cityScore=${cityScore}, candidateScore=${JSON.stringify(candidateScore)}`,
+      );
+
       // Compare lexicographically
-      const better =
-        candidateScore.some((v, i) => v < best.score[i]) &&
-        candidateScore.every((v, i) => i === 0 || v <= best.score[i]);
-      if (better) {
+      function lexLess(a, b) {
+        for (let i = 0; i < a.length; ++i) {
+          if (a[i] < b[i]) return true;
+          if (a[i] > b[i]) return false;
+        }
+        return false;
+      }
+
+      // ... inside your forEach loop:
+      if (lexLess(candidateScore, best.score)) {
         best = { score: candidateScore, jobId: job.jobId };
       }
     });
 
+    // After loop, log the final selection
+    console.log(
+      `[JobScoring] Selected jobId=${best.jobId} with score=${JSON.stringify(best.score)}`,
+    );
     return best.jobId;
   },
 
@@ -196,11 +225,16 @@ export const JobProcessor = {
       shifts: appData.shiftPriorities || [],
       isShiftPrioritized: appData.shiftPrioritized || false, // UPDATED
       cities: appData.otherCities || [],
-      isCityPrioritized: appData.cityPrioritized || false,   // UPDATED
+      isCityPrioritized: appData.cityPrioritized || false, // UPDATED
     };
     const bestJobId = JobProcessor.selectBestJobIdRaw(jobCards || [], filter);
-    if (!bestJobId) return null;
-    return (jobCards || []).find((j) => j.jobId === bestJobId) || null;
+    if (!bestJobId) {
+      console.log("[JobScoring] No suitable job found.");
+      return null;
+    }
+    const bestJob = (jobCards || []).find((j) => j.jobId === bestJobId) || null;
+    console.log("[JobScoring] getBestJob selected:", bestJob);
+    return bestJob;
   },
 
   getJobSchedule: async (jobId) => {

@@ -47,7 +47,7 @@ export const LocationSearch = ({
           variables: {
             geoAddressQueryRequest: {
               address: query,
-              countries: ['CAN'],
+              countries: ['USA'],
             },
           },
           query: "query queryGeoInfoByAddress($geoAddressQueryRequest: GeoAddressQueryRequest!) {\n  queryGeoInfoByAddress(geoAddressQueryRequest: $geoAddressQueryRequest) {\n    country\n    lat\n    lng\n    postalCode\n    label\n    municipality\n    region\n    subRegion\n    addressNumber\n    __typename\n  }\n}\n",

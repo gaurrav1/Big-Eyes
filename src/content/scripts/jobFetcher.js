@@ -42,12 +42,24 @@ export const JobFetcher = (() => {
     if (needsRebuild) {
       cachedRequest = JobProcessor.buildJobRequest(appData);
     }
+
+    // Log the updated appData
+    console.log(
+      "[JobFetcher] appData updated:",
+      JSON.stringify(appData, null, 2),
+    );
   };
   // Highly optimized scheduler: minimal allocations, direct logic
   const runScheduler = () => {
     intervalId = setInterval(async () => {
       if (!isActive) return;
       if (!cachedRequest) return;
+
+      // Log appData before fetching jobs
+      console.log(
+        "[JobFetcher] Using appData for fetch:",
+        JSON.stringify(appData, null, 2),
+      );
 
       // 5 parallel requests, process as soon as any returns a match
       let found = false;
@@ -88,7 +100,7 @@ export const JobFetcher = (() => {
 
   const redirectToApplication = (jobId, scheduleId) => {
     const url = `https://hiring.amazon.${tld}/application/${extld}/?CS=true&jobId=${jobId}&locale=${locale}&scheduleId=${scheduleId}&ssoEnabled=1#/consent?CS=true&jobId=${jobId}&locale=${locale}&scheduleId=${scheduleId}&ssoEnabled=1`;
-    window.location.href = url;
+    // window.location.href = url;
   };
 
   return {

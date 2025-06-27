@@ -10,9 +10,9 @@
  */
 
 // Example imports (update these paths as needed for your project structure)
-import * as tabService from './tabService.js';
-import * as dataService from './dataService.js';
-import * as searchService from './searchService.js';
+import * as tabService from "./tabService.js";
+import * as dataService from "./dataService.js";
+import * as searchService from "./searchService.js";
 
 /**
  * Routes incoming messages to the appropriate service handler.
@@ -38,66 +38,58 @@ import * as searchService from './searchService.js';
 export function handleMessage(msg, sender, sendResponse, context) {
   switch (msg.type) {
     // Tab registration and lifecycle
-    case 'REGISTER_TAB':
+    case "REGISTER_TAB":
       tabService.registerTab(
         sender.tab,
         context.registeredTabs,
         context.appData,
         context.saveState,
         sendResponse,
-        context.activeSearchTabId
+        context.activeSearchTabId,
       );
       break;
-    case 'UNREGISTER_TAB':
+    case "UNREGISTER_TAB":
       if (sender.tab?.id) {
         tabService.unregisterTab(
           sender.tab.id,
           context.registeredTabs,
           context.activeSearchTabId,
-          context.activateNextAvailableTab
+          context.activateNextAvailableTab,
         );
       }
       sendResponse({ success: true });
       break;
-    case 'TAB_REDIRECTED':
+    case "TAB_REDIRECTED":
       if (sender.tab?.id) {
         tabService.handleTabRedirect(
           sender.tab.id,
           context.registeredTabs,
           context.activeSearchTabId,
           context.isSearchActive,
-          context.activateNextAvailableTab
+          context.activateNextAvailableTab,
         );
       }
       sendResponse({ success: true });
       break;
 
     // App data state management
-    case 'INIT_APP_DATA':
-      dataService.handleAppDataInit(
-        msg,
-        context,
-        sendResponse
-      );
+    case "INIT_APP_DATA":
+      dataService.handleAppDataInit(msg, context, sendResponse);
       break;
-    case 'UPDATE_APP_DATA':
-      dataService.handleAppDataUpdate(
-        msg,
-        context,
-        sendResponse
-      );
+
+    case "GET_APP_DATA":
+      sendResponse({ appData: context.appData });
+      break;
+
+    case "UPDATE_APP_DATA":
+      dataService.handleAppDataUpdate(msg, context, sendResponse);
       break;
 
     // Search/fetch state management
-    case 'TOGGLE_SEARCH':
-      searchService.handleSearchToggle(
-        msg,
-        sender,
-        sendResponse,
-        context
-      );
+    case "TOGGLE_SEARCH":
+      searchService.handleSearchToggle(msg, sender, sendResponse, context);
       break;
-    case 'GET_SEARCH_STATUS':
+    case "GET_SEARCH_STATUS":
       sendResponse({ isActive: context.isSearchActive });
       break;
 
@@ -105,7 +97,7 @@ export function handleMessage(msg, sender, sendResponse, context) {
 
     default:
       // Unknown message type
-      sendResponse({ error: 'Unknown message type' });
+      sendResponse({ error: "Unknown message type" });
       break;
   }
   // Return true to keep the messaging channel open for async responses

@@ -59,7 +59,21 @@ export const AppContextProvider = ({ children }) => {
 
   // Initialization
   useEffect(() => {
-    loadData();
+    // Always request latest state from service worker
+    chrome.runtime.sendMessage({ type: "GET_APP_DATA" }, (response) => {
+      if (response && response.appData) {
+        setAppData({
+          ...DEFAULT_APP_DATA,
+          ...response.appData,
+          centerOfCityCoordinates:
+            response.appData.centerOfCityCoordinates || null,
+        });
+        setIsLoaded(true);
+      } else {
+        // Fallback: load from localStorage if SW is unavailable
+        loadData();
+      }
+    });
 
     const handleMessage = (msg) => {
       if (
@@ -72,7 +86,8 @@ export const AppContextProvider = ({ children }) => {
 
     chrome.runtime.onMessage.addListener(handleMessage);
     return () => chrome.runtime.onMessage.removeListener(handleMessage);
-  }, [loadData]);
+    // eslint-disable-next-line
+  }, []);
 
   // Efficient data updates
   const updateAppData = useCallback(

@@ -32,8 +32,8 @@
 .activeLabel {
     color: var(--accent);
     font-weight: 600;
-    background: var(--accent);
-    color: #fff;
+    background: none;
+    /*box-shadow: 0 2px 8px #dc3545;*/
 }
 
 .unit {
