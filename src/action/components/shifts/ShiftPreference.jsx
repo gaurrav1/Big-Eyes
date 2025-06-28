@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styles from "./ShiftPreference.module.css";
 import { useAppContext } from "../../context/AppContext";
-import { PrioritizedList } from "../../components/common/PrioritizedList";
+import { PrioritizedList } from "../common/PrioritizedList.jsx";
 import { SHIFT_LABELS, SHIFT_KEYS } from "../../constants/shifts";
 import { ToggleButton } from "../button/ToggleButton";
 

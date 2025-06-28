@@ -16,6 +16,7 @@
     --background-glass-dark: rgba(30, 30, 30, 0.65);
     --glass-blur: 18px;
     --glass-border: 1.5px solid rgba(37, 37, 37, 0.24);
+    --glass-dotted-border:  1.5px dotted rgba(37, 37, 37, 0.24);
 
     /* Base Colors */
     --color-background: #f7f7fa;

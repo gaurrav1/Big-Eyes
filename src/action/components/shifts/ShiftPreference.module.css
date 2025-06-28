@@ -1,17 +1,16 @@
 .container {
-    display: grid;
-    margin-top: -18px;
-    grid-template-columns: 1fr;
-    gap: 32px;
-    max-width: 900px;
-    font-family: inherit;
-    color: var(--fg);
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-top: 24px;
     background: var(--background-glass);
     border-radius: 24px;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
     backdrop-filter: blur(var(--glass-blur));
-    border: var(--glass-border);
-    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    transition:
+            background 0.3s,
+            box-shadow 0.3s;
 }
 
 @media (min-width: 768px) {
