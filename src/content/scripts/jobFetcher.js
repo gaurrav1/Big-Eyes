@@ -66,6 +66,12 @@ export const JobFetcher = (() => {
       );
       let pending = controllers.length;
 
+      if (!cachedRequest) {
+        console.warn("[JobFetcher] No cached request found, skipping fetch.");
+        return;
+      }
+
+
       controllers.forEach((controller, index) => {
         JobProcessor.fetchGraphQL(cachedRequest, controller.signal)
           .then(async (response) => {
@@ -122,7 +128,28 @@ export const JobFetcher = (() => {
 
   const redirectToApplication = (jobId, scheduleId) => {
     const url = `https://hiring.amazon.${tld}/application/${extld}/?CS=true&jobId=${jobId}&locale=${locale}&scheduleId=${scheduleId}&ssoEnabled=1#/consent?CS=true&jobId=${jobId}&locale=${locale}&scheduleId=${scheduleId}&ssoEnabled=1`;
-    // chrome.runtime.sendMessage({ type: "TAB_REDIRECTED" });
+    // 1. Stop the fetcher
+    stop();
+
+    // 2. Tell background that toggle should be turned off globally
+    chrome.runtime.sendMessage({
+      type: "TOGGLE_FETCHING",
+      isActive: false,
+    });
+
+
+// 3. Clear active tab
+    chrome.runtime.sendMessage({
+      type: "CLEAR_ACTIVE_TAB",
+    });
+
+    // 4. Open job search tab
+    chrome.runtime.sendMessage({
+      type: "OPEN_JOB_SEARCH_TAB",
+    });
+
+
+    // Optionally: redirect current tab
     // window.location.href = url;
   };
 

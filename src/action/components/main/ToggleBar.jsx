@@ -32,50 +32,26 @@ export function ToggleBar({ appData }) {
     setShowLocationDialog(false);
   };
 
-  // Add this useEffect to handle actual toggling
-  useEffect(() => {
-    if (isSearching === undefined) return;
-
-    chrome.runtime.sendMessage(
-      {
-        type: "TOGGLE_FETCHING",
-        isActive: isSearching,
-      },
-      (response) => {
-        if (!response?.success) {
-          setToggleError(response?.error || "Failed to toggle search.");
-          setIsSearching(!isSearching);
-        }
-      },
-    );
-  }, [isSearching]);
-
-  // Fix the toggle function
   const toggleSearch = () => {
-
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const activeTab = tabs[0];
-        chrome.tabs.sendMessage(activeTab.id, {
-          type: "TOGGLE_CLICKED",
-          payload: { /* your toggle state or command */ }
-        });
-    });
+      const newState = !isSearching;
 
-
-    const newState = !isSearching;
-    setIsSearching(newState);
-
-    // Only show dialog if activating without location
-    if (newState && shouldShowLocationDialog()) {
-      setShowLocationDialog(true);
-    } else {
-      // Actually toggle the search state
-      chrome.runtime.sendMessage({
+      // Send message directly to that tab
+      chrome.tabs.sendMessage(activeTab.id, {
         type: "TOGGLE_FETCHING",
         isActive: newState,
       });
-    }
+
+      setIsSearching(newState);
+
+      // Optional dialog logic
+      if (newState && shouldShowLocationDialog()) {
+        setShowLocationDialog(true);
+      }
+    });
   };
+
 
   // Handle dialog confirm
   const handleChooseLocation = () => {
@@ -89,23 +65,25 @@ export function ToggleBar({ appData }) {
     });
   };
 
-  // Fix the useEffect for state sync
   useEffect(() => {
-    // Get initial state
-    chrome.runtime.sendMessage({ type: "GET_TAB_STATE" }, (state) =>
-      setIsSearching(state?.isActive || false),
-    );
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const tabId = tabs[0].id;
 
-    // Listen for state changes
+      chrome.tabs.sendMessage(tabId, { type: "GET_TAB_STATE" }, (res) => {
+        setIsSearching(res?.isActive || false);
+      });
+    });
+
+    // Listen to updates
     const listener = (msg) => {
       if (msg.type === "TAB_STATE_UPDATE") {
-        setIsSearching(msg.tabState?.isActive || false);
+        setIsSearching(msg.isActive);
       }
     };
     chrome.runtime.onMessage.addListener(listener);
-
     return () => chrome.runtime.onMessage.removeListener(listener);
   }, []);
+
 
   return (
     <div className={styles.toggleBar}>

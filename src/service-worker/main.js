@@ -1,4 +1,3 @@
-// Service Worker - Single Source of Truth
 import { DEFAULT_APP_DATA } from "./modules/defaultData.js";
 
 const STORAGE_KEY_APP_DATA = "appData";
@@ -31,13 +30,7 @@ chrome.storage.local.get(
 // Message handling
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch (message.type) {
-      case "SERVICE_WORKER_TABID":
-          chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-              const tabId = tabs[0].id;
-              console.log("Active Tab ID:", tabId);
-              sendResponse(tabId)
-          });
-      case "GET_APP_DATA":
+    case "GET_APP_DATA":
       sendResponse(appData);
       break;
 
@@ -83,6 +76,27 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     case "FETCH_STATUS_UPDATE":
         sendResponse(tabState.isActive)
+        break;
+
+    case "OPEN_JOB_SEARCH_TAB":
+        chrome.tabs.create({
+            url: "https://hiring.amazon.com/app#/jobSearch",
+            // active: true,
+        }, (tab) => {
+            updateTabState({ isActive: true, activeTabId: tab.id });
+
+            // Optionally send APP_DATA_UPDATE to new tab
+            chrome.tabs.sendMessage(tab.id, {
+                type: "APP_DATA_UPDATE",
+                payload: appData,
+            });
+        });
+        break;
+
+    case "CLEAR_ACTIVE_TAB":
+        updateTabState({ isActive: false, activeTabId: null });
+        break;
+
 
   }
   return true;
@@ -111,6 +125,10 @@ async function handleFetchToggle(isActive) {
       try {
         const tab = await chrome.tabs.get(tabState.activeTabId);
         if (tab.url.includes("jobSearch")) {
+            chrome.tabs.sendMessage(validTab.id, {
+                type: "APP_DATA_UPDATE",
+                payload: appData,
+            });
           updateTabState({ isActive: true, activeTabId: tab.id });
           return;
         }
