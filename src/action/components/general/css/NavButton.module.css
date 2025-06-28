@@ -2,12 +2,12 @@
     text-decoration: none;
     color: var(--accent);
     flex: 1;
-    padding: 1rem 0;
+    padding: .8rem 0;
     border: var(--glass-border);
     border-radius: 14px;
     background: var(--background-glass);
     font-weight: 600;
-    font-size: 1.08rem;
+    font-size: var(--h5-size);
     cursor: pointer;
     transition:
         background 0.2s,

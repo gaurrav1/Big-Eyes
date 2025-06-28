@@ -4,7 +4,7 @@ import { LocationSearch } from "./LocationSearch.jsx";
 import { PrioritizedList } from "../common/PrioritizedList";
 import styles from "./CityList.module.css";
 import { FaSortAmountDown, FaSortAmountUp } from "react-icons/fa";
-import {WarningText} from "../general/WarningText.jsx";
+import { WarningText } from "../general/WarningText.jsx";
 
 export const CityList = () => {
   const { appData, updateAppData } = useAppContext();
@@ -12,6 +12,7 @@ export const CityList = () => {
   const [addCityError, setAddCityError] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [sortOrder, setSortOrder] = useState(null); // null, "asc", "desc"
+  const [listResetKey, setListResetKey] = useState(0); // For remounting PrioritizedList
 
   const handleAddCity = useCallback(
     (location) => {
@@ -78,6 +79,8 @@ export const CityList = () => {
   const resetCities = () => {
     updateAppData({ otherCities: [] });
     setAddCityError(null);
+    setEditMode(false); // Turn off edit mode
+    setListResetKey((k) => k + 1); // Force remount PrioritizedList to clear selection
   };
 
   // Render city content
@@ -192,10 +195,8 @@ export const CityList = () => {
       )}
 
       <div className={styles.cityListContainer}>
-
-
-
         <PrioritizedList
+          key={listResetKey}
           items={otherCities}
           onReorder={handleReorderCities}
           onDelete={handleDeleteCities}
@@ -208,33 +209,26 @@ export const CityList = () => {
           className={styles.cityPriorityList}
           editMode={editMode}
         >
-            { (otherCities.length > 0) && (
-                <div className={styles.priorityListHeaderRow}>
-                    <button
-                        className={styles.editButton}
-                        onClick={handleEditModeToggle}
-                        type="button"
-                    >
-                        {editMode ? "Done" : "Edit"}
-                    </button>
-                    <button
-                        className={styles.resetButton}
-                        onClick={resetCities}
-                        type="button"
-                    >
-                        Reset List
-                    </button>
-                    {editMode && renderSortControls()}
-                </div>
-            ) }
+          {otherCities.length > 0 && (
+            <div className={styles.priorityListHeaderRow}>
+              <button
+                className={styles.editButton}
+                onClick={handleEditModeToggle}
+                type="button"
+              >
+                {editMode ? "Done" : "Edit"}
+              </button>
+              <button
+                className={styles.resetButton}
+                onClick={resetCities}
+                type="button"
+              >
+                Reset List
+              </button>
+              {editMode && renderSortControls()}
+            </div>
+          )}
         </PrioritizedList>
-        {/*<div className={styles.disclaimer}>*/}
-        {/*  <strong>Disclaimer:</strong> The suggestion list may show cities all*/}
-        {/*  over Canada and the US because the API is powered by Amazon servers.*/}
-        {/*  Only select cities where you are sure an Amazon station exists;*/}
-        {/*  otherwise, the filter will ignore your choice if the selected city is*/}
-        {/*  unknown during job search.*/}
-        {/*</div>*/}
       </div>
     </div>
   );

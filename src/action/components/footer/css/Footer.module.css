@@ -1,21 +1,17 @@
 .footerWrapper {
     justify-self: flex-end;
     width: 100%;
-    background: var(--background-glass);
     border-radius: 18px;
     box-shadow: 0 8px 32px #1f26872e;
-    border: var(--glass-border);
     padding: 1.2rem 0 0.7rem 0;
-    margin-top: 2rem;
     backdrop-filter: blur(var(--glass-blur));
 }
 
 .buttonGroup {
     display: flex;
     flex-direction: column;
-    gap: 14px;
     margin-bottom: 1.2rem;
-    padding: 0 1.5rem;
+    padding: 0 .5rem;
 }
 
 .footer {
