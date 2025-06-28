@@ -5,7 +5,7 @@ import {ToggleBar} from "../../components/main/ToggleBar.jsx";
 import {Section} from "../../components/general/Section.jsx";
 
 export const Main = () => {
-  const { appData, isLoaded } = useAppContext();
+  const { appData } = useAppContext();
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export const Main = () => {
     <div className="container">
         <ToggleBar appData={appData}/>
         <Section header={filterHeader}>
-            {isClient && isLoaded ? (
+            {isClient ? (
                 <Lists appData={appData} />
             ) : (
                 <div>Loading preferences...</div>

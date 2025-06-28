@@ -2,8 +2,7 @@ import {
   createContext,
   useContext,
   useState,
-  useEffect,
-  useCallback,
+  useEffect, useCallback,
 } from "react";
 
 const AppContext = createContext();
@@ -16,30 +15,30 @@ const DEFAULT_APP_DATA = {
   shiftPrioritized: false, // NEW FIELD
   cityPrioritized: false, // NEW FIELD
   shiftPriorities: ["FLEX_TIME", "FULL_TIME", "PART_TIME", "REDUCED_TIME"],
-  timestamp: Date.now()
+  timestamp: Date.now(),
 };
-
-const STORAGE_KEY = "appData";
 
 export const AppContextProvider = ({ children }) => {
   const [appData, setAppData] = useState(DEFAULT_APP_DATA);
-  const [isLoaded, setIsLoaded] = useState(false);
 
-  // Optimized data loading
-  const loadData = useCallback(async () => {
-    try {
-      setAppData(DEFAULT_APP_DATA);
+  useEffect(() => {
+    // Initial data load
+    chrome.runtime.sendMessage(
+        { type: "GET_APP_DATA" },
+        (response) => setAppData(response)
+    );
 
-      await chrome.runtime.sendMessage({
-        type: "INIT_APP_DATA",
-        payload: DEFAULT_APP_DATA,
-      });
-    } finally {
-      setIsLoaded(true);
-    }
+    // Listen for updates
+    const listener = (msg) => {
+      if (msg.type === "APP_DATA_UPDATE") {
+        setAppData(msg.payload);
+      }
+    };
+    chrome.runtime.onMessage.addListener(listener);
+
+    return () => chrome.runtime.onMessage.removeListener(listener);
   }, []);
 
-  // Data persistence
   const saveData = useCallback((data) => {
     chrome.runtime.sendMessage({
       type: "UPDATE_APP_DATA",
@@ -47,62 +46,26 @@ export const AppContextProvider = ({ children }) => {
     }).then(r => console.log(r));
   }, []);
 
-  // Initialization
-  useEffect(() => {
-    // Always request latest state from service worker
-    chrome.runtime.sendMessage({ type: "GET_APP_DATA" }, (response) => {
-      if (response && response.appData) {
-        setAppData({
-          ...DEFAULT_APP_DATA,
-          ...response.appData
-        });
-        console.log("Loaded data with SW")
-        setIsLoaded(true);
-      } else {
-        loadData().then(r => console.log("No data found... Default Data loaded", r));
-      }
-    });
-
-    const handleMessage = (msg) => {
-      if (
-        msg.type === "APP_DATA_UPDATE" &&
-        msg.timestamp > (appData.timestamp || 0)
-      ) {
-        setAppData(msg.payload);
-      }
-    };
-
-    chrome.runtime.onMessage.addListener(handleMessage);
-    return () => chrome.runtime.onMessage.removeListener(handleMessage);
-    // eslint-disable-next-line
-  }, []);
-
   // Efficient data updates
   const updateAppData = useCallback(
-    (newData) => {
-      setAppData((prev) => {
-        const merged = { ...prev, ...newData, timestamp: Date.now() };
+      (newData) => {
+        setAppData((prev) => {
+          const merged = { ...prev, ...newData, timestamp: Date.now() };
 
-        // Prevent unnecessary saves
-        if (JSON.stringify(prev) !== JSON.stringify(merged)) {
-          saveData(merged);
-        }
+          // Prevent unnecessary saves
+          if (JSON.stringify(prev) !== JSON.stringify(merged)) {
+            saveData(merged);
+          }
 
-        return merged;
-      });
-    },
-    [saveData],
+          return merged;
+        });
+      },
+      [saveData],
   );
 
   return (
-    <AppContext.Provider
-      value={{
-        appData,
-        updateAppData,
-        isLoaded,
-      }}
-    >
-      {children}
-    </AppContext.Provider>
+      <AppContext.Provider value={{ appData, updateAppData }}>
+        {children}
+      </AppContext.Provider>
   );
 };

@@ -9,7 +9,7 @@ import { SectionHeader } from "../../components/general/SectionHeader.jsx";
 import { Section } from "../../components/general/Section.jsx";
 
 export const Location = () => {
-  const { appData, updateAppData, isLoaded } = useAppContext();
+  const { appData, updateAppData } = useAppContext();
   const [isClient, setIsClient] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [pendingCenterCity, setPendingCenterCity] = useState(null);
@@ -136,7 +136,7 @@ export const Location = () => {
     }
   };
 
-  if (!isClient || !isLoaded) {
+  if (!isClient) {
     return <div className={styles.loading}>Loading your preferences...</div>;
   }
 

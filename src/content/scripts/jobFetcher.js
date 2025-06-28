@@ -9,13 +9,18 @@ export const JobFetcher = (() => {
   const start = () => {
     if (isActive) return;
     isActive = true;
+    console.log("[JobFetcher] Starting job search");
     runScheduler();
   };
 
   const stop = () => {
+    if (!isActive) return;
     isActive = false;
-    if (intervalId) clearInterval(intervalId);
-    intervalId = null;
+    console.log("[JobFetcher] Stopping job search");
+    if (intervalId) {
+      clearInterval(intervalId);
+      intervalId = null;
+    }
   };
 
   function playJobFoundAlert() {

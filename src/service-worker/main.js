@@ -1,140 +1,163 @@
-// --- Imports ---
-import * as tabService from "./modules/tabService.js";
-import * as dataService from "./modules/dataService.js";
-import * as searchService from "./modules/searchService.js";
-import { handleMessage } from "./modules/messageRouter.js";
-import * as utils from "./modules/utils.js";
+// Service Worker - Single Source of Truth
+import { DEFAULT_APP_DATA } from "./modules/defaultData.js";
 
-// --- State ---
-let appData = {
-  centerOfCityCoordinates: null,
-  commuteDistance: 35,
-  otherCities: [],
-  shiftPriorities: ["FLEX_TIME", "FULL_TIME", "PART_TIME", "REDUCED_TIME"],
-  shiftPrioritized: false, // NEW FIELD
-  cityPrioritized: false, // NEW FIELD
-  timestamp: 0,
-};
-let isSearchActive = false;
-let activeSearchTabId = null;
-let registeredTabs = new Map();
+const STORAGE_KEY_APP_DATA = "appData";
+const STORAGE_KEY_TAB_STATE = "tabState";
 
-// --- State Setters ---
-function setAppData(newData) {
-  appData = newData;
-}
-function setIsSearchActive(val) {
-  isSearchActive = val;
-}
-function setActiveSearchTabId(val) {
-  activeSearchTabId = val;
-}
-function setRegisteredTabs(map) {
-  registeredTabs = map;
-}
-
-// --- Persistence ---
-function saveState() {
-  dataService.saveState(registeredTabs, activeSearchTabId, isSearchActive);
-}
-
-// --- Broadcast ---
-function broadcastAppData() {
-  dataService.broadcastAppData(registeredTabs, appData);
-}
-function broadcastStatus() {
-  searchService.broadcastStatus(registeredTabs, activeSearchTabId);
-}
-
-// --- Tab Activation ---
-function activateNextAvailableTab() {
-  tabService.activateNextAvailableTab(
-    registeredTabs,
-    activeSearchTabId,
-    isSearchActive,
-    setActiveSearchTabId,
-    setIsSearchActive,
-    broadcastStatus,
-  );
-}
-
-// --- Load persisted state on startup ---
-dataService.loadState({
-  setAppData,
-  setIsSearchActive,
-  setRegisteredTabs,
-  setActiveSearchTabId,
-  saveState,
-});
-
-// Add this after loading state:
-broadcastAppData();
-
-// --- Tab lifecycle events ---
-chrome.tabs.onRemoved.addListener((tabId) => {
-  tabService.handleTabRemoved(
-    tabId,
-    registeredTabs,
-    activeSearchTabId,
-    activateNextAvailableTab,
-  );
-});
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  tabService.handleTabUpdated(
-    { id: tabId, url: tab?.url ?? "" },
-    changeInfo,
-    registeredTabs,
-    appData,
-    activeSearchTabId,
-    isSearchActive,
-    (id) =>
-      tabService.handleTabRedirect(
-        id,
-        registeredTabs,
-        activeSearchTabId,
-        isSearchActive,
-        activateNextAvailableTab,
-      ),
-  );
-});
-
-// --- Message Routing ---
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  return handleMessage(msg, sender, sendResponse, {
-    appData,
-    setAppData,
-    saveState,
-    broadcastAppData,
-    registeredTabs,
-    setRegisteredTabs,
-    activeSearchTabId,
-    setActiveSearchTabId,
-    isSearchActive,
-    setIsSearchActive,
-    activateNextAvailableTab,
-    broadcastStatus,
+// Initialize storage on installation
+chrome.runtime.onInstalled.addListener(async () => {
+  await chrome.storage.local.set({
+    [STORAGE_KEY_APP_DATA]: DEFAULT_APP_DATA,
+    [STORAGE_KEY_TAB_STATE]: {
+      isActive: false,
+      activeTabId: null,
+    },
   });
 });
 
-console.log("Service worker loaded and modularized.");
+// State management
+let appData = DEFAULT_APP_DATA;
+let tabState = { isActive: false, activeTabId: null };
 
-// ----- Network Error Handling -----
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  if (msg.type === "NETWORK_ERROR") {
-    console.error("Network error occurred");
-    chrome.runtime.sendMessage({ type: "NETWORK_ERROR" });
+// Load state from storage
+chrome.storage.local.get(
+  [STORAGE_KEY_TAB_STATE, STORAGE_KEY_APP_DATA],
+  (result) => {
+    tabState = result[STORAGE_KEY_TAB_STATE] || tabState;
+    appData = result[STORAGE_KEY_APP_DATA] || appData;
+  },
+);
+
+// Message handling
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  switch (message.type) {
+      case "SERVICE_WORKER_TABID":
+          chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+              const tabId = tabs[0].id;
+              console.log("Active Tab ID:", tabId);
+              sendResponse(tabId)
+          });
+      case "GET_APP_DATA":
+      sendResponse(appData);
+      break;
+
+    case "GET_TAB_ID":
+        sendResponse({ tabId: sender.tab?.id });
+        break;
+
+    case "UPDATE_APP_DATA":
+      appData = { ...appData, ...message.payload };
+      chrome.storage.local.set({ [STORAGE_KEY_APP_DATA]: appData });
+
+      // Broadcast to all content scripts
+      chrome.tabs.query({ url: "*://*.hiring.amazon.com/*" }, (tabs) => {
+        tabs.forEach((tab) => {
+          chrome.tabs.sendMessage(tab.id, {
+            type: "APP_DATA_UPDATE",
+            payload: appData,
+          });
+        });
+      });
+      break;
+
+    case "TOGGLE_FETCHING":
+      handleFetchToggle(message.isActive)
+        .then(() => sendResponse({ success: true }))
+        .catch((err) =>
+          sendResponse({
+            success: false,
+            error: err?.message || "Unknown error",
+          }),
+        );
+      break;
+
+    case "TAB_REDIRECTED":
+      if (sender.tab.id === tabState.activeTabId) {
+        updateTabState({ isActive: false, activeTabId: null });
+      }
+      break;
+
+    case "GET_TAB_STATE":
+      sendResponse(tabState);
+      break;
+
+    case "FETCH_STATUS_UPDATE":
+        sendResponse(tabState.isActive)
+
+  }
+  return true;
+});
+
+// Tab lifecycle management
+chrome.tabs.onRemoved.addListener((tabId) => {
+  if (tabId === tabState.activeTabId) {
+    updateTabState({ isActive: false, activeTabId: null });
   }
 });
 
-// ----- Network Error Handling -----
-
-chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  if (msg.type === "PLAY_ALERT_SOUND") {
-    for (const tabId of registeredTabs.keys()) {
-      chrome.tabs.sendMessage(tabId, { type: "PLAY_ALERT_SOUND" });
+chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
+  if (tabId === tabState.activeTabId && changeInfo.url) {
+    if (!changeInfo.url.includes("jobSearch")) {
+      updateTabState({ isActive: false, activeTabId: null });
     }
-    sendResponse({ success: true });
-    return true;
   }
-  // ...other handlers...
 });
+
+// Helper functions
+async function handleFetchToggle(isActive) {
+  if (isActive) {
+    // Validate existing tab
+    if (tabState.activeTabId) {
+      try {
+        const tab = await chrome.tabs.get(tabState.activeTabId);
+        if (tab.url.includes("jobSearch")) {
+          updateTabState({ isActive: true, activeTabId: tab.id });
+          return;
+        }
+      } catch (e) {
+        console.error("")
+      }
+    }
+
+    // Find or create job search tab
+    const tabs = await chrome.tabs.query({
+      url: "*://*.hiring.amazon.com/app#/jobSearch*",
+    });
+    const validTab = tabs.find((tab) => tab.id);
+
+    if (validTab) {
+      updateTabState({ isActive: true, activeTabId: validTab.id });
+    } else {
+      const newTab = await chrome.tabs.create({
+        url: "https://hiring.amazon.com/app#/jobSearch",
+        active: true,
+      });
+      updateTabState({ isActive: true, activeTabId: newTab.id });
+    }
+  } else {
+    updateTabState({ isActive: false, activeTabId: null });
+  }
+}
+
+function updateTabState(newState) {
+  tabState = { ...tabState, ...newState };
+  chrome.storage.local.set({ [STORAGE_KEY_TAB_STATE]: tabState });
+
+  // Notify active tab about status change
+  if (tabState.activeTabId) {
+    chrome.tabs
+      .sendMessage(tabState.activeTabId, {
+        type: "FETCH_STATUS_UPDATE",
+        isActive: tabState.isActive,
+      })
+      .catch(() => {});
+  }
+
+  // Broadcast to entire extension
+  chrome.runtime
+    .sendMessage({
+      type: "TAB_STATE_UPDATE",
+      tabState: tabState,
+    })
+    .catch(() => {});
+}
