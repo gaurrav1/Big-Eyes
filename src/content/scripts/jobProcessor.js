@@ -183,9 +183,9 @@ export const JobProcessor = {
       if (filter.cities.length === 0) {
         cityScore = 0;
       } else if (filter.isCityPrioritized) {
-        cityScore = cityIndex[job.city] ?? Number.MAX_SAFE_INTEGER;
+        cityScore = cityIndex[job.locationName] ?? Number.MAX_SAFE_INTEGER;
       } else {
-        cityScore = filter.cities.includes(job.city)
+        cityScore = filter.cities.includes(job.locationName)
           ? 0
           : Number.MAX_SAFE_INTEGER;
       }
@@ -194,7 +194,7 @@ export const JobProcessor = {
 
       // Log all scoring details for this job
       console.log(
-        `[JobScoring] idx=${idx}, jobId=${job.jobId}, jobTitle=${job.jobTitle}, jobShifts=${JSON.stringify(jobShifts)}, city=${job.city}, shiftScore=${shiftScore}, cityScore=${cityScore}, candidateScore=${JSON.stringify(candidateScore)}`,
+        `[JobScoring] idx=${idx}, jobId=${job.jobId}, jobTitle=${job.jobTitle}, jobShifts=${JSON.stringify(jobShifts)}, locationName=${job.locationName}, shiftScore=${shiftScore}, cityScore=${cityScore}, candidateScore=${JSON.stringify(candidateScore)}`,
       );
 
       // Compare lexicographically
@@ -246,9 +246,18 @@ export const JobProcessor = {
     const filter = {
       shifts: appData.shiftPriorities || [],
       isShiftPrioritized: appData.shiftPrioritized || false, // UPDATED
-      cities: appData.otherCities || [],
+      cities: [
+        ...(appData.centerOfCityCoordinates?.locationName
+          ? [appData.centerOfCityCoordinates.locationName]
+          : []),
+        ...(Array.isArray(appData.otherCities)
+          ? appData.otherCities.map((obj) => obj.locationName).filter(Boolean)
+          : []),
+      ],
       isCityPrioritized: appData.cityPrioritized || false, // UPDATED
     };
+
+    console.log(`[JobScoring] filter=${JSON.stringify(filter)}`);
     const bestJobId = JobProcessor.selectBestJobIdRaw(jobCards || [], filter);
     if (!bestJobId) {
       console.log("[JobScoring] No suitable job found.");
