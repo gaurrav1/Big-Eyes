@@ -14,12 +14,42 @@ export const CityList = () => {
   const [sortOrder, setSortOrder] = useState(null); // null, "asc", "desc"
   const [listResetKey, setListResetKey] = useState(0); // For remounting PrioritizedList
 
+
+    const isElementCenterOfLocation = (location) => {
+        if (!centerOfCityCoordinates) return false;
+        return (
+            location.lat === centerOfCityCoordinates.lat &&
+            location.lng === centerOfCityCoordinates.lng
+        );
+    };
+
   const handleAddCity = useCallback(
     (location) => {
+      // Helper to extract locationName
+      const getLocationName = (name) => {
+        if (!name) return "";
+        const parts = name.split(",");
+        return parts.length > 1
+          ? parts.slice(0, 2).join(",").trim()
+          : name.trim();
+      };
+
+      // Helper to build city object with locationName
+      const buildCityObject = (location) => ({
+        ...location,
+        locationName: getLocationName(location.name),
+      });
+
       if (!centerOfCityCoordinates) {
         setAddCityError("Please select a center city first");
         return;
       }
+
+        // Prevent adding center city as other city
+        if (isElementCenterOfLocation(location)) {
+            setAddCityError("Center location is always interested location, you can exclude it from settings.");
+            return;
+        }
 
       // Check for duplicate
       const isDuplicate = otherCities.some(
@@ -40,7 +70,7 @@ export const CityList = () => {
 
       if (distance <= commuteDistance) {
         updateAppData({
-          otherCities: [...otherCities, location],
+          otherCities: [...otherCities, buildCityObject(location)],
         });
         setAddCityError(null);
       } else {
@@ -87,11 +117,7 @@ export const CityList = () => {
   const renderCityContent = useCallback((city) => {
     return (
       <div className={styles.cityInfo}>
-        <div className={styles.cityName}>{city.label}</div>
-        <div className={styles.cityDetails}>
-          {city.municipality && <span>{city.municipality}, </span>}
-          {city.region}
-        </div>
+        <div className={styles.cityName}>{city.locationName}</div>
       </div>
     );
   }, []);
@@ -182,7 +208,7 @@ export const CityList = () => {
 
       <LocationSearch
         onLocationSelect={handleAddCity}
-        placeholder="Add city within commute"
+        placeholder="Add location within commute"
         compact
         centerCoordinates={centerOfCityCoordinates}
         commuteDistance={commuteDistance}
@@ -191,7 +217,7 @@ export const CityList = () => {
       />
 
       {!centerOfCityCoordinates && (
-        <WarningText text={"Select center city to add optional cities"} />
+        <WarningText text={"Select center location to add optional location(s)."} />
       )}
 
       <div className={styles.cityListContainer}>

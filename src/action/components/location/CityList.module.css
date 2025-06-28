@@ -69,14 +69,10 @@
 
 .cityName {
     font-weight: 600;
-    font-size: 1.1rem;
-    color: #222;
-}
-
-.cityDetails {
     font-size: 0.95rem;
     color: var(--fg);
 }
+
 
 .distance {
     font-weight: 600;

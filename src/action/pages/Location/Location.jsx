@@ -7,8 +7,6 @@ import { useAppContext } from "../../context/AppContext";
 import { ConfirmationDialog } from "../../components/dialog/ConfirmationDialog";
 import { SectionHeader } from "../../components/general/SectionHeader.jsx";
 import { Section } from "../../components/general/Section.jsx";
-import { Divider } from "../../components/general/Divider.jsx";
-import { ToggleButton } from "../../components/button/ToggleButton.jsx";
 
 export const Location = () => {
   const { appData, updateAppData, isLoaded } = useAppContext();
@@ -17,14 +15,25 @@ export const Location = () => {
   const [pendingCenterCity, setPendingCenterCity] = useState(null);
   const [citiesExceedingDistance, setCitiesExceedingDistance] = useState([]);
 
-  // Ensure we're running on client after hydration
+  // Hydration check for SSR/CSR
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // Calculate distance between two points
+  // Helpers
+  const getLocationName = (name) => {
+    if (!name) return "";
+    const parts = name.split(",");
+    return parts.length > 1 ? parts.slice(0, 2).join(",").trim() : name.trim();
+  };
+
+  const buildCityObject = (location) => ({
+    ...location,
+    locationName: getLocationName(location.name),
+  });
+
   const calculateDistance = useCallback((lat1, lon1, lat2, lon2) => {
-    const R = 6371; // Earth radius in km
+    const R = 6371;
     const dLat = ((lat2 - lat1) * Math.PI) / 180;
     const dLon = ((lon2 - lon1) * Math.PI) / 180;
     const a =
@@ -40,10 +49,7 @@ export const Location = () => {
   // Check if any cities exceed commute distance with new center
   const checkCitiesExceedingDistance = useCallback(
     (newCenter) => {
-      if (!appData.otherCities || appData.otherCities.length === 0) {
-        return [];
-      }
-
+      if (!appData.otherCities || appData.otherCities.length === 0) return [];
       return appData.otherCities.filter((city) => {
         const distance = calculateDistance(
           newCenter.lat,
@@ -57,20 +63,11 @@ export const Location = () => {
     [appData.otherCities, appData.commuteDistance, calculateDistance],
   );
 
-  // Handle confirmation of center city change
+  // Confirm center city change (removes exceeding cities)
   const handleConfirmCenterChange = useCallback(() => {
     if (!pendingCenterCity) return;
-
-    // Apply the new center city
     updateAppData({
-      centerOfCityCoordinates: {
-        name: pendingCenterCity.name,
-        lat: pendingCenterCity.lat,
-        lng: pendingCenterCity.lng,
-        region: pendingCenterCity.region,
-        municipality: pendingCenterCity.municipality,
-      },
-      // Remove cities that exceed commute distance
+      centerOfCityCoordinates: buildCityObject(pendingCenterCity),
       otherCities: appData.otherCities.filter(
         (city) =>
           !citiesExceedingDistance.some(
@@ -79,8 +76,6 @@ export const Location = () => {
           ),
       ),
     });
-
-    // Reset dialog state
     setDialogOpen(false);
     setPendingCenterCity(null);
     setCitiesExceedingDistance([]);
@@ -89,9 +84,10 @@ export const Location = () => {
     updateAppData,
     appData.otherCities,
     citiesExceedingDistance,
+    buildCityObject,
   ]);
 
-  // Handle cancellation of center city change
+  // Cancel center city change
   const handleCancelCenterChange = useCallback(() => {
     setDialogOpen(false);
     setPendingCenterCity(null);
@@ -101,49 +97,36 @@ export const Location = () => {
   // Handle center city selection
   const handleCenterSelect = useCallback(
     (location) => {
-      // If there are no other cities, just update the center
       if (!appData.otherCities || appData.otherCities.length === 0) {
         updateAppData({
-          centerOfCityCoordinates: {
-            name: location.name,
-            lat: location.lat,
-            lng: location.lng,
-            region: location.region,
-            municipality: location.municipality,
-          },
+          centerOfCityCoordinates: buildCityObject(location),
         });
         return;
       }
-
-      // Check if any cities exceed commute distance
       const exceedingCities = checkCitiesExceedingDistance(location);
-
       if (exceedingCities.length > 0) {
-        // Store the pending center city and cities exceeding distance
         setPendingCenterCity(location);
         setCitiesExceedingDistance(exceedingCities);
         setDialogOpen(true);
       } else {
-        // No cities exceed distance, update directly
         updateAppData({
-          centerOfCityCoordinates: {
-            name: location.name,
-            lat: location.lat,
-            lng: location.lng,
-            region: location.region,
-            municipality: location.municipality,
-          },
+          centerOfCityCoordinates: buildCityObject(location),
         });
       }
     },
-    [appData.otherCities, checkCitiesExceedingDistance, updateAppData],
+    [
+      appData.otherCities,
+      updateAppData,
+      checkCitiesExceedingDistance,
+      buildCityObject,
+    ],
   );
 
   const handleDistanceChange = (distance) => {
     updateAppData({ commuteDistance: distance });
   };
 
-  // Clear all location preferences
+  // Reset all location preferences
   const handleResetAll = () => {
     if (confirm("Are you sure you want to reset all location preferences?")) {
       updateAppData({
@@ -153,7 +136,6 @@ export const Location = () => {
     }
   };
 
-  // Only render on client after preferences are loaded
   if (!isClient || !isLoaded) {
     return <div className={styles.loading}>Loading your preferences...</div>;
   }
@@ -162,17 +144,14 @@ export const Location = () => {
     title: "Center Location",
     fontSize: "H4",
   };
-
   const commuteDistanceSection = {
     title: "Commute Distance",
     fontSize: "H4",
   };
-
   const otherCitiesSection = {
-    title: "Cities within Commute",
+    title: "Interested Location(s)",
     fontSize: "H4",
   };
-
   const mainHeader = {
     title: "Location Preferences",
     isMainHeader: true,
@@ -180,23 +159,23 @@ export const Location = () => {
     isButton: true,
     buttonName: "Reset",
     disabled:
-        !appData.centerOfCityCoordinates && appData.otherCities.length === 0,
+      !appData.centerOfCityCoordinates && appData.otherCities.length === 0,
     buttonHandler: handleResetAll,
   };
 
   return (
     <>
-      <div className={styles.container} >
+      <div className={styles.container}>
         <br />
-        <br/>
-        <br/>
+        <br />
+        <br />
         <SectionHeader header={mainHeader} />
 
         <Section header={centerCitySection}>
           <LocationSearch
             onLocationSelect={handleCenterSelect}
             placeholder={
-              appData.centerOfCityCoordinates?.name || "Search for a city..."
+              appData.centerOfCityCoordinates?.name || "Search for a location..."
             }
             currentLocation={true}
           />
@@ -222,7 +201,6 @@ export const Location = () => {
         <Section header={otherCitiesSection}>
           <CityList />
 
-          {/* Confirmation Dialog for cities exceeding commute distance */}
           <ConfirmationDialog
             isOpen={dialogOpen}
             title="Warning: Cities Exceed Commute Distance"
@@ -242,7 +220,6 @@ export const Location = () => {
                   city.lat,
                   city.lng,
                 );
-
                 return (
                   <div
                     key={`${city.label}-${index}`}

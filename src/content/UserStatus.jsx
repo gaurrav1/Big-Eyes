@@ -67,7 +67,11 @@ export const UserStatus = () => {
       </div>
       <div className={styles.statusRow}>
         <span>Location:</span>
-        <b>{preferences.location}</b>
+        <b>{preferences.location.otherCities?.map((otherCity) => (
+            <div>
+              {otherCity}
+            </div>
+        ))}</b>
       </div>
       <div className={styles.statusRow}>
         <span>Shift Priority:</span>
