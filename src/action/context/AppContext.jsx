@@ -16,6 +16,7 @@ const DEFAULT_APP_DATA = {
   shiftPrioritized: false, // NEW FIELD
   cityPrioritized: false, // NEW FIELD
   shiftPriorities: ["FLEX_TIME", "FULL_TIME", "PART_TIME", "REDUCED_TIME"],
+  timestamp: Date.now()
 };
 
 const STORAGE_KEY = "appData";
@@ -27,20 +28,11 @@ export const AppContextProvider = ({ children }) => {
   // Optimized data loading
   const loadData = useCallback(async () => {
     try {
-      const savedData = JSON.parse(
-        localStorage.getItem(STORAGE_KEY) || DEFAULT_APP_DATA,
-      );
-      const initialData = {
-        ...DEFAULT_APP_DATA,
-        ...savedData,
-        centerOfCityCoordinates: savedData.centerOfCityCoordinates || null,
-      };
+      setAppData(DEFAULT_APP_DATA);
 
-      setAppData(initialData);
-
-      chrome.runtime.sendMessage({
+      await chrome.runtime.sendMessage({
         type: "INIT_APP_DATA",
-        payload: initialData,
+        payload: DEFAULT_APP_DATA,
       });
     } finally {
       setIsLoaded(true);
@@ -49,12 +41,10 @@ export const AppContextProvider = ({ children }) => {
 
   // Data persistence
   const saveData = useCallback((data) => {
-    const update = { ...data, timestamp: Date.now() };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(update));
     chrome.runtime.sendMessage({
       type: "UPDATE_APP_DATA",
-      payload: update,
-    });
+      payload: data,
+    }).then(r => console.log(r));
   }, []);
 
   // Initialization
@@ -64,14 +54,12 @@ export const AppContextProvider = ({ children }) => {
       if (response && response.appData) {
         setAppData({
           ...DEFAULT_APP_DATA,
-          ...response.appData,
-          centerOfCityCoordinates:
-            response.appData.centerOfCityCoordinates || null,
+          ...response.appData
         });
+        console.log("Loaded data with SW")
         setIsLoaded(true);
       } else {
-        // Fallback: load from localStorage if SW is unavailable
-        loadData();
+        loadData().then(r => console.log("No data found... Default Data loaded", r));
       }
     });
 
