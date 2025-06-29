@@ -79,7 +79,12 @@ export const JobFetcher = (() => {
       controllers.forEach((controller, index) => {
         JobProcessor.fetchGraphQL(cachedRequest, controller.signal)
           .then(async (response) => {
-            if (found || !response) return;
+            if (!response) {
+              console.log(`[JobFetcher] Skipped response due to timeout or slowness`);
+              return;
+            }
+
+            if (found) return;
             const bestJob = JobProcessor.getBestJob(response, appData);
             if (!bestJob) {
               console.log("[JobFetcher] No suitable job found by getBestJob.");
@@ -110,7 +115,7 @@ export const JobFetcher = (() => {
           })
           .catch((err) => {
             if (err.name !== "AbortError") {
-              console.error(`[FetchError] on index ${index}:`, err);
+              console.error(`[FetchError] on index ${index}:`, err, JSON.stringify(err, Object.getOwnPropertyNames(err)));
             }
           })
           .finally(() => {

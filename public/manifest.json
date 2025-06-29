@@ -23,8 +23,7 @@
       "js": [
         "src/content/index.jsx",
         "src/content/scripts/main.js",
-        "src/content/scripts/consent-page-handler.js",
-        "src/content/scripts/playSoundListener.js"
+        "src/content/scripts/consent-page-handler.js"
       ],
       "matches": ["https://*.hiring.amazon.com/**"]
     }

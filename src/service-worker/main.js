@@ -128,14 +128,15 @@ async function handleFetchToggle(isActive) {
     if (tabState.activeTabId) {
       try {
         const tab = await chrome.tabs.get(tabState.activeTabId);
-        if (tab.url.includes("jobSearch")) {
-            chrome.tabs.sendMessage(validTab.id, {
-                type: "APP_DATA_UPDATE",
-                payload: appData,
-            });
-          updateTabState({ isActive: true, activeTabId: tab.id });
-          return;
-        }
+          if (tab.url.includes("jobSearch")) {
+              chrome.tabs.sendMessage(tab.id, {
+                  type: "APP_DATA_UPDATE",
+                  payload: appData,
+              });
+              updateTabState({ isActive: true, activeTabId: tab.id });
+              return;
+          }
+
       } catch (e) {
         console.error("")
       }

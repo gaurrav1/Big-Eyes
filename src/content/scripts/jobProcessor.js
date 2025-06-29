@@ -99,6 +99,8 @@ export const JobProcessor = {
   }),
 
   fetchGraphQL: async (request, signal = undefined) => {
+    const start = performance.now(); // Start timer
+    try {
     const response = await axios.post(GRAPHQL_URL, request, {
       headers: {
         "Content-Type": "application/json",
@@ -110,7 +112,24 @@ export const JobProcessor = {
       timeout: 2000,
       signal, // NEW: for cancellation support
     });
-    return response.data;
+
+      const duration = performance.now() - start;
+      if (duration > 2000) {
+        console.warn(`[fetchGraphQL] Response too slow (${duration.toFixed(2)}ms), skipping`);
+        return null; // or throw new Error("Stale response");
+      }
+
+      return response.data;
+
+    } catch (err) {
+      const duration = performance.now() - start;
+      if (err.code === "ECONNABORTED") {
+        console.warn(`[fetchGraphQL] Timed out after ${duration.toFixed(2)}ms`);
+      } else {
+        console.error(`[fetchGraphQL] Error:`, err);
+      }
+      throw err;
+    }
   },
 
   /**
