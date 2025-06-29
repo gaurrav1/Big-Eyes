@@ -58,9 +58,7 @@ export function MyOutlet() {
   return (
     <div className="layout">
       {isMain ? <Header /> : <NavBar location={location} />}
-      <main style={{ flex: 1 }}>
         <Outlet />
-      </main>
       {showFooter && <Footer />}
     </div>
   );

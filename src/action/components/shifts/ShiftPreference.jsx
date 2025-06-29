@@ -49,7 +49,7 @@ const ShiftPreference = () => {
 
   return (
     <div className={styles.container}>
-      <div>
+      <div className={styles.shiftSection}>
         <div className={styles.header}>
           <div className={styles.title}>
             <h2 className={styles.listTitle}>My Shift Priorities</h2>
@@ -75,7 +75,7 @@ const ShiftPreference = () => {
         />
         </div>
       </div>
-      <div>
+      <div className={styles.shiftSection}>
         <div className={styles.header}>
           <div className={styles.title}>
             <h2 className={styles.listTitle}>Available Shifts</h2>

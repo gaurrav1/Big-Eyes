@@ -181,7 +181,7 @@ export const PrioritizedList = ({
   return (
       <>
         {children}
-        <div className={`${styles.container} ${className}`}>
+        <div className={styles.priorityListHeaderRow}>
           {(showEditButton || onReset) && (
               <div className={styles.header}>
                 {showEditButton && (
@@ -203,7 +203,8 @@ export const PrioritizedList = ({
                 )}
               </div>
           )}
-
+        </div>
+        <div className={`${styles.container} ${className}`}>
           <div className={styles.listContainer}>
             {items.length > 0 ? (
                 <ul className={styles.itemList}>

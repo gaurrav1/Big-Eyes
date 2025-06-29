@@ -14,6 +14,10 @@
             box-shadow 0.3s;
 }
 
+.shiftSection {
+    margin-top: 18px;
+}
+
 @media (min-width: 768px) {
     .container {
         grid-template-columns: 1fr 1fr;
@@ -259,9 +263,9 @@
     justify-content: center;
     padding: 20px 10px;
     text-align: center;
-    color: #8e8e93;
-    font-size: 16px;
-    background: var(--background-glass);
+    color: var(--muted);
+    font-size: var(--h6-size);
+    background: var(--section-background);
     border-radius: 14px;
     gap: 12px;
     flex-direction: column;
@@ -269,8 +273,8 @@
 }
 
 .emptyState .shiftIcon {
-    background: rgba(142, 142, 147, 0.1);
-    color: #8e8e93;
+    background: var(--background-glass);
+    color: var(--muted);
     font-size: 24px;
     width: 50px;
     height: 50px;

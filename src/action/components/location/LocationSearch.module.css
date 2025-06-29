@@ -85,12 +85,16 @@
 }
 
 .suggestionItem {
-    padding: 14px 22px;
+    padding: 7px 11px;
     cursor: pointer;
     transition: background 0.2s;
     display: flex;
     flex-direction: column;
     border-radius: 10px;
+    border-bottom: var(--glass-border);
+}
+.suggestionItem:last-child {
+    border-bottom: none;
 }
 
 .suggestionItem:hover {
