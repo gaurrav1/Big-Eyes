@@ -21,13 +21,12 @@
     }
 }
 
-.listContainer, .shiftListSection {
+.listContainer {
     background: var(--section-background);
     backdrop-filter: blur(var(--glass-blur));
     -webkit-backdrop-filter: blur(var(--glass-blur));
     box-shadow: 0 2px 8px #1f268714;
-    border: var(--glass-border);
-    border-radius: 14px;
+    border-radius: 22px;
     overflow: hidden;
     transition:
             box-shadow 0.3s,
