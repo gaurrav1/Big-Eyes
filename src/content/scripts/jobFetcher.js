@@ -24,7 +24,11 @@ export const JobFetcher = (() => {
   };
 
   function playJobFoundAlert() {
-    chrome.runtime.sendMessage({ type: "PLAY_ALERT_SOUND" });
+    // chrome.runtime.sendMessage({ type: "PLAY_ALERT_SOUND" });
+    const audio = new Audio(chrome.runtime.getURL("sounds/captured.mp3"));
+    audio.volume = 1.0;
+    audio.play().catch(() => {});
+
   }
 
   const updateAppData = (data) => {
@@ -143,14 +147,14 @@ export const JobFetcher = (() => {
       type: "CLEAR_ACTIVE_TAB",
     });
 
-    // 4. Open job search tab
-    chrome.runtime.sendMessage({
-      type: "OPEN_JOB_SEARCH_TAB",
-    });
+    // // 4. Open job search tab
+    // chrome.runtime.sendMessage({
+    //   type: "OPEN_JOB_SEARCH_TAB",
+    // });
 
 
     // Optionally: redirect current tab
-    // window.location.href = url;
+    window.location.href = url;
   };
 
   return {

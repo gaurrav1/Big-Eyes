@@ -30,6 +30,10 @@ chrome.storage.local.get(
 // Message handling
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   switch (message.type) {
+    case "PLAY_ALERT_SOUND":
+
+          break;
+
     case "GET_APP_DATA":
       sendResponse(appData);
       break;

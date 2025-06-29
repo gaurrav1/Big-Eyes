@@ -17,8 +17,15 @@ async function init() {
     if (state?.isActive && state?.activeTabId === tabId) {
       console.log("[JobFetcher] Tab is active, starting fetcher");
       JobFetcher.start();
+
+      // Notify popup UI toggle to update
+      chrome.runtime.sendMessage({
+        type: "TAB_STATE_UPDATE",
+        isActive: true,
+      });
     }
   });
+
 }
 
 

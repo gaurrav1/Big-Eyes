@@ -4,7 +4,7 @@ import { useAppContext } from "../../context/AppContext";
 import { useState } from "react";
 
 export function Settings() {
-  const { appData, updateAppData, isLoaded } = useAppContext();
+  const { appData, updateAppData} = useAppContext();
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export function Settings() {
     updateAppData({ shiftPrioritized: !appData.shiftPrioritized });
   };
 
-  if (!isClient || !isLoaded) {
+  if (!isClient) {
     return <div className="loading">Loading your preferences...</div>;
   }
 
