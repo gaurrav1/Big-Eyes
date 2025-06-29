@@ -18,21 +18,26 @@
     gap: 10px;
 }
 
-.editButton {
+.editButton,
+.resetButton,
+.sortButton {
+    background: none;
+    border: none;
     color: var(--accent);
     font-size: 15px;
     font-weight: 500;
     cursor: pointer;
     padding: 8px 18px;
     border-radius: 12px;
-    border: var(--glass-border);
-    box-shadow: 0 2px 8px rgba(31, 38, 135, 0.06);
     transition:
-        background 0.2s,
-        color 0.2s;
+            background 0.2s,
+            color 0.2s,
+            box-shadow 0.2s;
 }
 
-.editButton:hover {
+.editButton:hover,
+.resetButton:hover,
+.sortButton:hover {
     background: var(--hover);
     color: #005bb5;
 }

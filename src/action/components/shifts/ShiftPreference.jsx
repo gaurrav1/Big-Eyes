@@ -57,6 +57,7 @@ const ShiftPreference = () => {
         </div>
         <div className={styles.subtitle}>Drag to reorder or tap to manage</div>
 
+        <div className={styles.shiftListSection}>
         <PrioritizedList
           items={selectedShifts}
           onReorder={handleReorderShifts}
@@ -72,6 +73,7 @@ const ShiftPreference = () => {
           onReset={handleReset}
           resetLabel="Reset"
         />
+        </div>
       </div>
       <div>
         <div className={styles.header}>
