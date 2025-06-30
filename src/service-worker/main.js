@@ -4,22 +4,22 @@ const STORAGE_KEY_APP_DATA = "appData";
 const STORAGE_KEY_TAB_STATE = "tabState";
 
 let getCanadaNotation = () => {
-    return {
-        jobSearchUrl: "https://hiring.amazon.ca/app#/jobSearch",
-        wildCardUrl: "*://*.hiring.amazon.ca/*",
-        wildCardJobSearchUrl: "*://*.hiring.amazon.ca/app#/jobSearch",
-    }
-}
+  return {
+    jobSearchUrl: "https://hiring.amazon.ca/app#/jobSearch",
+    wildCardUrl: "*://*.hiring.amazon.ca/*",
+    wildCardJobSearchUrl: "*://*.hiring.amazon.ca/app#/jobSearch",
+  };
+};
 
 let getUsaNotation = () => {
-    return {
-        jobSearchUrl: "https://hiring.amazon.com/app#/jobSearch",
-        wildCardUrl: "*://*.hiring.amazon.com/*",
-        wildCardJobSearchUrl: "*://*.hiring.amazon.com/app#/jobSearch",
-    }
-}
+  return {
+    jobSearchUrl: "https://hiring.amazon.com/app#/jobSearch",
+    wildCardUrl: "*://*.hiring.amazon.com/*",
+    wildCardJobSearchUrl: "*://*.hiring.amazon.com/app#/jobSearch",
+  };
+};
 
-let country =  getCanadaNotation();
+let country = getCanadaNotation();
 
 // Initialize storage on installation
 chrome.runtime.onInstalled.addListener(async () => {
@@ -47,18 +47,19 @@ chrome.storage.local.get(
 
 // Message handling
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  let isAsync = false;
   switch (message.type) {
     case "PLAY_ALERT_SOUND":
-
-          break;
+      sendResponse();
+      break;
 
     case "GET_APP_DATA":
       sendResponse(appData);
       break;
 
     case "GET_TAB_ID":
-        sendResponse({ tabId: sender.tab?.id });
-        break;
+      sendResponse({ tabId: sender.tab?.id });
+      break;
 
     case "UPDATE_APP_DATA":
       appData = { ...appData, ...message.payload };
@@ -73,6 +74,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           });
         });
       });
+      sendResponse();
       break;
 
     case "TOGGLE_FETCHING":
@@ -90,6 +92,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       if (sender.tab.id === tabState.activeTabId) {
         updateTabState({ isActive: false, activeTabId: null });
       }
+      sendResponse();
       break;
 
     case "GET_TAB_STATE":
@@ -97,31 +100,39 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       break;
 
     case "FETCH_STATUS_UPDATE":
-        sendResponse(tabState.isActive)
-        break;
+      sendResponse(tabState.isActive);
+      break;
 
     case "OPEN_JOB_SEARCH_TAB":
-        chrome.tabs.create({
-            url: country.jobSearchUrl,
-            // active: true,
-        }, (tab) => {
-            updateTabState({ isActive: true, activeTabId: tab.id });
+      chrome.tabs.create(
+        {
+          url: country.jobSearchUrl,
+          // active: true,
+        },
+        (tab) => {
+          updateTabState({ isActive: true, activeTabId: tab.id });
 
-            // Optionally send APP_DATA_UPDATE to new tab
-            chrome.tabs.sendMessage(tab.id, {
-                type: "APP_DATA_UPDATE",
-                payload: appData,
-            });
-        });
-        break;
+          // Optionally send APP_DATA_UPDATE to new tab
+          chrome.tabs.sendMessage(tab.id, {
+            type: "APP_DATA_UPDATE",
+            payload: appData,
+          });
+          sendResponse();
+        },
+      );
+      isAsync = true;
+      break;
 
     case "CLEAR_ACTIVE_TAB":
-        updateTabState({ isActive: false, activeTabId: null });
-        break;
+      updateTabState({ isActive: false, activeTabId: null });
+      sendResponse();
+      break;
 
-
+    default:
+      sendResponse();
+      break;
   }
-  return true;
+  return isAsync;
 });
 
 // Tab lifecycle management
@@ -146,17 +157,16 @@ async function handleFetchToggle(isActive) {
     if (tabState.activeTabId) {
       try {
         const tab = await chrome.tabs.get(tabState.activeTabId);
-          if (tab.url.includes("jobSearch")) {
-              chrome.tabs.sendMessage(tab.id, {
-                  type: "APP_DATA_UPDATE",
-                  payload: appData,
-              });
-              updateTabState({ isActive: true, activeTabId: tab.id });
-              return;
-          }
-
+        if (tab.url.includes("jobSearch")) {
+          chrome.tabs.sendMessage(tab.id, {
+            type: "APP_DATA_UPDATE",
+            payload: appData,
+          });
+          updateTabState({ isActive: true, activeTabId: tab.id });
+          return;
+        }
       } catch (e) {
-        console.error("")
+        console.error("");
       }
     }
 

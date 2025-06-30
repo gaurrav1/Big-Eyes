@@ -5,7 +5,9 @@ let country = "United States";
 
 async function init() {
   const tabId = await new Promise((resolve) => {
-    chrome.runtime.sendMessage({ type: "GET_TAB_ID" }, (res) => resolve(res?.tabId));
+    chrome.runtime.sendMessage({ type: "GET_TAB_ID" }, (res) =>
+      resolve(res?.tabId),
+    );
   });
 
   console.log("Current Tab ID:", tabId);
@@ -26,12 +28,9 @@ async function init() {
       });
     }
   });
-
 }
 
-
 init();
-
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   switch (msg.type) {
@@ -43,6 +42,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         JobFetcher.stop();
       }
       chrome.runtime.sendMessage({ type: "TAB_STATE_UPDATE", isActive });
+      sendResponse();
       break;
 
     case "GET_TAB_STATE":
@@ -51,6 +51,11 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
     case "APP_DATA_UPDATE":
       JobFetcher.updateAppData(msg.payload);
+      sendResponse();
+      break;
+
+    default:
+      sendResponse();
       break;
   }
 });

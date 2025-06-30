@@ -36,22 +36,37 @@ export function ToggleBar({ appData }) {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const activeTab = tabs[0];
       const newState = !isSearching;
+      // Only send message if tab URL matches your content script's pattern
+      if (
+        activeTab.url &&
+        activeTab.url.startsWith("https://hiring.amazon.ca/")
+      ) {
+        chrome.tabs.sendMessage(
+          activeTab.id,
+          {
+            type: "TOGGLE_FETCHING",
+            isActive: newState,
+          },
+          () => {
+            if (chrome.runtime.lastError) {
+              console.error(chrome.runtime.lastError.message);
+            }
+          },
+        );
+        setIsSearching(newState); // Only toggle if valid tab
+        setToggleError(""); // Clear any previous error
 
-      // Send message directly to that tab
-      chrome.tabs.sendMessage(activeTab.id, {
-        type: "TOGGLE_FETCHING",
-        isActive: newState,
-      });
-
-      setIsSearching(newState);
-
-      // Optional dialog logic
-      if (newState && shouldShowLocationDialog()) {
-        setShowLocationDialog(true);
+        if (newState && shouldShowLocationDialog()) {
+          setShowLocationDialog(true);
+        }
+      } else {
+        setToggleError(
+          "Please open the Amazon Hiring website to search for jobs.",
+        );
+        setIsSearching(false);
       }
     });
   };
-
 
   // Handle dialog confirm
   const handleChooseLocation = () => {
@@ -67,11 +82,22 @@ export function ToggleBar({ appData }) {
 
   useEffect(() => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const tabId = tabs[0].id;
-
-      chrome.tabs.sendMessage(tabId, { type: "GET_TAB_STATE" }, (res) => {
-        setIsSearching(res?.isActive || false);
-      });
+      const tab = tabs[0];
+      // Only send message if tab URL matches your content script's pattern
+      if (tab.url && tab.url.startsWith("https://hiring.amazon.ca/")) {
+        chrome.tabs.sendMessage(tab.id, { type: "GET_TAB_STATE" }, (res) => {
+          if (chrome.runtime.lastError) {
+            // Optionally log or ignore
+            console.warn(
+              "No content script in this tab:",
+              chrome.runtime.lastError.message,
+            );
+            setIsSearching(false); // fallback
+            return;
+          }
+          setIsSearching(res?.isActive || false);
+        });
+      }
     });
 
     // Listen to updates
@@ -79,11 +105,11 @@ export function ToggleBar({ appData }) {
       if (msg.type === "TAB_STATE_UPDATE") {
         setIsSearching(msg.isActive);
       }
+      return true;
     };
     chrome.runtime.onMessage.addListener(listener);
     return () => chrome.runtime.onMessage.removeListener(listener);
   }, []);
-
 
   return (
     <div className={styles.toggleBar}>
