@@ -1,5 +1,9 @@
+import styles from './History.module.css'
+
 export function History() {
   return (
-    <div>History</div>
+    <div className={styles.container}>
+      History
+    </div>
   )
 }

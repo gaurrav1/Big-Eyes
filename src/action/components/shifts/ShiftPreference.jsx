@@ -3,7 +3,6 @@ import styles from "./ShiftPreference.module.css";
 import { useAppContext } from "../../context/AppContext";
 import { PrioritizedList } from "../common/PrioritizedList.jsx";
 import { SHIFT_LABELS, SHIFT_KEYS } from "../../constants/shifts";
-import { ToggleButton } from "../button/ToggleButton";
 
 const ShiftPreference = () => {
   const { appData, updateAppData } = useAppContext();

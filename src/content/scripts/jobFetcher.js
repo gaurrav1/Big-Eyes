@@ -1,4 +1,4 @@
-import { JobProcessor } from "./jobProcessor.js";
+import {JobProcessor} from "./jobProcessor.js";
 
 export const JobFetcher = (() => {
   let isActive = false;
@@ -104,23 +104,13 @@ export const JobFetcher = (() => {
               }
               if (schedule && !found) {
                 found = true;
-                await chrome.runtime.sendMessage({
-                  type: "TOGGLE_FETCHING",
-                  isActive: false,
-                });
-
-                await chrome.runtime.sendMessage({
-                  type: "CLEAR_ACTIVE_TAB",
-                });
-
-                await chrome.runtime.sendMessage({
-                  type: "OPEN_JOB_SEARCH_TAB",
-                });
 
                 controllers.forEach((c) => c.abort()); // Cancel others
                 playJobFoundAlert();
 
                 redirectToApplication(bestJob.jobId, schedule.scheduleId);
+
+                stop();
               }
             }
           })
@@ -142,16 +132,27 @@ export const JobFetcher = (() => {
   // Initialize cache on first run
   updateAppData(appData);
 
-  const tld = "com";
-  const extld = "us";
-  const locale = "en-US";
-
   const redirectToApplication = (jobId, scheduleId) => {
-    const url = `https://hiring.amazon.${tld}/application/${extld}/?CS=true&jobId=${jobId}&locale=${locale}&scheduleId=${scheduleId}&ssoEnabled=1#/consent?CS=true&jobId=${jobId}&locale=${locale}&scheduleId=${scheduleId}&ssoEnabled=1`;
+    const tld = "com";
+    const extld = "us";
+    const locale = "en-US";
 
     stop();
 
-    window.location.href = url;
+    chrome.runtime.sendMessage({
+      type: "TOGGLE_FETCHING",
+      isActive: false,
+    });
+
+    chrome.runtime.sendMessage({
+      type: "CLEAR_ACTIVE_TAB",
+    });
+
+    chrome.runtime.sendMessage({
+      type: "OPEN_JOB_SEARCH_TAB",
+    });
+
+    window.location.href = `https://hiring.amazon.${tld}/application/${extld}/?CS=true&jobId=${jobId}&locale=${locale}&scheduleId=${scheduleId}&ssoEnabled=1#/consent?CS=true&jobId=${jobId}&locale=${locale}&scheduleId=${scheduleId}&ssoEnabled=1`;
   };
 
   return {

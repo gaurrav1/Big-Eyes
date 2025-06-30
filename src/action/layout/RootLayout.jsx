@@ -29,7 +29,6 @@ function NavBar({ location }) {
                     "padding": "0.3rem 1.2rem",
                     "background": "var(--background-glass)",
                     "borderRadius": "18px",
-                    "boxShadow": "0 4px 24px 0 rgba(31, 38, 135, 0.1)",
                     "display": "flex",
                     "flexDirection": "row",
                     "justifyContent": "center",

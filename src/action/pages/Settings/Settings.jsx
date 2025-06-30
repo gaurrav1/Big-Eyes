@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { ToggleButton } from "../../components/button/ToggleButton";
 import { useAppContext } from "../../context/AppContext";
 import { useState } from "react";
-import styles from "./css/Settings.module.css"
+import styles from "./Settings.module.css"
 
 export function Settings() {
   const { appData, updateAppData} = useAppContext();

@@ -1,7 +1,7 @@
 .toggleWrapper {
     display: flex;
     min-height: 60px;
-    margin-top: 70px;
+    margin-top: 32px;
     align-items: center;
     justify-content: space-between;
     flex-direction: row;
