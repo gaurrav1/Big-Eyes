@@ -88,6 +88,26 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         );
       break;
 
+    case "JOB_FOUND_ACTIONS":
+      chrome.tabs.create(
+        {
+          url: country.jobSearchUrl,
+          // active: true,
+        },
+        (tab) => {
+          updateTabState({ isActive: true, activeTabId: tab.id });
+
+          // Optionally send APP_DATA_UPDATE to new tab
+          chrome.tabs.sendMessage(tab.id, {
+            type: "APP_DATA_UPDATE",
+            payload: appData,
+          });
+          sendResponse();
+        },
+      );
+      isAsync = true;
+      break;
+
     case "TAB_REDIRECTED":
       if (sender.tab.id === tabState.activeTabId) {
         updateTabState({ isActive: false, activeTabId: null });
@@ -194,21 +214,23 @@ function updateTabState(newState) {
   tabState = { ...tabState, ...newState };
   chrome.storage.local.set({ [STORAGE_KEY_TAB_STATE]: tabState });
 
-  // Notify active tab about status change
-  if (tabState.activeTabId) {
-    chrome.tabs
-      .sendMessage(tabState.activeTabId, {
-        type: "FETCH_STATUS_UPDATE",
+  // Notify all hiring.amazon.ca tabs
+  chrome.tabs.query({ url: country.wildCardUrl }, (tabs) => {
+    tabs.forEach((tab) => {
+      chrome.tabs.sendMessage(tab.id, {
+        type: "TAB_STATE_UPDATE",
         isActive: tabState.isActive,
-      })
-      .catch(() => {});
-  }
+        activeTabId: tabState.activeTabId,
+      });
+    });
+  });
 
-  // Broadcast to entire extension
+  // Notify popup/action UI
   chrome.runtime
     .sendMessage({
       type: "TAB_STATE_UPDATE",
-      tabState: tabState,
+      isActive: tabState.isActive,
+      activeTabId: tabState.activeTabId,
     })
     .catch(() => {});
 }

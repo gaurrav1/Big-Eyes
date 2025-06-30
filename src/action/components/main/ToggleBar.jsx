@@ -5,6 +5,8 @@ import { WarningText } from "../general/WarningText.jsx";
 import { ConfirmationDialog } from "../dialog/ConfirmationDialog.jsx";
 import styles from "./css/ToggleBar.module.css";
 
+const country = "https://hiring.amazon.ca/";
+
 export function ToggleBar({ appData }) {
   const [isSearching, setIsSearching] = useState(false);
   const [toggleError, setToggleError] = useState(""); // <-- Add this line
@@ -32,15 +34,30 @@ export function ToggleBar({ appData }) {
     setShowLocationDialog(false);
   };
 
+  // Query the active tab for its state
+  const queryActiveTabState = () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const tab = tabs[0];
+      if (tab && tab.url && tab.url.startsWith(country)) {
+        chrome.tabs.sendMessage(tab.id, { type: "GET_TAB_STATE" }, (res) => {
+          if (chrome.runtime.lastError) {
+            setIsSearching(false);
+            return;
+          }
+          setIsSearching(res?.isActive || false);
+        });
+      } else {
+        setIsSearching(false);
+      }
+    });
+  };
+
   const toggleSearch = () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const activeTab = tabs[0];
       const newState = !isSearching;
       // Only send message if tab URL matches your content script's pattern
-      if (
-        activeTab.url &&
-        activeTab.url.startsWith("https://hiring.amazon.ca/")
-      ) {
+      if (activeTab.url && activeTab.url.startsWith(country)) {
         chrome.tabs.sendMessage(
           activeTab.id,
           {
@@ -51,9 +68,10 @@ export function ToggleBar({ appData }) {
             if (chrome.runtime.lastError) {
               console.error(chrome.runtime.lastError.message);
             }
+            // After toggling, re-query the tab state to update the UI
+            queryActiveTabState();
           },
         );
-        setIsSearching(newState); // Only toggle if valid tab
         setToggleError(""); // Clear any previous error
 
         if (newState && shouldShowLocationDialog()) {
@@ -72,38 +90,15 @@ export function ToggleBar({ appData }) {
   const handleChooseLocation = () => {
     setShowLocationDialog(false);
     navigate("/location");
-    // Toggle ON after choosing location
-    setIsSearching(true);
-    chrome.runtime.sendMessage({
-      type: "TOGGLE_FETCHING",
-      isActive: true,
-    });
   };
 
   useEffect(() => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const tab = tabs[0];
-      // Only send message if tab URL matches your content script's pattern
-      if (tab.url && tab.url.startsWith("https://hiring.amazon.ca/")) {
-        chrome.tabs.sendMessage(tab.id, { type: "GET_TAB_STATE" }, (res) => {
-          if (chrome.runtime.lastError) {
-            // Optionally log or ignore
-            console.warn(
-              "No content script in this tab:",
-              chrome.runtime.lastError.message,
-            );
-            setIsSearching(false); // fallback
-            return;
-          }
-          setIsSearching(res?.isActive || false);
-        });
-      }
-    });
+    queryActiveTabState();
 
     // Listen to updates
     const listener = (msg) => {
       if (msg.type === "TAB_STATE_UPDATE") {
-        setIsSearching(msg.isActive);
+        queryActiveTabState();
       }
       return true;
     };

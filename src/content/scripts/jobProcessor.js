@@ -1,26 +1,10 @@
 import axios from "axios";
-const GRAPHQL_URL = "https://e5mquma77feepi2bdn4d6h3mpu.appsync-api.us-east-1.amazonaws.com/graphql";
+import { getCountry, setCountry } from "./model/country";
+const GRAPHQL_URL =
+  "https://e5mquma77feepi2bdn4d6h3mpu.appsync-api.us-east-1.amazonaws.com/graphql";
 
-const getCanadaNotation = () => {
-  return {
-    name: "Canada",
-    tld: "ca",
-    extld: "ca",
-    locale: "en-CA"
-  }
-}
-
-const getUsaNotation = () => {
-  return {
-    name: "United States",
-    tld: "com",
-    extld: "us",
-    locale: "en-US"
-  }
-}
-
-
-let country = getCanadaNotation();
+// setCountry({ name: "United States", tld: "com", extld: "us", locale: "en-US" });
+let country = getCountry();
 
 export const JobProcessor = {
   getToday: () => new Date().toISOString().split("T")[0],
@@ -122,26 +106,27 @@ export const JobProcessor = {
   fetchGraphQL: async (request, signal = undefined) => {
     const start = performance.now(); // Start timer
     try {
-    const response = await axios.post(GRAPHQL_URL, request, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer token",
-        Country: country.name,
-        "Cache-Control": "no-cache",
-        Pragma: "no-cache",
-      },
-      timeout: 2000,
-      signal, // NEW: for cancellation support
-    });
+      const response = await axios.post(GRAPHQL_URL, request, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer token",
+          Country: country.name,
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+        },
+        timeout: 2000,
+        signal, // NEW: for cancellation support
+      });
 
       const duration = performance.now() - start;
       if (duration > 2000) {
-        console.warn(`[fetchGraphQL] Response too slow (${duration.toFixed(2)}ms), skipping`);
+        console.warn(
+          `[fetchGraphQL] Response too slow (${duration.toFixed(2)}ms), skipping`,
+        );
         return null; // or throw new Error("Stale response");
       }
 
       return response.data;
-
     } catch (err) {
       const duration = performance.now() - start;
       if (err.code === "ECONNABORTED") {

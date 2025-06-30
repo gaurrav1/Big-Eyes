@@ -1,25 +1,8 @@
-import {JobProcessor} from "./jobProcessor.js";
+import { JobProcessor } from "./jobProcessor.js";
+import { getCountry, setCountry } from "./model/country";
 
-const getCanadaNotation = () => {
-  return {
-    name: "Canada",
-    tld: "ca",
-    extld: "ca",
-    locale: "en-CA"
-  }
-}
-
-const getUsaNotation = () => {
-      return {
-        name: "United States",
-        tld: "com",
-        extld: "us",
-        locale: "en-US"
-      }
-}
-
-
-let country = getCanadaNotation();
+// setCountry({ name: "United States", tld: "com", extld: "us", locale: "en-US" });
+let country = getCountry();
 
 export const JobFetcher = (() => {
   let isActive = false;
@@ -49,7 +32,6 @@ export const JobFetcher = (() => {
     const audio = new Audio(chrome.runtime.getURL("sounds/captured.mp3"));
     audio.volume = 1.0;
     audio.play().catch(() => {});
-
   }
 
   const updateAppData = (data) => {
@@ -97,12 +79,13 @@ export const JobFetcher = (() => {
         return;
       }
 
-
       controllers.forEach((controller, index) => {
         JobProcessor.fetchGraphQL(cachedRequest, controller.signal)
           .then(async (response) => {
             if (!response) {
-              console.log(`[JobFetcher] Skipped response due to timeout or slowness`);
+              console.log(
+                `[JobFetcher] Skipped response due to timeout or slowness`,
+              );
               return;
             }
 
@@ -138,7 +121,11 @@ export const JobFetcher = (() => {
           })
           .catch((err) => {
             if (err.name !== "AbortError") {
-              console.error(`[FetchError] on index ${index}:`, err, JSON.stringify(err, Object.getOwnPropertyNames(err)));
+              console.error(
+                `[FetchError] on index ${index}:`,
+                err,
+                JSON.stringify(err, Object.getOwnPropertyNames(err)),
+              );
             }
           })
           .finally(() => {
@@ -155,21 +142,12 @@ export const JobFetcher = (() => {
   updateAppData(appData);
 
   const redirectToApplication = (jobId, scheduleId) => {
-
-
     stop();
 
     chrome.runtime.sendMessage({
-      type: "TOGGLE_FETCHING",
-      isActive: false,
-    });
-
-    chrome.runtime.sendMessage({
-      type: "CLEAR_ACTIVE_TAB",
-    });
-
-    chrome.runtime.sendMessage({
-      type: "OPEN_JOB_SEARCH_TAB",
+      type: "JOB_FOUND_ACTIONS",
+      jobId,
+      scheduleId,
     });
 
     window.location.href = `https://hiring.amazon.${country.tld}/application/${country.extld}/?CS=true&jobId=${jobId}&locale=${country.locale}&scheduleId=${scheduleId}&ssoEnabled=1#/consent?CS=true&jobId=${jobId}&locale=${country.locale}&scheduleId=${scheduleId}&ssoEnabled=1`;
