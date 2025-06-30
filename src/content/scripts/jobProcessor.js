@@ -1,5 +1,5 @@
-import axios from "axios";
 import { getCountry, setCountry } from "./model/country";
+
 const GRAPHQL_URL =
   "https://e5mquma77feepi2bdn4d6h3mpu.appsync-api.us-east-1.amazonaws.com/graphql";
 
@@ -18,33 +18,11 @@ export const JobProcessor = {
           country: country.name,
           keyWords: "",
           equalFilters: [],
-          containFilters: [
-            {
-              key: "isPrivateSchedule",
-              val: ["false"],
-            },
-          ],
+          containFilters: [{ key: "isPrivateSchedule", val: ["false"] }],
           rangeFilters: [
-            {
-              key: "hoursPerWeek",
-              range: {
-                minimum: 0,
-                maximum: 80,
-              },
-            },
+            { key: "hoursPerWeek", range: { minimum: 0, maximum: 80 } },
           ],
-          sorters: [
-            {
-              fieldName: "totalPayRateMax",
-              ascending: "false",
-            },
-          ],
-          // geoQueryClause: {
-          //   lat: 43.685271,
-          //   lng: -79.759924,
-          //   unit: "km",
-          //   distance: 15000,
-          // },
+          sorters: [{ fieldName: "totalPayRateMax", ascending: "false" }],
           pageSize: 200,
           consolidateSchedule: true,
         },
@@ -71,86 +49,102 @@ export const JobProcessor = {
       searchScheduleRequest: {
         locale: country.locale,
         country: country.name,
-        keyWords: "",
-        equalFilters: [],
-        containFilters: [
-          {
-            key: "isPrivateSchedule",
-            val: ["false"],
-          },
-        ],
-        rangeFilters: [],
-        orFilters: [],
         dateFilters: [
           {
             key: "firstDayOnSite",
-            range: {
-              startDate: "2025-06-20",
-            },
+            range: { startDate: JobProcessor.getToday() },
           },
         ],
-        sorters: [
-          {
-            fieldName: "totalPayRateMax",
-            ascending: "false",
-          },
-        ],
+        containFilters: [{ key: "isPrivateSchedule", val: ["false"] }],
+        sorters: [{ fieldName: "totalPayRateMax", ascending: "false" }],
         pageSize: 1000,
-        jobId: jobId,
+        jobId,
       },
     },
     query:
       "query searchScheduleCards($searchScheduleRequest: SearchScheduleRequest!) {\n  searchScheduleCards(searchScheduleRequest: $searchScheduleRequest) {\n    nextToken\n    scheduleCards {\n      hireStartDate\n      address\n      basePay\n      bonusSchedule\n      city\n      currencyCode\n      dataSource\n      distance\n      employmentType\n      externalJobTitle\n      featuredSchedule\n      firstDayOnSite\n      hoursPerWeek\n      image\n      jobId\n      jobPreviewVideo\n      language\n      postalCode\n      priorityRank\n      scheduleBannerText\n      scheduleId\n      scheduleText\n      scheduleType\n      signOnBonus\n      state\n      surgePay\n      tagLine\n      geoClusterId\n      geoClusterName\n      siteId\n      scheduleBusinessCategory\n      totalPayRate\n      financeWeekStartDate\n      laborDemandAvailableCount\n      scheduleBusinessCategoryL10N\n      firstDayOnSiteL10N\n      financeWeekStartDateL10N\n      scheduleTypeL10N\n      employmentTypeL10N\n      basePayL10N\n      signOnBonusL10N\n      totalPayRateL10N\n      distanceL10N\n      requiredLanguage\n      monthlyBasePay\n      monthlyBasePayL10N\n      vendorKamName\n      vendorId\n      vendorName\n      kamPhone\n      kamCorrespondenceEmail\n      kamStreet\n      kamCity\n      kamDistrict\n      kamState\n      kamCountry\n      kamPostalCode\n      __typename\n    }\n    __typename\n  }\n}\n",
   }),
 
-  fetchGraphQL: async (request, signal = undefined) => {
-    const start = performance.now(); // Start timer
+  fetchGraphQL: async (request, externalSignal) => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000); // hard timeout in ms
+
+    const signal = externalSignal ?? controller.signal;
+    const start = performance.now();
+
     try {
-      const response = await axios.post(GRAPHQL_URL, request, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer token",
-          Country: country.name,
-          "Cache-Control": "no-cache",
-          Pragma: "no-cache",
-        },
-        timeout: 2000,
-        signal, // NEW: for cancellation support
-      });
+      const response = await Promise.race([
+        fetch(GRAPHQL_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer token",
+            Country: country.name,
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+          },
+          body: JSON.stringify(request),
+          signal,
+        }),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Request timed out")), 2000),
+        ),
+      ]);
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        console.error(`[fetchGraphQL] HTTP error ${response.status}`);
+        return null;
+      }
 
       const duration = performance.now() - start;
       if (duration > 2000) {
         console.warn(
           `[fetchGraphQL] Response too slow (${duration.toFixed(2)}ms), skipping`,
         );
-        return null; // or throw new Error("Stale response");
+        return null;
       }
 
-      return response.data;
+      return await response.json();
     } catch (err) {
       const duration = performance.now() - start;
-      if (err.code === "ECONNABORTED") {
-        console.warn(`[fetchGraphQL] Timed out after ${duration.toFixed(2)}ms`);
-      } else {
-        console.error(`[fetchGraphQL] Error:`, err);
-      }
-      throw err;
+      console.error(
+        `[fetchGraphQL] Failed in ${duration.toFixed(2)}ms:`,
+        err.message,
+      );
+      return null;
     }
   },
 
-  /**
-   * @param {Array<Object>} jobCards
-   *   Raw array from response.data.searchJobCardsByLocation.jobCards
-   * @param {Object} filter
-   *   {
-   *     shifts: string[],              // e.g. ["FULL_TIME","FLEX_TIME"]
-   *     isShiftPrioritized: boolean,   // true = use order, false = just membership
-   *     cities: string[],              // e.g. ["Richmond","Anchorage"]
-   *     isCityPrioritized: boolean
-   *   }
-   * @returns {string}
-   *   The best-matched jobId
-   */
+  getBestJob: (response, appData) => {
+    const jobCards = response?.data?.searchJobCardsByLocation?.jobCards ?? [];
+    const filter = {
+      shifts: appData.shiftPriorities || [],
+      isShiftPrioritized: appData.shiftPrioritized || false,
+      cities: [
+        ...(appData.centerOfCityCoordinates?.locationName
+          ? [appData.centerOfCityCoordinates.locationName]
+          : []),
+        ...(Array.isArray(appData.otherCities)
+          ? appData.otherCities.map((c) => c.locationName).filter(Boolean)
+          : []),
+      ],
+      isCityPrioritized: appData.cityPrioritized || false,
+    };
+
+    console.log(`[JobScoring] filter=${JSON.stringify(filter)}`);
+    const bestJobId = JobProcessor.selectBestJobIdRaw(jobCards, filter);
+    return jobCards.find((j) => j.jobId === bestJobId) || null;
+  },
+
+  getJobSchedule: async (jobId) => {
+    const response = await JobProcessor.fetchGraphQL(
+      JobProcessor.buildScheduleRequest(jobId),
+    );
+    return response?.data?.searchScheduleCards?.scheduleCards?.[0];
+  },
+
   selectBestJobIdRaw: function (jobCards, filter) {
     // Edge cases
     if (jobCards.length === 0) return null;
@@ -263,40 +257,5 @@ export const JobProcessor = {
       `[JobScoring] Selected jobId=${best.jobId} with score=${JSON.stringify(best.score)}`,
     );
     return best.jobId;
-  },
-
-  getBestJob: (response, appData) => {
-    const jobCards = response?.data?.searchJobCardsByLocation?.jobCards;
-    // Build filter object from appData
-    const filter = {
-      shifts: appData.shiftPriorities || [],
-      isShiftPrioritized: appData.shiftPrioritized || false, // UPDATED
-      cities: [
-        ...(appData.centerOfCityCoordinates?.locationName
-          ? [appData.centerOfCityCoordinates.locationName]
-          : []),
-        ...(Array.isArray(appData.otherCities)
-          ? appData.otherCities.map((obj) => obj.locationName).filter(Boolean)
-          : []),
-      ],
-      isCityPrioritized: appData.cityPrioritized || false, // UPDATED
-    };
-
-    console.log(`[JobScoring] filter=${JSON.stringify(filter)}`);
-    const bestJobId = JobProcessor.selectBestJobIdRaw(jobCards || [], filter);
-    if (!bestJobId) {
-      console.log("[JobScoring] No suitable job found.");
-      return null;
-    }
-    const bestJob = (jobCards || []).find((j) => j.jobId === bestJobId) || null;
-    console.log("[JobScoring] getBestJob selected:", bestJob);
-    return bestJob;
-  },
-
-  getJobSchedule: async (jobId) => {
-    const response = await JobProcessor.fetchGraphQL(
-      JobProcessor.buildScheduleRequest(jobId),
-    );
-    return response?.data?.searchScheduleCards?.scheduleCards?.[0];
   },
 };
