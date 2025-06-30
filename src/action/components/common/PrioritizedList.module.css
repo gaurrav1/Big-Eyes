@@ -43,7 +43,7 @@
 }
 
 .listContainer {
-    border-radius: 18px;
+    border-radius: 22px;
     background: var(--section-background);
     overflow: hidden;
     transition:

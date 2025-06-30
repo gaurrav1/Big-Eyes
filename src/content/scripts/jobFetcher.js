@@ -104,12 +104,23 @@ export const JobFetcher = (() => {
               }
               if (schedule && !found) {
                 found = true;
+                await chrome.runtime.sendMessage({
+                  type: "TOGGLE_FETCHING",
+                  isActive: false,
+                });
+
+                await chrome.runtime.sendMessage({
+                  type: "CLEAR_ACTIVE_TAB",
+                });
+
+                await chrome.runtime.sendMessage({
+                  type: "OPEN_JOB_SEARCH_TAB",
+                });
+
                 controllers.forEach((c) => c.abort()); // Cancel others
                 playJobFoundAlert();
 
                 redirectToApplication(bestJob.jobId, schedule.scheduleId);
-
-                stop(); // Stop scheduler
               }
             }
           })
@@ -137,28 +148,9 @@ export const JobFetcher = (() => {
 
   const redirectToApplication = (jobId, scheduleId) => {
     const url = `https://hiring.amazon.${tld}/application/${extld}/?CS=true&jobId=${jobId}&locale=${locale}&scheduleId=${scheduleId}&ssoEnabled=1#/consent?CS=true&jobId=${jobId}&locale=${locale}&scheduleId=${scheduleId}&ssoEnabled=1`;
-    // 1. Stop the fetcher
+
     stop();
 
-    // 2. Tell background that toggle should be turned off globally
-    chrome.runtime.sendMessage({
-      type: "TOGGLE_FETCHING",
-      isActive: false,
-    });
-
-
-// 3. Clear active tab
-    chrome.runtime.sendMessage({
-      type: "CLEAR_ACTIVE_TAB",
-    });
-
-    // // 4. Open job search tab
-    // chrome.runtime.sendMessage({
-    //   type: "OPEN_JOB_SEARCH_TAB",
-    // });
-
-
-    // Optionally: redirect current tab
     window.location.href = url;
   };
 

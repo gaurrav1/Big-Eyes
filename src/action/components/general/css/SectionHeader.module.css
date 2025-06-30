@@ -1,12 +1,11 @@
 .sectionHeader {
-    position: sticky;
-    top: 70px; /* Or top: 56px; if you have a fixed header */
     z-index: 10;
     display: flex;
     width: 100%;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    letter-spacing: -0.3px;
 }
 
 .sectionTitle {

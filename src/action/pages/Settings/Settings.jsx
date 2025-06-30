@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { ToggleButton } from "../../components/button/ToggleButton";
 import { useAppContext } from "../../context/AppContext";
 import { useState } from "react";
+import styles from "./css/Settings.module.css"
 
 export function Settings() {
   const { appData, updateAppData} = useAppContext();
@@ -24,7 +25,7 @@ export function Settings() {
   }
 
   return (
-    <>
+    <div className={styles.container}>
       <div>Settings</div>
       <ToggleButton
         isActive={appData.cityPrioritized}
@@ -34,6 +35,6 @@ export function Settings() {
         isActive={appData.shiftPrioritized}
         onClick={handleToggleShiftPriority}
       />
-    </>
+    </div>
   );
 }

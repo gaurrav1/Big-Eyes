@@ -3,6 +3,7 @@ import { useAppContext } from "../../context/AppContext.jsx";
 import { Lists } from "../../components/main/Lists.jsx";
 import {ToggleBar} from "../../components/main/ToggleBar.jsx";
 import {Section} from "../../components/general/Section.jsx";
+import styles from "./Main.module.css";
 
 export const Main = () => {
   const { appData } = useAppContext();
@@ -18,7 +19,7 @@ export const Main = () => {
   }
 
   return (
-    <div className="container">
+    <div className={styles.container}>
         <ToggleBar appData={appData}/>
         <Section header={filterHeader}>
             {isClient ? (

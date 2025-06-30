@@ -166,9 +166,6 @@ export const Location = () => {
   return (
     <>
       <div className={styles.container}>
-        <br />
-        <br />
-        <br />
         <SectionHeader header={mainHeader} />
 
         <Section header={centerCitySection}>

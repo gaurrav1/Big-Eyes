@@ -49,8 +49,9 @@ body {
 
 .layout {
     font-family: inherit;
+    margin-top: 64px;
     font-weight: 500;
-    padding: 1rem 0.6rem 0 0.6rem;
+    padding: 0 0.6rem;
     display: flex;
     flex-direction: column;
     user-select: none;
