@@ -78,7 +78,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       break;
 
     case "TOGGLE_FETCHING":
-      handleFetchToggle(message.isActive)
+      handleFetchToggle(message.isActive, message.tabId)
         .then(() => sendResponse({ success: true }))
         .catch((err) =>
           sendResponse({
@@ -171,40 +171,10 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
 });
 
 // Helper functions
-async function handleFetchToggle(isActive) {
+async function handleFetchToggle(isActive, tabId) {
   if (isActive) {
-    // Validate existing tab
-    if (tabState.activeTabId) {
-      try {
-        const tab = await chrome.tabs.get(tabState.activeTabId);
-        if (tab.url.includes("jobSearch")) {
-          chrome.tabs.sendMessage(tab.id, {
-            type: "APP_DATA_UPDATE",
-            payload: appData,
-          });
-          updateTabState({ isActive: true, activeTabId: tab.id });
-          return;
-        }
-      } catch (e) {
-        console.error("");
-      }
-    }
-
-    // Find or create job search tab
-    const tabs = await chrome.tabs.query({
-      url: country.wildCardJobSearchUrl,
-    });
-    const validTab = tabs.find((tab) => tab.id);
-
-    if (validTab) {
-      updateTabState({ isActive: true, activeTabId: validTab.id });
-    } else {
-      const newTab = await chrome.tabs.create({
-        url: country.jobSearchUrl,
-        active: true,
-      });
-      updateTabState({ isActive: true, activeTabId: newTab.id });
-    }
+    // Set the requesting tab as the new active tab
+    updateTabState({ isActive: true, activeTabId: tabId });
   } else {
     updateTabState({ isActive: false, activeTabId: null });
   }

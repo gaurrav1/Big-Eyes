@@ -18,8 +18,16 @@ async function init() {
 
   chrome.runtime.sendMessage({ type: "GET_TAB_STATE" }, (state) => {
     if (state?.isActive && state?.activeTabId === tabId) {
-      console.log("[JobFetcher] Tab is active, starting fetcher");
-      JobFetcher.start();
+      if (!isActive) {
+        console.log("[JobFetcher] Tab is active, starting fetcher");
+        isActive = true;
+        JobFetcher.start();
+      } else {
+        if (isActive) {
+          isActive = false;
+          JobFetcher.stop();
+        }
+      }
     }
   });
 }
@@ -28,17 +36,6 @@ init();
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   switch (msg.type) {
-    case "TOGGLE_FETCHING":
-      isActive = msg.isActive;
-      if (isActive) {
-        JobFetcher.start();
-      } else {
-        JobFetcher.stop();
-      }
-
-      sendResponse();
-      break;
-
     case "GET_TAB_STATE":
       sendResponse({ isActive, tabId });
       break;
@@ -51,10 +48,12 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     case "TAB_STATE_UPDATE":
       if (msg.activeTabId === tabId && msg.isActive) {
         if (!isActive) {
+          isActive = true;
           JobFetcher.start();
         }
       } else {
         if (isActive) {
+          isActive = false;
           JobFetcher.stop();
         }
       }

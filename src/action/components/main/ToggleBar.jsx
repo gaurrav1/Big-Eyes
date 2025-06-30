@@ -58,11 +58,11 @@ export function ToggleBar({ appData }) {
       const newState = !isSearching;
       // Only send message if tab URL matches your content script's pattern
       if (activeTab.url && activeTab.url.startsWith(country)) {
-        chrome.tabs.sendMessage(
-          activeTab.id,
+        chrome.runtime.sendMessage(
           {
             type: "TOGGLE_FETCHING",
             isActive: newState,
+            tabId: activeTab.id,
           },
           () => {
             if (chrome.runtime.lastError) {
