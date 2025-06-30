@@ -25,7 +25,7 @@
         "src/content/scripts/main.js",
         "src/content/scripts/consent-page-handler.js"
       ],
-      "matches": ["https://*.hiring.amazon.com/**"]
+      "matches": ["https://*.hiring.amazon.ca/**"]
     }
   ],
   "background": {
@@ -33,11 +33,11 @@
     "type": "module"
   },
   "permissions": ["storage", "geolocation", "scripting", "tabs"],
-  "host_permissions": ["https://*.hiring.amazon.com/**"],
+  "host_permissions": ["https://*.hiring.amazon.ca/**"],
   "web_accessible_resources": [
     {
       "resources": ["images/*.png", "content/*.css", "sounds/*.mp3"],
-      "matches": ["https://*.hiring.amazon.com/*"]
+      "matches": ["https://*.hiring.amazon.ca/*"]
     }
   ]
 }

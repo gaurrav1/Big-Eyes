@@ -1,6 +1,7 @@
 import { JobFetcher } from "./jobFetcher.js";
 
 let isActive = false;
+let country = "United States";
 
 async function init() {
   const tabId = await new Promise((resolve) => {
@@ -16,7 +17,7 @@ async function init() {
   chrome.runtime.sendMessage({ type: "GET_TAB_STATE" }, (state) => {
     if (state?.isActive && state?.activeTabId === tabId) {
       console.log("[JobFetcher] Tab is active, starting fetcher");
-      JobFetcher.start();
+      JobFetcher.start(country);
 
       // Notify popup UI toggle to update
       chrome.runtime.sendMessage({

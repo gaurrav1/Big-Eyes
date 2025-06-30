@@ -3,6 +3,24 @@ import { DEFAULT_APP_DATA } from "./modules/defaultData.js";
 const STORAGE_KEY_APP_DATA = "appData";
 const STORAGE_KEY_TAB_STATE = "tabState";
 
+let getCanadaNotation = () => {
+    return {
+        jobSearchUrl: "https://hiring.amazon.ca/app#/jobSearch",
+        wildCardUrl: "*://*.hiring.amazon.ca/*",
+        wildCardJobSearchUrl: "*://*.hiring.amazon.ca/app#/jobSearch",
+    }
+}
+
+let getUsaNotation = () => {
+    return {
+        jobSearchUrl: "https://hiring.amazon.com/app#/jobSearch",
+        wildCardUrl: "*://*.hiring.amazon.com/*",
+        wildCardJobSearchUrl: "*://*.hiring.amazon.com/app#/jobSearch",
+    }
+}
+
+let country =  getCanadaNotation();
+
 // Initialize storage on installation
 chrome.runtime.onInstalled.addListener(async () => {
   await chrome.storage.local.set({
@@ -47,7 +65,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       chrome.storage.local.set({ [STORAGE_KEY_APP_DATA]: appData });
 
       // Broadcast to all content scripts
-      chrome.tabs.query({ url: "*://*.hiring.amazon.com/*" }, (tabs) => {
+      chrome.tabs.query({ url: country.wildCardUrl }, (tabs) => {
         tabs.forEach((tab) => {
           chrome.tabs.sendMessage(tab.id, {
             type: "APP_DATA_UPDATE",
@@ -84,7 +102,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     case "OPEN_JOB_SEARCH_TAB":
         chrome.tabs.create({
-            url: "https://hiring.amazon.com/app#/jobSearch",
+            url: country.jobSearchUrl,
             // active: true,
         }, (tab) => {
             updateTabState({ isActive: true, activeTabId: tab.id });
@@ -144,7 +162,7 @@ async function handleFetchToggle(isActive) {
 
     // Find or create job search tab
     const tabs = await chrome.tabs.query({
-      url: "*://*.hiring.amazon.com/app#/jobSearch*",
+      url: country.wildCardJobSearchUrl,
     });
     const validTab = tabs.find((tab) => tab.id);
 
@@ -152,7 +170,7 @@ async function handleFetchToggle(isActive) {
       updateTabState({ isActive: true, activeTabId: validTab.id });
     } else {
       const newTab = await chrome.tabs.create({
-        url: "https://hiring.amazon.com/app#/jobSearch",
+        url: country.jobSearchUrl,
         active: true,
       });
       updateTabState({ isActive: true, activeTabId: newTab.id });

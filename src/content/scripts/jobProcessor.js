@@ -1,6 +1,27 @@
 import axios from "axios";
-const GRAPHQL_URL =
-  "https://e5mquma77feepi2bdn4d6h3mpu.appsync-api.us-east-1.amazonaws.com/graphql";
+const GRAPHQL_URL = "https://e5mquma77feepi2bdn4d6h3mpu.appsync-api.us-east-1.amazonaws.com/graphql";
+
+const getCanadaNotation = () => {
+  return {
+    name: "Canada",
+    tld: "ca",
+    extld: "ca",
+    locale: "en-CA"
+  }
+}
+
+const getUsaNotation = () => {
+  return {
+    name: "United States",
+    tld: "com",
+    extld: "us",
+    locale: "en-US"
+  }
+}
+
+
+let country = getCanadaNotation();
+
 export const JobProcessor = {
   getToday: () => new Date().toISOString().split("T")[0],
 
@@ -9,8 +30,8 @@ export const JobProcessor = {
       operationName: "searchJobCardsByLocation",
       variables: {
         searchJobRequest: {
-          locale: "en-US",
-          country: "United States",
+          locale: country.locale,
+          country: country.name,
           keyWords: "",
           equalFilters: [],
           containFilters: [
@@ -64,8 +85,8 @@ export const JobProcessor = {
     operationName: "searchScheduleCards",
     variables: {
       searchScheduleRequest: {
-        locale: "en-US",
-        country: "United States",
+        locale: country.locale,
+        country: country.name,
         keyWords: "",
         equalFilters: [],
         containFilters: [
@@ -105,7 +126,7 @@ export const JobProcessor = {
       headers: {
         "Content-Type": "application/json",
         Authorization: "Bearer token",
-        Country: "United States",
+        Country: country.name,
         "Cache-Control": "no-cache",
         Pragma: "no-cache",
       },

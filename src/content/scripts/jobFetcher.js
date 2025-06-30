@@ -1,5 +1,26 @@
 import {JobProcessor} from "./jobProcessor.js";
 
+const getCanadaNotation = () => {
+  return {
+    name: "Canada",
+    tld: "ca",
+    extld: "ca",
+    locale: "en-CA"
+  }
+}
+
+const getUsaNotation = () => {
+      return {
+        name: "United States",
+        tld: "com",
+        extld: "us",
+        locale: "en-US"
+      }
+}
+
+
+let country = getCanadaNotation();
+
 export const JobFetcher = (() => {
   let isActive = false;
   let appData = {};
@@ -58,6 +79,7 @@ export const JobFetcher = (() => {
       JSON.stringify(appData, null, 2),
     );
   };
+
   // Highly optimized scheduler: minimal allocations, direct logic
   const runScheduler = () => {
     intervalId = setInterval(() => {
@@ -133,9 +155,7 @@ export const JobFetcher = (() => {
   updateAppData(appData);
 
   const redirectToApplication = (jobId, scheduleId) => {
-    const tld = "com";
-    const extld = "us";
-    const locale = "en-US";
+
 
     stop();
 
@@ -152,7 +172,7 @@ export const JobFetcher = (() => {
       type: "OPEN_JOB_SEARCH_TAB",
     });
 
-    window.location.href = `https://hiring.amazon.${tld}/application/${extld}/?CS=true&jobId=${jobId}&locale=${locale}&scheduleId=${scheduleId}&ssoEnabled=1#/consent?CS=true&jobId=${jobId}&locale=${locale}&scheduleId=${scheduleId}&ssoEnabled=1`;
+    window.location.href = `https://hiring.amazon.${country.tld}/application/${country.extld}/?CS=true&jobId=${jobId}&locale=${country.locale}&scheduleId=${scheduleId}&ssoEnabled=1#/consent?CS=true&jobId=${jobId}&locale=${country.locale}&scheduleId=${scheduleId}&ssoEnabled=1`;
   };
 
   return {
