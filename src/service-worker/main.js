@@ -19,7 +19,7 @@ let getUsaNotation = () => {
   };
 };
 
-let country = getCanadaNotation();
+let country = getUsaNotation();
 
 // Initialize storage on installation
 chrome.runtime.onInstalled.addListener(async () => {
@@ -92,7 +92,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       chrome.tabs.create(
         {
           url: country.jobSearchUrl,
-          // active: true,
+          active: false,
         },
         (tab) => {
           updateTabState({ isActive: true, activeTabId: tab.id });

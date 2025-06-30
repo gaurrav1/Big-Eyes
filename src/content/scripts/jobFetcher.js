@@ -1,7 +1,7 @@
 import { JobProcessor } from "./jobProcessor.js";
 import { getCountry, setCountry } from "./model/country";
 
-// setCountry({ name: "United States", tld: "com", extld: "us", locale: "en-US" });
+setCountry({ name: "United States", tld: "com", extld: "us", locale: "en-US" });
 let country = getCountry();
 
 export const JobFetcher = (() => {
@@ -9,10 +9,12 @@ export const JobFetcher = (() => {
   let appData = {};
   let intervalId = null;
   let cachedRequest = null;
+  let hasRedirected = false; // NEW
 
   const start = () => {
     if (isActive) return;
     isActive = true;
+    hasRedirected = false; // Reset on start
     console.log("[JobFetcher] Starting job search");
     runScheduler();
   };
@@ -107,15 +109,12 @@ export const JobFetcher = (() => {
                 );
                 return;
               }
-              if (schedule && !found) {
-                found = true;
-
-                controllers.forEach((c) => c.abort()); // Cancel others
-                playJobFoundAlert();
-
-                redirectToApplication(bestJob.jobId, schedule.scheduleId);
-
+              if (schedule && !hasRedirected) {
+                hasRedirected = true;
+                controllers.forEach((c) => c.abort());
                 stop();
+                playJobFoundAlert();
+                redirectToApplication(bestJob.jobId, schedule.scheduleId);
               }
             }
           })
