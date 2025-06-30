@@ -1,8 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import styles from "./UserStatus.module.css";
 
 const STATUS_LABELS = {
-  on: { text: "Fetching: ON", className: styles.statusOn },
+  thisTab: { text: "Fetching: ON (this tab)", className: styles.statusOn },
+  otherTab: {
+    text: "Fetching: ON (other tab)",
+    className: styles.statusOtherTab,
+  },
   off: { text: "Fetching: OFF", className: styles.statusOff },
   error: { text: "Network Error", className: styles.statusError },
 };
@@ -15,8 +19,36 @@ export const UserStatus = () => {
     cityPrioritized: false,
   });
   const [status, setStatus] = useState("off");
+  const tabIdRef = useRef(null);
 
-  // Listen for messages from background/content scripts
+  // Get this tab's id on mount
+  useEffect(() => {
+    chrome.runtime.sendMessage({ type: "GET_TAB_ID" }, (res) => {
+      tabIdRef.current = res?.tabId;
+      queryTabStatus();
+    });
+  }, []);
+
+  // Helper to query the current tab's fetching status
+  const queryTabStatus = () => {
+    chrome.runtime.sendMessage({ type: "GET_TAB_STATE" }, (res) => {
+      if (chrome.runtime.lastError) {
+        setStatus("off");
+        return;
+      }
+      // Compare tab ids
+      if (res?.isActive) {
+        if (res.activeTabId === tabIdRef.current) {
+          setStatus("thisTab");
+        } else {
+          setStatus("otherTab");
+        }
+      } else {
+        setStatus("off");
+      }
+    });
+  };
+
   useEffect(() => {
     function handleMsg(msg) {
       if (msg.type === "APP_DATA_UPDATE") {
@@ -27,8 +59,8 @@ export const UserStatus = () => {
           cityPrioritized: msg.payload?.cityPrioritized || false,
         });
       }
-      if (msg.type === "FETCH_STATUS_UPDATE") {
-        setStatus(msg.isActive ? "on" : "off");
+      if (msg.type === "TAB_STATE_UPDATE") {
+        queryTabStatus();
       }
       if (msg.type === "NETWORK_ERROR") {
         setStatus("error");
@@ -36,24 +68,31 @@ export const UserStatus = () => {
     }
     chrome.runtime.onMessage.addListener(handleMsg);
 
-    // Initial fetch from storage
-    chrome.storage.local.get(["appData", "fetchStatus"], (result) => {
+    // Initial fetch from storage and tab state
+    chrome.storage.local.get(["appData"], (result) => {
       setPreferences({
         location: result.appData?.location || "Unknown",
         shiftPriorities: result.appData?.shiftPriorities || [],
+        shiftPrioritized: result.appData?.shiftPrioritized || false,
+        cityPrioritized: result.appData?.cityPrioritized || false,
       });
-      setStatus(result.fetchStatus === true ? "on" : "off");
     });
 
+    // Only query status if tabId is already set
+    if (tabIdRef.current !== null) {
+      queryTabStatus();
+    }
+
     return () => chrome.runtime.onMessage.removeListener(handleMsg);
+    // eslint-disable-next-line
   }, []);
 
   // Update tab title on status change
   useEffect(() => {
     const base = document.title.replace(/(\[.*?\]\s*)?/, "");
     let prefix = "";
-    if (status === "on") prefix = "[⏳ ON] ";
-    else if (status === "off") prefix = "[⏹ OFF] ";
+    if (status === "thisTab") prefix = "[⏳ ON] ";
+    else if (status === "otherTab" || status === "off") prefix = "[⏹ OFF] ";
     else if (status === "error") prefix = "[⚠️ ERROR] ";
     document.title = prefix + base;
   }, [status]);
@@ -67,11 +106,13 @@ export const UserStatus = () => {
       </div>
       <div className={styles.statusRow}>
         <span>Location:</span>
-        <b>{preferences.location.otherCities?.map((otherCity) => (
-            <div>
-              {otherCity}
-            </div>
-        ))}</b>
+        <b>
+          {Array.isArray(preferences.location?.otherCities)
+            ? preferences.location.otherCities.map((otherCity, idx) => (
+                <div key={idx}>{otherCity}</div>
+              ))
+            : preferences.location}
+        </b>
       </div>
       <div className={styles.statusRow}>
         <span>Shift Priority:</span>
