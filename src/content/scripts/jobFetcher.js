@@ -1,7 +1,7 @@
 import { JobProcessor } from "./jobProcessor.js";
 import { getCountry, setCountry } from "./model/country";
 
-setCountry({ name: "United States", tld: "com", extld: "us", locale: "en-US" });
+// setCountry({ name: "United States", tld: "com", extld: "us", locale: "en-US" });
 const country = getCountry();
 
 const INTERVAL_MS = 500;
@@ -91,6 +91,7 @@ export const JobFetcher = (() => {
             hasRedirected = true;
             controllers.forEach((c) => c.abort());
             playJobFoundAlert();
+            console.log("Job ID: " + bestJob.jobId + "\nSchedule ID: " + schedule.scheduleId + "\nLocation: " + bestJob.locationName + "\nJob Type: " + bestJob.jobType);
             redirectToApplication(bestJob.jobId, schedule.scheduleId);
             break; // exit loop
           }

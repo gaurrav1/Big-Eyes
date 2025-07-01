@@ -19,7 +19,7 @@ let getUsaNotation = () => {
   };
 };
 
-let country = getUsaNotation();
+let country = getCanadaNotation();
 
 // Initialize storage on installation
 chrome.runtime.onInstalled.addListener(async () => {

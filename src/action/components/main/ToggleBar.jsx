@@ -5,7 +5,7 @@ import { WarningText } from "../general/WarningText.jsx";
 import { ConfirmationDialog } from "../dialog/ConfirmationDialog.jsx";
 import styles from "./css/ToggleBar.module.css";
 
-const country = "https://hiring.amazon.com/";
+const country = "https://hiring.amazon.ca/";
 
 export function ToggleBar({ appData }) {
   const [isSearching, setIsSearching] = useState(false);

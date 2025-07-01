@@ -3,7 +3,7 @@ import { getCountry, setCountry } from "./model/country";
 const GRAPHQL_URL =
   "https://e5mquma77feepi2bdn4d6h3mpu.appsync-api.us-east-1.amazonaws.com/graphql";
 
-setCountry({ name: "United States", tld: "com", extld: "us", locale: "en-US" });
+// setCountry({ name: "United States", tld: "com", extld: "us", locale: "en-US" });
 let country = getCountry();
 
 export const JobProcessor = {
@@ -148,7 +148,18 @@ export const JobProcessor = {
   selectBestJobIdRaw: function (jobCards, filter) {
     // Edge cases
     if (jobCards.length === 0) return null;
-    if (jobCards.length === 1) return jobCards[0].jobId;
+    if (jobCards.length === 1) {
+      const job = jobCards[0];
+      const jobShifts = job.jobType.split(";").map(s => s.trim());
+
+      const hasValidShift = jobShifts.some(s => filter.shifts.includes(s));
+
+      if (!hasValidShift) {
+        console.log("[JobScoring] Single job doesn't match required shift types");
+        return null;
+      }
+      return job.jobId;
+    }
     if (!filter.shifts.length && !filter.cities.length) {
       return jobCards[0].jobId;
     }
