@@ -45,6 +45,24 @@ chrome.storage.local.get(
   },
 );
 
+async function ensureOffscreen() {
+  const exists = await chrome.offscreen.hasDocument();
+  if (!exists) {
+    await chrome.offscreen.createDocument({
+      url: "play-sound.html",
+      reasons: ["AUDIO_PLAYBACK"],
+      justification: "Play alert sound when job is found",
+    });
+  }
+}
+
+chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
+  if (msg.type === "PLAY_SOUND") {
+    await ensureOffscreen();
+    await chrome.runtime.sendMessage({type: "PLAY_SOUND_OFFSCREEN"}); // forwarded to offscreen page
+  }
+});
+
 // Message handling
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   let isAsync = false;

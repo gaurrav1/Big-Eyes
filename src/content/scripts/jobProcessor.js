@@ -181,6 +181,7 @@ export const JobProcessor = {
 
       console.log("jobShifts:", jobShifts, "filter.shifts:", filter.shifts);
 
+
       // 2. Compute shiftScore:
       let shiftScore;
       if (filter.shifts.length === 0) {

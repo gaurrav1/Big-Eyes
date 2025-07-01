@@ -6,7 +6,8 @@ const country = getCountry();
 
 const INTERVAL_MS = 500;
 const FETCH_CONCURRENCY = 5;
-
+const audio = new Audio(chrome.runtime.getURL("sounds/captured.mp3"));
+audio.volume = 1.0;
 export const JobFetcher = (() => {
   let isActive = false;
   let appData = {};
@@ -17,9 +18,7 @@ export const JobFetcher = (() => {
   const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
   function playJobFoundAlert() {
-    const audio = new Audio(chrome.runtime.getURL("sounds/captured.mp3"));
-    audio.volume = 1.0;
-    audio.play().catch(() => {});
+    chrome.runtime.sendMessage({ type: "PLAY_SOUND" });
   }
 
   function redirectToApplication(jobId, scheduleId) {

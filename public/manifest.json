@@ -32,11 +32,11 @@
     "service_worker": "src/service-worker/main.js",
     "type": "module"
   },
-  "permissions": ["storage", "geolocation", "scripting", "tabs"],
+  "permissions": ["storage", "geolocation", "scripting", "tabs", "offscreen"],
   "host_permissions": ["https://*.hiring.amazon.com/**"],
   "web_accessible_resources": [
     {
-      "resources": ["images/*.png", "content/*.css", "sounds/*.mp3"],
+      "resources": ["images/*.png", "content/*.css", "sounds/*.mp3", "*.html"],
       "matches": ["https://*.hiring.amazon.com/*"]
     }
   ]
