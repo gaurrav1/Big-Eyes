@@ -1,7 +1,7 @@
 import { JobProcessor } from "./jobProcessor.js";
 import { getCountry, setCountry } from "./model/country";
 
-// setCountry({ name: "United States", tld: "com", extld: "us", locale: "en-US" });
+setCountry({ name: "United States", tld: "com", extld: "us", locale: "en-US" });
 const country = getCountry();
 
 const INTERVAL_MS = 500;
@@ -30,7 +30,7 @@ export const JobFetcher = (() => {
     });
 
     const url = `https://hiring.amazon.${country.tld}/application/${country.extld}/?CS=true&jobId=${jobId}&locale=${country.locale}&scheduleId=${scheduleId}&ssoEnabled=1#/consent?CS=true&jobId=${jobId}&locale=${country.locale}&scheduleId=${scheduleId}&ssoEnabled=1`;
-    window.location.href = url;
+    // window.location.href = url;
   }
 
   function updateAppData(data) {

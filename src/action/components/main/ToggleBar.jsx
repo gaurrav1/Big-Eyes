@@ -3,9 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { ToggleButton } from "../general/ToggleButton.jsx";
 import { WarningText } from "../general/WarningText.jsx";
 import { ConfirmationDialog } from "../dialog/ConfirmationDialog.jsx";
-import styles from "./css/ToggleBar.module.css";
 
-const country = "https://hiring.amazon.ca/";
+const country = "https://hiring.amazon.com/";
 
 export function ToggleBar({ appData }) {
   const [isSearching, setIsSearching] = useState(false);
@@ -107,7 +106,7 @@ export function ToggleBar({ appData }) {
   }, []);
 
   return (
-    <div className={styles.toggleBar}>
+    <div>
       <ToggleButton isActive={isSearching} onClick={toggleSearch} />
       {toggleError && <WarningText text={toggleError} isError={true} />}
       <ConfirmationDialog

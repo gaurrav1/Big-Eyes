@@ -10,12 +10,12 @@ const HEADING = {
         H6 : "var(--h6-size)"
     },
     headingFontWeight: {
-        H1 : "var(--h1-fontWeight)",
-        H2 : "var(--h2-fontWeight)",
-        H3 : "var(--h3-fontWeight)",
-        H4 : "var(--h4-fontWeight)",
-        H5 : "var(--h5-fontWeight)",
-        H6 : "var(--h6-fontWeight)"
+        H1 : "var(--h1-weight)",
+        H2 : "var(--h2-weight)",
+        H3 : "var(--h3-weight)",
+        H4 : "var(--h4-weight)",
+        H5 : "var(--h5-weight)",
+        H6 : "var(--h6-weight)"
     }
 }
 

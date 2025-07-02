@@ -31,9 +31,8 @@ html,
 body {
     margin: 0;
     padding: 0;
-    overflow-y: scroll;
-    min-width: 350px;
-    min-height: 600px;
+    min-width: 325px;
+    min-height: 560px;
     font-family: "Montserrat", sans-serif;
     font-optical-sizing: auto;
     font-weight: 500;

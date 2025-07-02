@@ -29,12 +29,12 @@
 
 .footer {
     text-align: center;
-    font-size: 1rem;
+    font-size: var(--h5-size);
     color: var(--muted);
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 6px;
-    font-weight: 500;
+    font-weight: var(--h5-weight);
     padding-bottom: 0.2rem;
 }

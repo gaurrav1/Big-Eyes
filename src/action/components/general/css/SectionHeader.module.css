@@ -17,7 +17,7 @@
     color: var(--muted);
     padding: 0.3rem 0.8rem;
     border-radius: 20px;
-    font-size: 17px;
+    font-size: var(--h4-size);
     cursor: pointer;
     border: none;
     transition:
@@ -28,8 +28,4 @@
 .sectionButton:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-}
-
-.isMainTitle {
-    padding-left: 0px;
 }

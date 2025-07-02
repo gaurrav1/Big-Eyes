@@ -14,15 +14,15 @@ export function Lists({ appData }) {
 
   // Compose title (with fallback)
   const locationTitle =
-    centerOfCityCoordinates?.name && commuteDistance
-      ? `${centerOfCityCoordinates.name} - ${commuteDistance} km`
+    centerOfCityCoordinates?.locationName && commuteDistance
+      ? `${centerOfCityCoordinates.locationName} ~ ${commuteDistance} km`
       : "Location";
 
   // Compose description (first names, or fallback)
   const locationDescription =
     Array.isArray(otherCities) && otherCities.length > 0
       ? otherCities.map((city) => city.name.split(",")[0]).join(", ")
-      : "Select a location";
+      : "Any nearby location";
 
   const shiftTitle =
     shiftPriorities && shiftPriorities.length > 0
@@ -53,7 +53,7 @@ export function Lists({ appData }) {
     locate: "/location",
   };
   const shiftTypeTile = {
-    icon: <CalendarIcon height={30} width={30} />,
+    icon: <CalendarIcon height={26} width={26} />,
     title: shiftTitle,
     description: shiftDescription,
     navIcon: <Next height={30} width={30} />,

@@ -3,7 +3,7 @@ import { getCountry, setCountry } from "./model/country";
 const GRAPHQL_URL =
   "https://e5mquma77feepi2bdn4d6h3mpu.appsync-api.us-east-1.amazonaws.com/graphql";
 
-// setCountry({ name: "United States", tld: "com", extld: "us", locale: "en-US" });
+setCountry({ name: "United States", tld: "com", extld: "us", locale: "en-US" });
 let country = getCountry();
 
 export const JobProcessor = {
@@ -23,7 +23,7 @@ export const JobProcessor = {
             { key: "hoursPerWeek", range: { minimum: 0, maximum: 80 } },
           ],
           sorters: [{ fieldName: "totalPayRateMax", ascending: "false" }],
-          pageSize: 200,
+          pageSize: 50,
           consolidateSchedule: true,
         },
       },

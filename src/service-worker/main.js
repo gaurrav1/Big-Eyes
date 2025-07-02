@@ -19,7 +19,7 @@ let getUsaNotation = () => {
   };
 };
 
-let country = getCanadaNotation();
+let country = getUsaNotation();
 
 // Initialize storage on installation
 chrome.runtime.onInstalled.addListener(async () => {
@@ -107,22 +107,23 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       break;
 
     case "JOB_FOUND_ACTIONS":
-      chrome.tabs.create(
-        {
-          url: country.jobSearchUrl,
-          active: false,
-        },
-        (tab) => {
-          updateTabState({ isActive: true, activeTabId: tab.id });
-
-          // Optionally send APP_DATA_UPDATE to new tab
-          chrome.tabs.sendMessage(tab.id, {
-            type: "APP_DATA_UPDATE",
-            payload: appData,
-          });
-          sendResponse();
-        },
-      );
+      updateTabState({ isActive: false, activeTabId: null });
+      // chrome.tabs.create(
+      //   {
+      //     url: country.jobSearchUrl,
+      //     active: false,
+      //   },
+      //   (tab) => {
+      //     updateTabState({ isActive: true, activeTabId: tab.id });
+      //
+      //     // Optionally send APP_DATA_UPDATE to new tab
+      //     chrome.tabs.sendMessage(tab.id, {
+      //       type: "APP_DATA_UPDATE",
+      //       payload: appData,
+      //     });
+      //     sendResponse();
+      //   },
+      // );
       isAsync = true;
       break;
 

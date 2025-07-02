@@ -23,7 +23,6 @@
     background: var(--hover);
     color: #005bb5;
     box-shadow: 0 6px 18px rgba(0, 113, 227, 0.1);
-    transform: translateY(-1px) scale(1.03);
 }
 
 .prevNavIcon {
@@ -42,7 +41,7 @@
 
 .prevNavText {
     font-size: var(--h4-size);
-    font-weight: 600;
+    font-weight: var(--h4-weight);
     display: flex;
     align-items: center;
     justify-content: center;

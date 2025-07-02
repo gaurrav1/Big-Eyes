@@ -35,8 +35,7 @@ function NavBar({ location }) {
                     "alignItems": "center",
                     "transition": "background 0.3s, box-shadow 0.3s",
                     "textAlign": "center",
-                    "fontWeight": 600,
-                    "fontSize": "1.1rem",
+                    "fontSize": "var(--h4-size)",
                     "color": "var(--fg)",
                     "letterSpacing": "0.01em",
                 }}
