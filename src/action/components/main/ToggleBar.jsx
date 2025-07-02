@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { ToggleButton } from "../general/ToggleButton.jsx";
 import { WarningText } from "../general/WarningText.jsx";
 import { ConfirmationDialog } from "../dialog/ConfirmationDialog.jsx";
 
 const country = "https://hiring.amazon.com/";
 
-export function ToggleBar({ appData }) {
+export function ToggleBar({
+  appData,
+  showLocationDialog,
+  setShowLocationDialog,
+}) {
   const [isSearching, setIsSearching] = useState(false);
-  const [toggleError, setToggleError] = useState(""); // <-- Add this line
-  const [showLocationDialog, setShowLocationDialog] = useState(false);
-  const navigate = useNavigate();
+  const [toggleError, setToggleError] = useState("");
 
   // Helper: check if we should show the location warning dialog
   const shouldShowLocationDialog = () => {
@@ -21,16 +22,6 @@ export function ToggleBar({ appData }) {
     }
     // Show dialog if no center city selected
     return !appData?.centerOfCityCoordinates;
-  };
-
-  const handleDontShowFor1Day = () => {
-    // Suppress dialog for 1 day
-    const oneDay = 24 * 60 * 60 * 1000;
-    localStorage.setItem(
-      "suppressLocationDialogUntil",
-      String(Date.now() + oneDay),
-    );
-    setShowLocationDialog(false);
   };
 
   // Query the active tab for its state
@@ -58,18 +49,18 @@ export function ToggleBar({ appData }) {
       // Only send message if tab URL matches your content script's pattern
       if (activeTab.url && activeTab.url.startsWith(country)) {
         chrome.runtime.sendMessage(
-          {
-            type: "TOGGLE_FETCHING",
-            isActive: newState,
-            tabId: activeTab.id,
-          },
-          () => {
-            if (chrome.runtime.lastError) {
-              console.error(chrome.runtime.lastError.message);
-            }
-            // After toggling, re-query the tab state to update the UI
-            queryActiveTabState();
-          },
+            {
+              type: "TOGGLE_FETCHING",
+              isActive: newState,
+              tabId: activeTab.id,
+            },
+            () => {
+              if (chrome.runtime.lastError) {
+                console.error(chrome.runtime.lastError.message);
+              }
+              // After toggling, re-query the tab state to update the UI
+              queryActiveTabState();
+            },
         );
         setToggleError(""); // Clear any previous error
 
@@ -78,17 +69,11 @@ export function ToggleBar({ appData }) {
         }
       } else {
         setToggleError(
-          "Please open the Amazon Hiring website to search for jobs.",
+            "Please open the Amazon Hiring website to search for jobs.",
         );
         setIsSearching(false);
       }
     });
-  };
-
-  // Handle dialog confirm
-  const handleChooseLocation = () => {
-    setShowLocationDialog(false);
-    navigate("/location");
   };
 
   useEffect(() => {
@@ -109,15 +94,6 @@ export function ToggleBar({ appData }) {
     <div>
       <ToggleButton isActive={isSearching} onClick={toggleSearch} />
       {toggleError && <WarningText text={toggleError} isError={true} />}
-      <ConfirmationDialog
-        isOpen={showLocationDialog}
-        title="Select a Location Preference"
-        message="You have not selected a center city. If you continue, jobs will be picked randomly from all over Canada. Would you like to choose a location?"
-        confirmText="Choose Location"
-        cancelText="Don't show for 1 day"
-        onConfirm={handleChooseLocation}
-        onCancel={handleDontShowFor1Day}
-      />
     </div>
   );
 }

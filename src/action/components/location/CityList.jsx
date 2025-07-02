@@ -249,7 +249,7 @@ export const CityList = () => {
                 onClick={resetCities}
                 type="button"
               >
-                Reset List
+                Reset
               </button>
               {editMode && renderSortControls()}
             </div>

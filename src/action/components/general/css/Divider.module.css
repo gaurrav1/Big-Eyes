@@ -2,7 +2,7 @@
   width: 94%;
   margin-left: 3%;
   height: 1.5px;
-  background: linear-gradient(45deg, transparent, white);
+  background: linear-gradient(45deg, var(--bg), var(--fg));
   border-radius: 2px;
   box-shadow: 0 1px 4px rgba(31,38,135,0.06);
   backdrop-filter: blur(var(--glass-blur));

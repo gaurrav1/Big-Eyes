@@ -13,6 +13,7 @@ export const Location = () => {
   const [isClient, setIsClient] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [pendingCenterCity, setPendingCenterCity] = useState(null);
+  const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const [citiesExceedingDistance, setCitiesExceedingDistance] = useState([]);
 
   // Hydration check for SSR/CSR
@@ -128,12 +129,19 @@ export const Location = () => {
 
   // Reset all location preferences
   const handleResetAll = () => {
-    if (confirm("Are you sure you want to reset all location preferences?")) {
-      updateAppData({
-        centerOfCityCoordinates: null,
-        otherCities: [],
-      });
-    }
+    setResetDialogOpen(true);
+  };
+
+  const handleConfirmReset = () => {
+    updateAppData({
+      centerOfCityCoordinates: null,
+      otherCities: [],
+    });
+    setResetDialogOpen(false);
+  };
+
+  const handleCancelReset = () => {
+    setResetDialogOpen(false);
   };
 
   if (!isClient) {
@@ -167,6 +175,15 @@ export const Location = () => {
     <>
       <div className={styles.container}>
         <SectionHeader header={mainHeader} />
+        <ConfirmationDialog
+            isOpen={resetDialogOpen}
+            title="Reset All Location Preferences"
+            message="Are you sure you want to reset all location preferences? This will remove your center city and all interested locations."
+            confirmText="Reset"
+            cancelText="Cancel"
+            onConfirm={handleConfirmReset}
+            onCancel={handleCancelReset}
+        />
 
         <Section header={centerCitySection}>
           <LocationSearch

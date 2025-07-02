@@ -1,5 +1,5 @@
 import { Tile } from "../general/Tile/Tile";
-import { CalendarIcon, LocationIcon, Next } from "../../svgs/Svg";
+import {CalendarIcon, LocationIcon, Next, TimeIcon} from "../../svgs/Svg";
 import styles from "./css/Lists.module.css";
 import { Divider } from "../general/Divider";
 import { SHIFT_LABELS } from "../../constants/shifts";
@@ -53,7 +53,7 @@ export function Lists({ appData }) {
     locate: "/location",
   };
   const shiftTypeTile = {
-    icon: <CalendarIcon height={26} width={26} />,
+    icon: <TimeIcon height={26} width={26} />,
     title: shiftTitle,
     description: shiftDescription,
     navIcon: <Next height={30} width={30} />,

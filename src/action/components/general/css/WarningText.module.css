@@ -1,7 +1,7 @@
 .warningText {
     margin-top: 0.3rem;
     border-radius: 8px;
-    font-size: 0.8rem;
+    font-size: var(--h6-size);
     padding: 0 1rem;
     text-align: justify;
 }

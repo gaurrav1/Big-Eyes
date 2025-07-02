@@ -28,7 +28,7 @@
     font-size: 15px;
     font-weight: 500;
     cursor: pointer;
-    padding: 8px 18px;
+    padding: 4px 11px;
     border-radius: 12px;
     transition:
         background 0.2s,
@@ -68,8 +68,8 @@
 }
 
 .cityName {
-    font-weight: 600;
-    font-size: 0.95rem;
+    font-weight: var(--h6-weight);
+    font-size: var(--h5-size);
     color: var(--fg);
 }
 
