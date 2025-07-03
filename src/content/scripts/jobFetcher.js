@@ -1,13 +1,15 @@
 import { JobProcessor } from "./jobProcessor.js";
-import { getCountry, setCountry } from "./model/country";
+import {getCountry, setCountry} from "./model/country";
 
-setCountry({ name: "United States", tld: "com", extld: "us", locale: "en-US" });
-const country = getCountry();
+if (window.location.href.includes("hiring.amazon.com")) {
+  console.log("Hiring amazon.com");
+  setCountry({ name: "United States", tld: "com", extld: "us", locale: "en-US" });
+}
+let country = getCountry();
 
 const INTERVAL_MS = 500;
 const FETCH_CONCURRENCY = 5;
-const audio = new Audio(chrome.runtime.getURL("sounds/captured.mp3"));
-audio.volume = 1.0;
+
 export const JobFetcher = (() => {
   let isActive = false;
   let appData = {};

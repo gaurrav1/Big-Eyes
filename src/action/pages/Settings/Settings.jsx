@@ -2,10 +2,11 @@ import { useEffect } from "react";
 import { ToggleButton } from "../../components/button/ToggleButton";
 import { useAppContext } from "../../context/AppContext";
 import { useState } from "react";
-import styles from "./Settings.module.css"
+import styles from "./Settings.module.css";
+import GlassCountrySelector from "../../components/GlassCountrySelector.jsx";
 
 export function Settings() {
-  const { appData, updateAppData} = useAppContext();
+  const { appData, updateAppData } = useAppContext();
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -26,15 +27,18 @@ export function Settings() {
 
   return (
     <div className={styles.container}>
-      <div>Settings</div>
+      <GlassCountrySelector />
+
       <ToggleButton
         isActive={appData.cityPrioritized}
         onClick={handleToggleCityPriority}
       />
+
       <ToggleButton
         isActive={appData.shiftPrioritized}
         onClick={handleToggleShiftPriority}
       />
+
     </div>
   );
 }

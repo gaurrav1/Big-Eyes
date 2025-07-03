@@ -1,9 +1,12 @@
-import { getCountry, setCountry } from "./model/country";
+import {getCountry, setCountry} from "./model/country";
 
 const GRAPHQL_URL =
   "https://e5mquma77feepi2bdn4d6h3mpu.appsync-api.us-east-1.amazonaws.com/graphql";
 
-setCountry({ name: "United States", tld: "com", extld: "us", locale: "en-US" });
+if (window.location.href.includes("hiring.amazon.com")) {
+  console.log("Hiring amazon.com");
+  setCountry({ name: "United States", tld: "com", extld: "us", locale: "en-US" });
+}
 let country = getCountry();
 
 export const JobProcessor = {

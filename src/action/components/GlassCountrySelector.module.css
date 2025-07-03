@@ -1,0 +1,144 @@
+.glassContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    border-radius: 36px;
+    position: relative;
+    overflow: hidden;
+}
+
+.header {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 8px;
+    position: relative;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 0;
+    letter-spacing: 0.02em;
+    text-align: center;
+    text-shadow: 0 2px 8px rgba(255, 255, 255, 0.18);
+}
+
+.flagGrid {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+    justify-content: center;
+    width: 100%;
+}
+
+/* Individual flag card */
+.flagCard {
+    border-radius: 24px;
+    padding: 18px 12px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition:
+        box-shadow 0.18s cubic-bezier(0.4, 2, 0.6, 1),
+        transform 0.14s cubic-bezier(0.4, 2, 0.6, 1),
+        border 0.18s;
+    position: relative;
+    min-width: 110px;
+    min-height: 170px;
+    user-select: none;
+}
+
+.flagCard:active {
+    transform: scale(0.97);
+}
+
+.flagCard:hover,
+.flagCard:focus-visible {
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+    border: 2.5px solid #7fd7ff;
+    outline: none;
+}
+
+.selected {
+    border: 2.5px solid #1e90ff;
+    box-shadow: 0 8px 32px 0 rgba(30, 144, 255, 0.18);
+    background: rgba(255, 255, 255, 0.38);
+}
+
+.countryName {
+    margin-top: 14px;
+    font-size: 1.08rem;
+    font-weight: 600;
+    color: #222;
+    letter-spacing: 0.01em;
+    text-shadow: 0 1px 4px rgba(255, 255, 255, 0.12);
+}
+
+/* SVG flag styles */
+.flagIcon {
+    width: 72px;
+    height: 72px;
+    display: block;
+    border-radius: 12px;
+    margin-bottom: 0;
+}
+
+.flagWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    border-radius: 14px;
+    margin-bottom: 0;
+}
+
+/* Subtle highlight for accessibility */
+.flagCard:focus-visible::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 24px;
+    border: 2px solid #1e90ff;
+    pointer-events: none;
+    box-shadow: 0 0 0 4px rgba(30, 144, 255, 0.1);
+}
+
+.checkmark {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    font-size: 1.5rem;
+    color: #1e90ff;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px 0 rgba(30, 144, 255, 0.1);
+    font-weight: bold;
+    pointer-events: none;
+}
+
+@media (max-width: 350px) {
+    .flagCard {
+        min-width: 90px;
+        min-height: 140px;
+        padding: 12px 6px 8px 6px;
+    }
+    .flagIcon,
+    .flagWrapper {
+        width: 48px;
+        height: 48px;
+    }
+    .title {
+        font-size: 1.1rem;
+    }
+}

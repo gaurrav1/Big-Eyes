@@ -1,17 +1,21 @@
-import { useEffect, useState } from "react";
+import {useEffect, useMemo, useState} from "react";
 import { ToggleButton } from "../general/ToggleButton.jsx";
 import { WarningText } from "../general/WarningText.jsx";
-import { ConfirmationDialog } from "../dialog/ConfirmationDialog.jsx";
-
-const country = "https://hiring.amazon.com/";
 
 export function ToggleBar({
   appData,
-  showLocationDialog,
   setShowLocationDialog,
 }) {
   const [isSearching, setIsSearching] = useState(false);
   const [toggleError, setToggleError] = useState("");
+  const [countryCode, setCountryCode] = useState('CA');
+
+  // Get dynamic URL based on country
+  const countryUrl = useMemo(() =>
+          countryCode.toLowerCase() === "ca"
+              ? "https://hiring.amazon.ca/"
+              : "https://hiring.amazon.com/",
+      [countryCode]);
 
   // Helper: check if we should show the location warning dialog
   const shouldShowLocationDialog = () => {
@@ -28,7 +32,7 @@ export function ToggleBar({
   const queryActiveTabState = () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const tab = tabs[0];
-      if (tab && tab.url && tab.url.startsWith(country)) {
+      if (tab && tab.url && tab.url.startsWith(countryUrl)) {
         chrome.tabs.sendMessage(tab.id, { type: "GET_TAB_STATE" }, (res) => {
           if (chrome.runtime.lastError) {
             setIsSearching(false);
@@ -47,7 +51,7 @@ export function ToggleBar({
       const activeTab = tabs[0];
       const newState = !isSearching;
       // Only send message if tab URL matches your content script's pattern
-      if (activeTab.url && activeTab.url.startsWith(country)) {
+      if (activeTab.url && activeTab.url.startsWith(countryUrl)) {
         chrome.runtime.sendMessage(
             {
               type: "TOGGLE_FETCHING",
@@ -76,13 +80,24 @@ export function ToggleBar({
     });
   };
 
+  function queryActiveCountryCode() {
+    chrome.runtime.sendMessage({type: "GET_COUNTRY"})
+        .then((res) => {
+          setCountryCode(res.country);
+        });
+  }
+
   useEffect(() => {
     queryActiveTabState();
+    queryActiveCountryCode();
 
     // Listen to updates
-    const listener = (msg) => {
-      if (msg.type === "TAB_STATE_UPDATE") {
+    const listener = ({type, message}) => {
+      if (type === "TAB_STATE_UPDATE") {
         queryActiveTabState();
+      }
+      if (type === "COUNTRY_CHANGE_UPDATE") {
+        setCountryCode(message?.country);
       }
       return true;
     };

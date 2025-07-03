@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import {useState, useEffect, useRef, useCallback, useMemo} from 'react';
 import axios from 'axios';
 import styles from './LocationSearch.module.css';
 
@@ -17,6 +17,7 @@ export const LocationSearch = ({
 }) => {
   const [inputValue, setInputValue] = useState('');
   const [suggestions, setSuggestions] = useState([]);
+  const [countryCode, setCountryCode] = useState('CA');
   const [isLoading, setIsLoading] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
@@ -27,7 +28,18 @@ export const LocationSearch = ({
   const inputRef = useRef(null);
   const lastInteractionType = useRef(null);
 
+
+  function queryActiveCountryCode() {
+    chrome.runtime.sendMessage({type: "GET_COUNTRY"})
+        .then((res) => {
+          setCountryCode(res.country);
+        });
+  }
+
   const fetchSuggestions = useCallback(async (query) => {
+
+    const countries = countryCode.toLowerCase() === 'ca' ? ['CAN'] : ['USA'];
+
     if (!query || query.length < MIN_INPUT_LENGTH) {
       setSuggestions([]);
       return;
@@ -48,7 +60,7 @@ export const LocationSearch = ({
           variables: {
             geoAddressQueryRequest: {
               address: query,
-              countries: ['CAN', 'USA'],
+              countries: countries,
             },
           },
           query: "query queryGeoInfoByAddress($geoAddressQueryRequest: GeoAddressQueryRequest!) {\n  queryGeoInfoByAddress(geoAddressQueryRequest: $geoAddressQueryRequest) {\n    country\n    lat\n    lng\n    postalCode\n    label\n    municipality\n    region\n    subRegion\n    addressNumber\n    __typename\n  }\n}\n",
@@ -70,7 +82,7 @@ export const LocationSearch = ({
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [countryCode]);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -250,6 +262,19 @@ export const LocationSearch = ({
       suggestion.lng
     );
   }, [centerCoordinates, commuteDistance]);
+
+  useEffect(() => {
+    queryActiveCountryCode();
+
+    const listener = ({type, message}) => {
+      if (type === "COUNTRY_CHANGE_UPDATE") {
+        setCountryCode(message?.country);
+      }
+      return true;
+    };
+    chrome.runtime.onMessage.addListener(listener);
+    return () => chrome.runtime.onMessage.removeListener(listener);
+  }, []);
 
   return (
     <div className={`${styles.container} ${compact ? styles.compact : ''}`}>
