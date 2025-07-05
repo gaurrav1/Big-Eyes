@@ -1,4 +1,5 @@
 import {getCountry, setCountry} from "./model/country";
+import {loadExhaustedJobIds} from "./utils.js";
 
 const GRAPHQL_URL =
   "https://e5mquma77feepi2bdn4d6h3mpu.appsync-api.us-east-1.amazonaws.com/graphql";
@@ -123,7 +124,13 @@ export const JobProcessor = {
   },
 
   getBestJob: (response, appData) => {
-    const jobCards = response?.data?.searchJobCardsByLocation?.jobCards ?? [];
+    const jobCardsRaw = response?.data?.searchJobCardsByLocation?.jobCards ?? [];
+
+    // Load exhausted jobIds from localStorage
+    const exhausted = loadExhaustedJobIds();
+
+    const jobCards = jobCardsRaw.filter(j => !exhausted[j.jobId]);
+
     const filter = {
       shifts: appData.shiftPriorities || [],
       isShiftPrioritized: appData.shiftPrioritized || false,

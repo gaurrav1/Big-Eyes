@@ -1,5 +1,6 @@
 import { JobProcessor } from "./jobProcessor.js";
 import {getCountry, setCountry} from "./model/country";
+import {markJobIdAsExhausted} from "./utils.js";
 
 if (window.location.href.includes("hiring.amazon.com")) {
   console.log("Hiring amazon.com");
@@ -31,7 +32,7 @@ function resetSelectedListEveryMinute() {
     localStorage.removeItem("selectedPairs");
     previouslySelected.clear();
     console.log("[JobFetcher] Cleared selected jobId-scheduleId list");
-  }, 60 * 2000);
+  }, 60 * 5000);
 }
 
 
@@ -115,6 +116,13 @@ export const JobFetcher = (() => {
         if (bestJob) {
           console.log("[JobFetcher] Best job found:", bestJob);
           const schedule = await JobProcessor.getJobSchedule(bestJob.jobId, appData, previouslySelected);
+
+          if (!schedule) {
+            console.log(`[JobFetcher] All schedules exhausted for jobId=${bestJob.jobId}`);
+            markJobIdAsExhausted(bestJob.jobId);
+            continue;
+          }
+
 
           if (schedule && !hasRedirected) {
             const key = `${bestJob.jobId}-${schedule.scheduleId}`;
