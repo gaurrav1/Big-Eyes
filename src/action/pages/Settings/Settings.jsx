@@ -3,7 +3,7 @@ import { ToggleButton } from "../../components/button/ToggleButton";
 import { useAppContext } from "../../context/AppContext";
 import { useState } from "react";
 import styles from "./Settings.module.css";
-import GlassCountrySelector from "../../components/GlassCountrySelector.jsx";
+import GlassCountrySelector from "../../components/settings/GlassCountrySelector.jsx";
 
 export function Settings() {
   const { appData, updateAppData } = useAppContext();
@@ -27,16 +27,17 @@ export function Settings() {
 
   return (
     <div className={styles.container}>
-      <GlassCountrySelector />
 
       <ToggleButton
         isActive={appData.cityPrioritized}
         onClick={handleToggleCityPriority}
+        title={"Strict Order for location"}
       />
 
       <ToggleButton
         isActive={appData.shiftPrioritized}
         onClick={handleToggleShiftPriority}
+        title={"Strict Order for Shifts"}
       />
 
     </div>

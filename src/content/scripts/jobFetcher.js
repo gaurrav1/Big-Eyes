@@ -3,7 +3,7 @@ import {getCountry, setCountry} from "./model/country";
 
 if (window.location.href.includes("hiring.amazon.com")) {
   console.log("Hiring amazon.com");
-  setCountry({ name: "United States", tld: "com", extld: "us", locale: "en-US" });
+  setCountry({ name: "United States", tld: "com", extld: "us", locale: "en-US", jobSearchUrl: "https://hiring.amazon.com/app#/jobSearch" });
 }
 let country = getCountry();
 
@@ -27,12 +27,13 @@ export const JobFetcher = (() => {
     stop(); // Ensure nothing continues
     chrome.runtime.sendMessage({
       type: "JOB_FOUND_ACTIONS",
-      jobId,
-      scheduleId,
+      openUrl: country.jobSearchUrl,
+      jobId: jobId,
+      scheduleId: scheduleId,
     });
 
     const url = `https://hiring.amazon.${country.tld}/application/${country.extld}/?CS=true&jobId=${jobId}&locale=${country.locale}&scheduleId=${scheduleId}&ssoEnabled=1#/consent?CS=true&jobId=${jobId}&locale=${country.locale}&scheduleId=${scheduleId}&ssoEnabled=1`;
-    // window.location.href = url;
+    window.location.href = url;
   }
 
   function updateAppData(data) {

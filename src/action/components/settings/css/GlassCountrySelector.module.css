@@ -1,5 +1,6 @@
 .glassContainer {
     display: flex;
+    padding-bottom: 1rem;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
@@ -18,9 +19,9 @@
 }
 
 .title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #222;
+    font-size: var(--h4-size);
+    font-weight: var(--h4-weight);
+    color: var(--fg);
     margin-bottom: 0;
     letter-spacing: 0.02em;
     text-align: center;
@@ -38,7 +39,9 @@
 /* Individual flag card */
 .flagCard {
     border-radius: 24px;
-    padding: 18px 12px 12px 12px;
+    border: none;
+    padding: 1rem;
+    background: var(--section-background);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -48,41 +51,28 @@
         transform 0.14s cubic-bezier(0.4, 2, 0.6, 1),
         border 0.18s;
     position: relative;
-    min-width: 110px;
-    min-height: 170px;
     user-select: none;
-}
-
-.flagCard:active {
-    transform: scale(0.97);
-}
-
-.flagCard:hover,
-.flagCard:focus-visible {
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
-    border: 2.5px solid #7fd7ff;
-    outline: none;
 }
 
 .selected {
     border: 2.5px solid #1e90ff;
     box-shadow: 0 8px 32px 0 rgba(30, 144, 255, 0.18);
-    background: rgba(255, 255, 255, 0.38);
+    background: var(--section-background);
 }
 
 .countryName {
     margin-top: 14px;
-    font-size: 1.08rem;
-    font-weight: 600;
-    color: #222;
+    font-size: var(--h6-size);
+    font-weight: var(--h6-weight);
+    color: var(--fg);
     letter-spacing: 0.01em;
     text-shadow: 0 1px 4px rgba(255, 255, 255, 0.12);
 }
 
 /* SVG flag styles */
 .flagIcon {
-    width: 72px;
-    height: 72px;
+    width: 48px;
+    height: 48px;
     display: block;
     border-radius: 12px;
     margin-bottom: 0;
@@ -92,8 +82,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 72px;
-    height: 72px;
+    width: 48px;
+    height: 48px;
     border-radius: 14px;
     margin-bottom: 0;
 }
@@ -111,9 +101,9 @@
 
 .checkmark {
     position: absolute;
-    top: 10px;
-    right: 14px;
-    font-size: 1.5rem;
+    top: 0;
+    right: 0;
+    font-size: var(--h5-size);
     color: #1e90ff;
     background: rgba(255, 255, 255, 0.85);
     border-radius: 50%;
@@ -125,20 +115,4 @@
     box-shadow: 0 2px 8px 0 rgba(30, 144, 255, 0.1);
     font-weight: bold;
     pointer-events: none;
-}
-
-@media (max-width: 350px) {
-    .flagCard {
-        min-width: 90px;
-        min-height: 140px;
-        padding: 12px 6px 8px 6px;
-    }
-    .flagIcon,
-    .flagWrapper {
-        width: 48px;
-        height: 48px;
-    }
-    .title {
-        font-size: 1.1rem;
-    }
 }

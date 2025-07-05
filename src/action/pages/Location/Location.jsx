@@ -176,20 +176,21 @@ export const Location = () => {
       <div className={styles.container}>
         <SectionHeader header={mainHeader} />
         <ConfirmationDialog
-            isOpen={resetDialogOpen}
-            title="Reset All Location Preferences"
-            message="Are you sure you want to reset all location preferences? This will remove your center city and all interested locations."
-            confirmText="Reset"
-            cancelText="Cancel"
-            onConfirm={handleConfirmReset}
-            onCancel={handleCancelReset}
+          isOpen={resetDialogOpen}
+          title="Reset All Location Preferences"
+          message="Are you sure you want to reset all location preferences? This will remove your center city and all interested locations."
+          confirmText="Reset"
+          cancelText="Cancel"
+          onConfirm={handleConfirmReset}
+          onCancel={handleCancelReset}
         />
 
         <Section header={centerCitySection}>
           <LocationSearch
             onLocationSelect={handleCenterSelect}
             placeholder={
-              appData.centerOfCityCoordinates?.name || "Search for a location..."
+              appData.centerOfCityCoordinates?.name ||
+              "Search for a location..."
             }
             currentLocation={true}
           />

@@ -3,6 +3,7 @@ let country = {
   tld: "ca",
   extld: "ca",
   locale: "en-CA",
+  jobSearchUrl: "https://hiring.amazon.ca/app#/jobSearch"
 };
 
 export function getCountry() {

@@ -1,4 +1,4 @@
-import styles from './GlassCountrySelector.module.css'
+import styles from './css/GlassCountrySelector.module.css'
 
 // Canada Flag SVG (React-optimized)
 export function CanadaFlag({ height = 64, width = 64 }) {

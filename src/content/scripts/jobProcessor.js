@@ -8,6 +8,7 @@ if (window.location.href.includes("hiring.amazon.com")) {
   setCountry({ name: "United States", tld: "com", extld: "us", locale: "en-US" });
 }
 let country = getCountry();
+console.log(country);
 
 export const JobProcessor = {
   getToday: () => new Date().toISOString().split("T")[0],

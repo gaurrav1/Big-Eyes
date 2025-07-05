@@ -1,9 +1,9 @@
 import { DEFAULT_APP_DATA } from "./modules/defaultData.js";
-import { getCountryData } from "./modules/countryData.js";
+import { ALL_COUNTRY_DATA } from "./modules/countryData.js";
 
 const STORAGE_KEY_APP_DATA = "appData";
 const STORAGE_KEY_TAB_STATE = "tabState";
-const STORAGE_KEY_COUNTRY = "country";
+let urlToOpen = "";
 
 // Initialize storage on installation
 chrome.runtime.onInstalled.addListener(async () => {
@@ -19,19 +19,16 @@ chrome.runtime.onInstalled.addListener(async () => {
 // State management
 let appData = DEFAULT_APP_DATA;
 let tabState = { isActive: false, activeTabId: null };
-let country = "CA";
 
 // Load state from storage
 chrome.storage.local.get(
-  [STORAGE_KEY_TAB_STATE, STORAGE_KEY_APP_DATA, STORAGE_KEY_COUNTRY],
+  [STORAGE_KEY_TAB_STATE, STORAGE_KEY_APP_DATA],
   (result) => {
     tabState = result[STORAGE_KEY_TAB_STATE] || tabState;
     appData = result[STORAGE_KEY_APP_DATA] || appData;
-    country = result[STORAGE_KEY_COUNTRY] || country;
   },
 );
 
-let countryData = getCountryData(country);
 
 async function ensureOffscreen() {
   const exists = await chrome.offscreen.hasDocument();
@@ -75,15 +72,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         .then((r) => {
           console.log(r);
 
-          // Broadcast to all content scripts
-          chrome.tabs.query({ url: countryData.wildCardUrl }, (tabs) => {
-            tabs.forEach((tab) => {
-              chrome.tabs
-                .sendMessage(tab.id, {
+          // Inside relevant places like updateTabState, UPDATE_APP_DATA, etc.
+          ALL_COUNTRY_DATA.forEach((data) => {
+            chrome.tabs.query({ url: data.wildCardUrl }, (tabs) => {
+              tabs.forEach((tab) => {
+                chrome.tabs.sendMessage(tab.id, {
                   type: "APP_DATA_UPDATE",
                   payload: appData,
-                })
-                .then((r) => console.log(r));
+                });
+              });
             });
           });
         });
@@ -100,26 +97,28 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             error: err?.message || "Unknown error",
           }),
         );
+      isAsync = true;
       break;
 
     case "JOB_FOUND_ACTIONS":
-      updateTabState({ isActive: false, activeTabId: null });
-      // chrome.tabs.create(
-      //   {
-      //     url: countryData.jobSearchUrl,
-      //     active: false,
-      //   },
-      //   (tab) => {
-      //     updateTabState({ isActive: true, activeTabId: tab.id });
-      //
-      //     // Optionally send APP_DATA_UPDATE to new tab
-      //     chrome.tabs.sendMessage(tab.id, {
-      //       type: "APP_DATA_UPDATE",
-      //       payload: appData,
-      //     });
-      //     sendResponse();
-      //   },
-      // );
+      urlToOpen = message.openUrl;
+
+      chrome.tabs.create(
+        {
+          url: urlToOpen,
+          active: false,
+        },
+        (tab) => {
+          updateTabState({ isActive: true, activeTabId: tab.id });
+
+          // Optionally send APP_DATA_UPDATE to new tab
+          chrome.tabs.sendMessage(tab.id, {
+            type: "APP_DATA_UPDATE",
+            payload: appData,
+          });
+          sendResponse();
+        },
+      );
       isAsync = true;
       break;
 
@@ -138,26 +137,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       sendResponse(tabState.isActive);
       break;
 
-    case "OPEN_JOB_SEARCH_TAB":
-      chrome.tabs.create(
-        {
-          url: countryData.jobSearchUrl,
-          // active: true,
-        },
-        (tab) => {
-          updateTabState({ isActive: true, activeTabId: tab.id });
-
-          // Optionally send APP_DATA_UPDATE to new tab
-          chrome.tabs.sendMessage(tab.id, {
-            type: "APP_DATA_UPDATE",
-            payload: appData,
-          });
-          sendResponse();
-        },
-      );
-      isAsync = true;
-      break;
-
     case "CLEAR_ACTIVE_TAB":
       updateTabState({ isActive: false, activeTabId: null });
       sendResponse();
@@ -165,46 +144,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     case "GET_COUNTRY":
       sendResponse({ country: country });
-      break;
-
-    case "COUNTRY_CHANGE_ACTION":
-      if (message.country === country) {
-        sendResponse({ success: true, message: "Country unchanged" });
-        break;
-      }
-
-      // Turn off searching if active
-      updateTabState({ isActive: false, activeTabId: null });
-
-      // Update country reference
-      const oldCountry = country;
-      country = message.country;
-      countryData = getCountryData(country);
-      appData = DEFAULT_APP_DATA;
-
-      // Update storage and notify components
-      chrome.storage.local.set({ [STORAGE_KEY_COUNTRY]: country }).then(() => {
-        // Single broadcast to all components
-        chrome.runtime.sendMessage({
-          type: "COUNTRY_CHANGE_UPDATE",
-          message: { country }
-        });
-
-        // Update new country tabs only
-        chrome.tabs.query({ url: countryData.wildCardUrl }, (tabs) => {
-          tabs.forEach((tab) => {
-            chrome.tabs.sendMessage(tab.id, {
-              type: "APP_DATA_UPDATE",
-              payload: appData
-            });
-          });
-        });
-      });
-
-      // Update UI filters
-      chrome.runtime.sendMessage({type: "APP_DATA_UPDATE", payload: appData})
-
-      sendResponse({ success: true });
       break;
 
     default:
@@ -244,12 +183,14 @@ function updateTabState(newState) {
   chrome.storage.local.set({ [STORAGE_KEY_TAB_STATE]: tabState });
 
   // Notify all hiring.amazon.ca tabs
-  chrome.tabs.query({ url: countryData.wildCardUrl }, (tabs) => {
-    tabs.forEach((tab) => {
-      chrome.tabs.sendMessage(tab.id, {
-        type: "TAB_STATE_UPDATE",
-        isActive: tabState.isActive,
-        activeTabId: tabState.activeTabId,
+  ALL_COUNTRY_DATA.forEach((data) => {
+    chrome.tabs.query({url: data.wildCardUrl}, (tabs) => {
+      tabs.forEach((tab) => {
+        chrome.tabs.sendMessage(tab.id, {
+          type: "TAB_STATE_UPDATE",
+          isActive: tabState.isActive,
+          activeTabId: tabState.activeTabId,
+        });
       });
     });
   });

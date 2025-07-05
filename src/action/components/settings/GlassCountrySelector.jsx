@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useState} from "react";
-import styles from "./GlassCountrySelector.module.css";
+import styles from "./css/GlassCountrySelector.module.css";
 import {CanadaFlag, UsaFlag} from "./CountryFlags.jsx";
-import {useAppContext} from "../context/AppContext.jsx";
 
 const COUNTRIES = [
   {
@@ -11,7 +10,7 @@ const COUNTRIES = [
   },
   {
     code: "US",
-    name: "United States",
+    name: "USA",
     Flag: UsaFlag,
   },
 ];
