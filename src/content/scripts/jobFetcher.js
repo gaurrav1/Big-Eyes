@@ -10,6 +10,31 @@ let country = getCountry();
 const INTERVAL_MS = 500;
 const FETCH_CONCURRENCY = 5;
 
+let previouslySelected = new Set();
+
+function loadSelectedFromStorage() {
+  try {
+    const raw = localStorage.getItem("selectedPairs");
+    const parsed = raw ? JSON.parse(raw) : [];
+    previouslySelected = new Set(parsed);
+  } catch (e) {
+    previouslySelected = new Set();
+  }
+}
+
+function saveSelectedToStorage() {
+  localStorage.setItem("selectedPairs", JSON.stringify([...previouslySelected]));
+}
+
+function resetSelectedListEveryMinute() {
+  setInterval(() => {
+    localStorage.removeItem("selectedPairs");
+    previouslySelected.clear();
+    console.log("[JobFetcher] Cleared selected jobId-scheduleId list");
+  }, 60 * 2000);
+}
+
+
 export const JobFetcher = (() => {
   let isActive = false;
   let appData = {};
@@ -33,7 +58,7 @@ export const JobFetcher = (() => {
     });
 
     const url = `https://hiring.amazon.${country.tld}/application/${country.extld}/?CS=true&jobId=${jobId}&locale=${country.locale}&scheduleId=${scheduleId}&ssoEnabled=1#/consent?CS=true&jobId=${jobId}&locale=${country.locale}&scheduleId=${scheduleId}&ssoEnabled=1`;
-    window.location.href = url;
+    // window.location.href = url;
   }
 
   function updateAppData(data) {
@@ -89,15 +114,25 @@ export const JobFetcher = (() => {
         const bestJob = JobProcessor.getBestJob(response, appData);
         if (bestJob) {
           console.log("[JobFetcher] Best job found:", bestJob);
-          const schedule = await JobProcessor.getJobSchedule(bestJob.jobId);
+          const schedule = await JobProcessor.getJobSchedule(bestJob.jobId, appData, previouslySelected);
+
           if (schedule && !hasRedirected) {
-            hasRedirected = true;
-            controllers.forEach((c) => c.abort());
-            playJobFoundAlert();
-            console.log("Job ID: " + bestJob.jobId + "\nSchedule ID: " + schedule.scheduleId + "\nLocation: " + bestJob.locationName + "\nJob Type: " + bestJob.jobType);
-            redirectToApplication(bestJob.jobId, schedule.scheduleId);
-            break; // exit loop
+            const key = `${bestJob.jobId}-${schedule.scheduleId}`;
+            if (previouslySelected.has(key)) {
+              console.log("[JobFetcher] Skipping previously selected job-schedule pair");
+            } else {
+              hasRedirected = true;
+              previouslySelected.add(key);
+              saveSelectedToStorage();
+
+              controllers.forEach((c) => c.abort());
+              playJobFoundAlert();
+              console.log("Job ID:", bestJob.jobId, "Schedule ID:", schedule.scheduleId);
+              redirectToApplication(bestJob.jobId, schedule.scheduleId);
+              break;
+            }
           }
+
         } else {
           console.log("[JobFetcher] No suitable job found.");
         }
@@ -113,9 +148,14 @@ export const JobFetcher = (() => {
     if (isActive) return;
     isActive = true;
     hasRedirected = false;
+
+    loadSelectedFromStorage();
+    resetSelectedListEveryMinute();
+
     console.log("[JobFetcher] Starting job fetch loop");
     runScheduler();
   }
+
 
   function stop() {
     if (!isActive) return;

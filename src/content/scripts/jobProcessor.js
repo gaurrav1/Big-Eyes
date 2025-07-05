@@ -21,18 +21,19 @@ export const JobProcessor = {
           locale: country.locale,
           country: country.name,
           keyWords: "",
-          equalFilters: [],
+          dateFilters: [{key: "firstDayOnSite", range: {startDate: JobProcessor.getToday()}}],
+          equalFilters: [{key: "scheduleRequiredLanguage", val: "en-US"}],
           containFilters: [{ key: "isPrivateSchedule", val: ["false"] }],
           rangeFilters: [
             { key: "hoursPerWeek", range: { minimum: 0, maximum: 80 } },
           ],
           sorters: [{ fieldName: "totalPayRateMax", ascending: "false" }],
-          pageSize: 50,
+          pageSize: 100,
           consolidateSchedule: true,
         },
       },
       query:
-        "query searchJobCardsByLocation($searchJobRequest: SearchJobRequest!) {\n  searchJobCardsByLocation(searchJobRequest: $searchJobRequest) {\n    nextToken\n    jobCards {\n      jobId\n      language\n      dataSource\n      requisitionType\n      jobTitle\n      jobType\n      employmentType\n      city\n      state\n      postalCode\n      locationName\n      totalPayRateMin\n      totalPayRateMax\n      tagLine\n      bannerText\n      image\n      jobPreviewVideo\n      distance\n      featuredJob\n      bonusJob\n      bonusPay\n      scheduleCount\n      currencyCode\n      geoClusterDescription\n      surgePay\n      jobTypeL10N\n      employmentTypeL10N\n      bonusPayL10N\n      surgePayL10N\n      totalPayRateMinL10N\n      totalPayRateMaxL10N\n      distanceL10N\n      monthlyBasePayMin\n      monthlyBasePayMinL10N\n      monthlyBasePayMax\n      monthlyBasePayMaxL10N\n      jobContainerJobMetaL1\n      virtualLocation\n      poolingEnabled\n      __typename\n    }\n    __typename\n  }\n}\n",
+        "query searchJobCardsByLocation($searchJobRequest: SearchJobRequest!) {\n  searchJobCardsByLocation(searchJobRequest: $searchJobRequest) {\n  nextToken\n    jobCards {\n   jobId\n      jobTitle\n      jobType\n      locationName\n      distance\n    scheduleCount\n        __typename\n    }\n    __typename\n  }\n}\n",
     };
 
     if (appData.centerOfCityCoordinates) {
@@ -66,7 +67,7 @@ export const JobProcessor = {
       },
     },
     query:
-      "query searchScheduleCards($searchScheduleRequest: SearchScheduleRequest!) {\n  searchScheduleCards(searchScheduleRequest: $searchScheduleRequest) {\n    nextToken\n    scheduleCards {\n      hireStartDate\n      address\n      basePay\n      bonusSchedule\n      city\n      currencyCode\n      dataSource\n      distance\n      employmentType\n      externalJobTitle\n      featuredSchedule\n      firstDayOnSite\n      hoursPerWeek\n      image\n      jobId\n      jobPreviewVideo\n      language\n      postalCode\n      priorityRank\n      scheduleBannerText\n      scheduleId\n      scheduleText\n      scheduleType\n      signOnBonus\n      state\n      surgePay\n      tagLine\n      geoClusterId\n      geoClusterName\n      siteId\n      scheduleBusinessCategory\n      totalPayRate\n      financeWeekStartDate\n      laborDemandAvailableCount\n      scheduleBusinessCategoryL10N\n      firstDayOnSiteL10N\n      financeWeekStartDateL10N\n      scheduleTypeL10N\n      employmentTypeL10N\n      basePayL10N\n      signOnBonusL10N\n      totalPayRateL10N\n      distanceL10N\n      requiredLanguage\n      monthlyBasePay\n      monthlyBasePayL10N\n      vendorKamName\n      vendorId\n      vendorName\n      kamPhone\n      kamCorrespondenceEmail\n      kamStreet\n      kamCity\n      kamDistrict\n      kamState\n      kamCountry\n      kamPostalCode\n      __typename\n    }\n    __typename\n  }\n}\n",
+      "query searchScheduleCards($searchScheduleRequest: SearchScheduleRequest!) {\n  searchScheduleCards(searchScheduleRequest: $searchScheduleRequest) {\n    nextToken\n    scheduleCards {\n         hoursPerWeek\n      jobId\n         scheduleId\n         scheduleType\n        __typename\n    }\n    __typename\n  }\n}\n",
   }),
 
   fetchGraphQL: async (request, externalSignal) => {
@@ -142,11 +143,31 @@ export const JobProcessor = {
     return jobCards.find((j) => j.jobId === bestJobId) || null;
   },
 
-  getJobSchedule: async (jobId) => {
+  getJobSchedule: async (jobId, appData, previouslySelected) => {
     const response = await JobProcessor.fetchGraphQL(
-      JobProcessor.buildScheduleRequest(jobId),
+        JobProcessor.buildScheduleRequest(jobId)
     );
-    return response?.data?.searchScheduleCards?.scheduleCards?.[0];
+    const schedules = response?.data?.searchScheduleCards?.scheduleCards ?? [];
+
+    if (schedules.length === 0) return null;
+    if (schedules.length === 1) {
+      const pairKey = `${jobId}-${schedules[0].scheduleId}`;
+      if (!previouslySelected.has(pairKey)) return schedules[0];
+      return null;
+    }
+
+    // Multiple schedules: filter by shift
+    const preferredShifts = appData.shiftPriorities || [];
+    for (const schedule of schedules) {
+      const pairKey = `${jobId}-${schedule.scheduleId}`;
+      if (previouslySelected.has(pairKey)) continue;
+
+      const scheduleType = (schedule.scheduleType || "").split(";").map(s => s.trim());
+      const hasValidShift = scheduleType.some(s => preferredShifts.includes(s));
+      if (hasValidShift) return schedule;
+    }
+
+    return null; // none matched
   },
 
   selectBestJobIdRaw: function (jobCards, filter) {
