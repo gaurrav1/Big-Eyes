@@ -150,7 +150,7 @@ export const JobProcessor = {
     return jobCards.find((j) => j.jobId === bestJobId) || null;
   },
 
-  getJobSchedule: async (jobId, appData, previouslySelected) => {
+  getJobSchedule: async (jobId, appData, exhaustedPairs) => {
     const response = await JobProcessor.fetchGraphQL(
         JobProcessor.buildScheduleRequest(jobId)
     );
@@ -159,7 +159,7 @@ export const JobProcessor = {
     if (schedules.length === 0) return null;
     if (schedules.length === 1) {
       const pairKey = `${jobId}-${schedules[0].scheduleId}`;
-      if (!previouslySelected.has(pairKey)) return schedules[0];
+      if (!exhaustedPairs[pairKey]) return schedules[0];
       return null;
     }
 
@@ -167,12 +167,13 @@ export const JobProcessor = {
     const preferredShifts = appData.shiftPriorities || [];
     for (const schedule of schedules) {
       const pairKey = `${jobId}-${schedule.scheduleId}`;
-      if (previouslySelected.has(pairKey)) continue;
+      if (exhaustedPairs[pairKey]) continue;
 
       const scheduleType = (schedule.scheduleType || "").split(";").map(s => s.trim());
       const hasValidShift = scheduleType.some(s => preferredShifts.includes(s));
       if (hasValidShift) return schedule;
     }
+
 
     return null; // none matched
   },

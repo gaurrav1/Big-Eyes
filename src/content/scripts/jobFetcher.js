@@ -1,6 +1,8 @@
 import { JobProcessor } from "./jobProcessor.js";
 import {getCountry, setCountry} from "./model/country";
-import {markJobIdAsExhausted} from "./utils.js";
+import {markJobIdAsExhausted, loadExhaustedPairs, markPairAsExhausted, cleanExhaustedPairs} from "./utils.js";
+
+let exhaustedPairs = {};
 
 if (window.location.href.includes("hiring.amazon.com")) {
   console.log("Hiring amazon.com");
@@ -10,31 +12,6 @@ let country = getCountry();
 
 const INTERVAL_MS = 500;
 const FETCH_CONCURRENCY = 5;
-
-let previouslySelected = new Set();
-
-function loadSelectedFromStorage() {
-  try {
-    const raw = localStorage.getItem("selectedPairs");
-    const parsed = raw ? JSON.parse(raw) : [];
-    previouslySelected = new Set(parsed);
-  } catch (e) {
-    previouslySelected = new Set();
-  }
-}
-
-function saveSelectedToStorage() {
-  localStorage.setItem("selectedPairs", JSON.stringify([...previouslySelected]));
-}
-
-function resetSelectedListEveryMinute() {
-  setInterval(() => {
-    localStorage.removeItem("selectedPairs");
-    previouslySelected.clear();
-    console.log("[JobFetcher] Cleared selected jobId-scheduleId list");
-  }, 60 * 5000);
-}
-
 
 export const JobFetcher = (() => {
   let isActive = false;
@@ -115,7 +92,7 @@ export const JobFetcher = (() => {
         const bestJob = JobProcessor.getBestJob(response, appData);
         if (bestJob) {
           console.log("[JobFetcher] Best job found:", bestJob);
-          const schedule = await JobProcessor.getJobSchedule(bestJob.jobId, appData, previouslySelected);
+          const schedule = await JobProcessor.getJobSchedule(bestJob.jobId, appData, exhaustedPairs);
 
           if (!schedule) {
             console.log(`[JobFetcher] All schedules exhausted for jobId=${bestJob.jobId}`);
@@ -126,12 +103,12 @@ export const JobFetcher = (() => {
 
           if (schedule && !hasRedirected) {
             const key = `${bestJob.jobId}-${schedule.scheduleId}`;
-            if (previouslySelected.has(key)) {
-              console.log("[JobFetcher] Skipping previously selected job-schedule pair");
+            exhaustedPairs = loadExhaustedPairs(); // clean before use
+            if (exhaustedPairs[key]) {
+              console.log("[JobFetcher] Skipping exhausted job-schedule pair:", key);
             } else {
               hasRedirected = true;
-              previouslySelected.add(key);
-              saveSelectedToStorage();
+              markPairAsExhausted(key); // adds with expiry
 
               controllers.forEach((c) => c.abort());
               playJobFoundAlert();
@@ -157,8 +134,7 @@ export const JobFetcher = (() => {
     isActive = true;
     hasRedirected = false;
 
-    loadSelectedFromStorage();
-    resetSelectedListEveryMinute();
+    exhaustedPairs = loadExhaustedPairs(); // auto-cleans expired
 
     console.log("[JobFetcher] Starting job fetch loop");
     runScheduler();
