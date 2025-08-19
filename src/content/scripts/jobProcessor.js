@@ -1,5 +1,5 @@
 import {getCountry, setCountry} from "./model/country";
-import {loadExhaustedJobIds} from "./utils.js";
+import {getNextJobFromRotation, loadExhaustedPairs} from "./utils.js";
 
 const GRAPHQL_URL =
   "https://e5mquma77feepi2bdn4d6h3mpu.appsync-api.us-east-1.amazonaws.com/graphql";
@@ -126,28 +126,40 @@ export const JobProcessor = {
   getBestJob: (response, appData) => {
     const jobCardsRaw = response?.data?.searchJobCardsByLocation?.jobCards ?? [];
 
-    // Load exhausted jobIds from localStorage
-    const exhausted = loadExhaustedJobIds();
+    // Don't filter by exhausted job IDs anymore
+    const jobCards = jobCardsRaw;
 
-    const jobCards = jobCardsRaw.filter(j => !exhausted[j.jobId]);
+    if (jobCards.length === 0) return null;
 
-    const filter = {
-      shifts: appData.shiftPriorities || [],
-      isShiftPrioritized: appData.shiftPrioritized || false,
-      cities: [
-        ...(appData.centerOfCityCoordinates?.locationName
-          ? [appData.centerOfCityCoordinates.locationName]
-          : []),
-        ...(Array.isArray(appData.otherCities)
-          ? appData.otherCities.map((c) => c.locationName).filter(Boolean)
-          : []),
-      ],
-      isCityPrioritized: appData.cityPrioritized || false,
-    };
+    const availableJobIds = jobCards.map(j => j.jobId);
+    const exhaustedPairs = loadExhaustedPairs();
 
-    console.log(`[JobScoring] filter=${JSON.stringify(filter)}`);
-    const bestJobId = JobProcessor.selectBestJobIdRaw(jobCards, filter);
-    return jobCards.find((j) => j.jobId === bestJobId) || null;
+    // Use rotation to get next job to try
+    const nextJobId = getNextJobFromRotation(availableJobIds, exhaustedPairs);
+
+    if (!nextJobId) {
+        // Fallback to scoring if rotation fails
+        const filter = {
+            shifts: appData.shiftPriorities || [],
+            isShiftPrioritized: appData.shiftPrioritized || false,
+            cities: [
+                ...(appData.centerOfCityCoordinates?.locationName
+                    ? [appData.centerOfCityCoordinates.locationName]
+                    : []),
+                ...(Array.isArray(appData.otherCities)
+                    ? appData.otherCities.map((c) => c.locationName).filter(Boolean)
+                    : []),
+            ],
+            isCityPrioritized: appData.cityPrioritized || false,
+        };
+
+        console.log(`[JobScoring] Fallback to scoring, filter=${JSON.stringify(filter)}`);
+        const bestJobId = JobProcessor.selectBestJobIdRaw(jobCards, filter);
+        return jobCards.find((j) => j.jobId === bestJobId) || null;
+    }
+
+    console.log(`[JobRotation] Selected jobId=${nextJobId} from rotation`);
+    return jobCards.find((j) => j.jobId === nextJobId) || null;
   },
 
   getJobSchedule: async (jobId, appData, exhaustedPairs) => {
@@ -157,25 +169,33 @@ export const JobProcessor = {
     const schedules = response?.data?.searchScheduleCards?.scheduleCards ?? [];
 
     if (schedules.length === 0) return null;
-    if (schedules.length === 1) {
-      const pairKey = `${jobId}-${schedules[0].scheduleId}`;
-      if (!exhaustedPairs[pairKey]) return schedules[0];
-      return null;
+
+    // Filter out exhausted pairs first
+    const availableSchedules = schedules.filter(schedule => {
+        const pairKey = `${jobId}-${schedule.scheduleId}`;
+        return !exhaustedPairs[pairKey];
+    });
+
+    if (availableSchedules.length === 0) return null;
+
+    if (availableSchedules.length === 1) {
+        return availableSchedules[0];
     }
 
-    // Multiple schedules: filter by shift
+    // Multiple schedules: prioritize by shift preference
     const preferredShifts = appData.shiftPriorities || [];
-    for (const schedule of schedules) {
-      const pairKey = `${jobId}-${schedule.scheduleId}`;
-      if (exhaustedPairs[pairKey]) continue;
 
-      const scheduleType = (schedule.scheduleType || "").split(";").map(s => s.trim());
-      const hasValidShift = scheduleType.some(s => preferredShifts.includes(s));
-      if (hasValidShift) return schedule;
+    // First, try to find schedules matching preferred shifts
+    for (const shift of preferredShifts) {
+        const matchingSchedule = availableSchedules.find(schedule => {
+            const scheduleType = (schedule.scheduleType || "").split(";").map(s => s.trim());
+            return scheduleType.includes(shift);
+        });
+        if (matchingSchedule) return matchingSchedule;
     }
 
-
-    return null; // none matched
+    // If no preferred shift found, return first available
+    return availableSchedules[0];
   },
 
   selectBestJobIdRaw: function (jobCards, filter) {

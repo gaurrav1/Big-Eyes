@@ -1,6 +1,6 @@
 import { JobProcessor } from "./jobProcessor.js";
 import {getCountry, setCountry} from "./model/country";
-import {markJobIdAsExhausted, loadExhaustedPairs, markPairAsExhausted, cleanExhaustedPairs} from "./utils.js";
+import {loadExhaustedPairs, markPairAsExhausted, cleanExhaustedPairs, resetRotationIfStale} from "./utils.js";
 
 let exhaustedPairs = {};
 
@@ -71,6 +71,9 @@ export const JobFetcher = (() => {
     if (schedulerRunning) return; // Prevent double scheduler
     schedulerRunning = true;
 
+    // Reset rotation queue if stale
+    resetRotationIfStale();
+
     while (isActive) {
       if (!cachedRequest) {
         console.warn("[JobFetcher] No cached request — skipping fetch.");
@@ -101,8 +104,8 @@ export const JobFetcher = (() => {
           const schedule = await JobProcessor.getJobSchedule(bestJob.jobId, appData, exhaustedPairs);
 
           if (!schedule) {
-            console.log(`[JobFetcher] All schedules exhausted for jobId=${bestJob.jobId}`);
-            markJobIdAsExhausted(bestJob.jobId);
+            console.log(`[JobFetcher] No available schedules for jobId=${bestJob.jobId}`);
+            // Don't exhaust the job ID, just continue to next iteration
             continue;
           }
 

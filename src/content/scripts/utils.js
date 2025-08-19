@@ -1,28 +1,58 @@
-const EXHAUSTED_JOB_KEY = "exhaustedJobIds";
+// Rotation Queue for fair job selection
+const ROTATION_QUEUE_KEY = "jobRotationQueue";
 
-export function loadExhaustedJobIds() {
-    const raw = localStorage.getItem(EXHAUSTED_JOB_KEY);
-    const now = Date.now();
+export function loadRotationQueue() {
+    const raw = localStorage.getItem(ROTATION_QUEUE_KEY);
     try {
-        const parsed = JSON.parse(raw || "{}");
-        // Filter out expired
-        for (const jobId in parsed) {
-            if (parsed[jobId] < now) delete parsed[jobId];
-        }
-        return parsed;
+        return JSON.parse(raw || "[]");
     } catch {
-        return {};
+        return [];
     }
 }
 
-export function saveExhaustedJobIds(map) {
-    localStorage.setItem(EXHAUSTED_JOB_KEY, JSON.stringify(map));
+export function saveRotationQueue(queue) {
+    localStorage.setItem(ROTATION_QUEUE_KEY, JSON.stringify(queue));
 }
 
-export function markJobIdAsExhausted(jobId, durationMs = 2 * 60 * 1000) {
-    const exhausted = loadExhaustedJobIds();
-    exhausted[jobId] = Date.now() + durationMs;
-    saveExhaustedJobIds(exhausted);
+export function updateRotationQueue(availableJobIds) {
+    let queue = loadRotationQueue();
+
+    // Remove jobs no longer available
+    queue = queue.filter(jobId => availableJobIds.includes(jobId));
+
+    // Add new jobs to end of queue
+    const newJobs = availableJobIds.filter(jobId => !queue.includes(jobId));
+    queue.push(...newJobs);
+
+    saveRotationQueue(queue);
+    return queue;
+}
+
+export function getNextJobFromRotation(availableJobIds, exhaustedPairs) {
+    const queue = updateRotationQueue(availableJobIds);
+
+    // Find first job in rotation that has available schedules
+    for (let i = 0; i < queue.length; i++) {
+        const jobId = queue[i];
+        if (availableJobIds.includes(jobId)) {
+            // Check if this job has any non-exhausted schedules
+            const hasAvailableSchedule = !isJobCompletelyExhausted(jobId, exhaustedPairs);
+            if (hasAvailableSchedule) {
+                // Move this job to end of queue for next rotation
+                queue.splice(i, 1);
+                queue.push(jobId);
+                saveRotationQueue(queue);
+                return jobId;
+            }
+        }
+    }
+    return null;
+}
+
+function isJobCompletelyExhausted(jobId, exhaustedPairs) {
+    // This would need to be enhanced to check if ALL schedules for a job are exhausted
+    // For now, we'll be optimistic and assume there might be new schedules
+    return false;
 }
 
 // Exhausted Pairs
@@ -54,7 +84,7 @@ export function saveExhaustedPairs(pairsMap) {
     localStorage.setItem(EXHAUSTED_PAIRS_KEY, JSON.stringify(pairsMap));
 }
 
-export function markPairAsExhausted(pairKey, durationMs = 2 * 60 * 1000) {
+export function markPairAsExhausted(pairKey, durationMs = 60 * 1000) { // Reduced to 60 seconds
     const pairs = loadExhaustedPairs();
     pairs[pairKey] = Date.now() + durationMs;
     saveExhaustedPairs(pairs);
@@ -64,4 +94,23 @@ export function cleanExhaustedPairs() {
     const pairs = loadExhaustedPairs(); // Automatically cleans expired
     saveExhaustedPairs(pairs);
     return pairs;
+}
+
+// Cleanup and reset mechanisms
+export function resetRotationIfStale(maxAgeMs = 10 * 60 * 1000) { // 10 minutes
+    const lastUpdate = localStorage.getItem('rotationLastUpdate');
+    const now = Date.now();
+
+    if (!lastUpdate || (now - parseInt(lastUpdate)) > maxAgeMs) {
+        localStorage.removeItem(ROTATION_QUEUE_KEY);
+        localStorage.setItem('rotationLastUpdate', now.toString());
+        console.log('[Rotation] Reset stale rotation queue');
+    }
+}
+
+export function clearAllExhaustedData() {
+    localStorage.removeItem(EXHAUSTED_PAIRS_KEY);
+    localStorage.removeItem(ROTATION_QUEUE_KEY);
+    localStorage.removeItem('rotationLastUpdate');
+    console.log('[Cleanup] Cleared all exhausted data');
 }
