@@ -32,7 +32,7 @@
     "service_worker": "src/service-worker/main.js",
     "type": "module"
   },
-  "permissions": ["storage", "geolocation", "scripting", "tabs", "offscreen"],
+  "permissions": ["storage", "geolocation", "scripting", "tabs", "offscreen", "windows"],
   "host_permissions": ["https://*.hiring.amazon.com/**", "https://*.hiring.amazon.ca/**"],
   "web_accessible_resources": [
     {

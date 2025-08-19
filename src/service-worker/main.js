@@ -100,27 +100,35 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       isAsync = true;
       break;
 
+    case "FOCUS_WINDOW":
+        // Focus the current window
+        chrome.windows.getCurrent({}, (win) => {
+          chrome.windows.update(win.id, { focused: true, state: "normal" });
+        });
+        sendResponse();
+        break;
+
     case "JOB_FOUND_ACTIONS":
       updateTabState({ isActive: false, activeTabId: null });
-      // urlToOpen = message.openUrl;
-      //
-      // chrome.tabs.create(
-      //   {
-      //     url: urlToOpen,
-      //     active: false,
-      //   },
-      //   (tab) => {
-      //     updateTabState({ isActive: true, activeTabId: tab.id });
-      //
-      //     // Optionally send APP_DATA_UPDATE to new tab
-      //     chrome.tabs.sendMessage(tab.id, {
-      //       type: "APP_DATA_UPDATE",
-      //       payload: appData,
-      //     });
-      //     sendResponse();
-      //   },
-      // );
-      // isAsync = true;
+      urlToOpen = message.openUrl;
+
+      chrome.tabs.create(
+        {
+          url: urlToOpen,
+          active: false,
+        },
+        (tab) => {
+          updateTabState({ isActive: true, activeTabId: tab.id });
+
+          // Optionally send APP_DATA_UPDATE to new tab
+          chrome.tabs.sendMessage(tab.id, {
+            type: "APP_DATA_UPDATE",
+            payload: appData,
+          });
+          sendResponse();
+        },
+      );
+      isAsync = true;
       break;
 
     case "TAB_REDIRECTED":

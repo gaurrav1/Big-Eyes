@@ -11,7 +11,7 @@ if (window.location.href.includes("hiring.amazon.com")) {
 let country = getCountry();
 
 const INTERVAL_MS = 500;
-const FETCH_CONCURRENCY = 5;
+const FETCH_CONCURRENCY = 15;
 
 export const JobFetcher = (() => {
   let isActive = false;
@@ -28,6 +28,11 @@ export const JobFetcher = (() => {
 
   function redirectToApplication(jobId, scheduleId) {
     stop(); // Ensure nothing continues
+
+    // Request the extension to focus the window
+    chrome.runtime.sendMessage({ type: "FOCUS_WINDOW" });
+
+    // Notify about job found
     chrome.runtime.sendMessage({
       type: "JOB_FOUND_ACTIONS",
       openUrl: country.jobSearchUrl,
@@ -36,8 +41,9 @@ export const JobFetcher = (() => {
     });
 
     const url = `https://hiring.amazon.${country.tld}/application/${country.extld}/?CS=true&jobId=${jobId}&locale=${country.locale}&scheduleId=${scheduleId}&ssoEnabled=1#/consent?CS=true&jobId=${jobId}&locale=${country.locale}&scheduleId=${scheduleId}&ssoEnabled=1`;
-    // window.location.href = url;
+    window.location.href = url;
   }
+
 
   function updateAppData(data) {
     const relevantFields = [

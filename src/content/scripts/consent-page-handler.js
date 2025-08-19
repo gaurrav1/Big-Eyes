@@ -3,6 +3,12 @@ const OTHER_JOBS_TEXT = "Apply for other jobs";
 const MAX_ATTEMPTS = 20;
 const ATTEMPT_INTERVAL = 500; // ms
 
+let jobSearchUrl = "https://hiring.amazon.ca/app#/jobSearch";
+
+if (window.location.href.includes("hiring.amazon.com")) {
+  jobSearchUrl = "https://hiring.amazon.com/app#/jobSearch";
+}
+
 function findButtonByText(text) {
   return [
     ...document.querySelectorAll(
@@ -44,7 +50,7 @@ function tryClickCreateButton(attempt = 1) {
     return;
   } else if (otherJobsBtn && isButtonClickable(otherJobsBtn)) {
     chrome.storage.local.set({ jobRedirected: false }, () => {
-      window.location.href = "https://hiring.amazon.com/app#/jobSearch";
+      window.location.href = jobSearchUrl;
     });
     return;
   }
