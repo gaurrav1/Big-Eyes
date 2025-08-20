@@ -1,6 +1,13 @@
+/* global chrome */
 import { JobProcessor } from "./jobProcessor.js";
 import {getCountry, setCountry} from "./model/country";
-import {loadExhaustedPairs, markPairAsExhausted, cleanExhaustedPairs, resetRotationIfStale} from "./utils.js";
+import {
+  loadExhaustedPairs, 
+  markPairAsExhaustedEnhanced, 
+  resetRotationIfStale,
+  AutoRefreshManager,
+  performComprehensiveCleanup
+} from "./utils.js";
 
 let exhaustedPairs = {};
 
@@ -12,6 +19,10 @@ let country = getCountry();
 
 const INTERVAL_MS = 500;
 const FETCH_CONCURRENCY = 15;
+
+// Auto-refresh monitoring
+let lastAutoRefreshCheck = 0;
+const AUTO_REFRESH_CHECK_INTERVAL = 30 * 1000; // 30 seconds
 
 export const JobFetcher = (() => {
   let isActive = false;
@@ -27,21 +38,15 @@ export const JobFetcher = (() => {
   }
 
   function redirectToApplication(jobId, scheduleId) {
-    stop(); // Ensure nothing continues
-
-    // Request the extension to focus the window
+    stop();
     chrome.runtime.sendMessage({ type: "FOCUS_WINDOW" });
-
-    // Notify about job found
     chrome.runtime.sendMessage({
       type: "JOB_FOUND_ACTIONS",
       openUrl: country.jobSearchUrl,
       jobId: jobId,
       scheduleId: scheduleId,
     });
-
-    const url = `https://hiring.amazon.${country.tld}/application/${country.extld}/?CS=true&jobId=${jobId}&locale=${country.locale}&scheduleId=${scheduleId}&ssoEnabled=1#/consent?CS=true&jobId=${jobId}&locale=${country.locale}&scheduleId=${scheduleId}&ssoEnabled=1`;
-    window.location.href = url;
+    window.location.href = `https://hiring.amazon.${country.tld}/application/${country.extld}/?CS=true&jobId=${jobId}&locale=${country.locale}&scheduleId=${scheduleId}&ssoEnabled=1#/consent?CS=true&jobId=${jobId}&locale=${country.locale}&scheduleId=${scheduleId}&ssoEnabled=1`;
   }
 
 
@@ -71,10 +76,33 @@ export const JobFetcher = (() => {
     if (schedulerRunning) return; // Prevent double scheduler
     schedulerRunning = true;
 
+    try {
+      AutoRefreshManager.start();
+      console.log('[JobFetcher] Auto-refresh system started for content script');
+    } catch (error) {
+      console.warn('[JobFetcher] Auto-refresh system already running or failed to start:', error);
+    }
+
     // Reset rotation queue if stale
-    resetRotationIfStale();
+    try { await resetRotationIfStale(); } catch(e){ console.warn('[JobFetcher] resetRotationIfStale error', e);}
+
+    // Perform initial comprehensive cleanup
+    const initialCleanup = await performComprehensiveCleanup();
+    console.log('[JobFetcher] Initial cleanup result:', initialCleanup);
 
     while (isActive) {
+      const now = Date.now();
+      if (now - lastAutoRefreshCheck > AUTO_REFRESH_CHECK_INTERVAL) {
+        try {
+          exhaustedPairs = await loadExhaustedPairs();
+          const cleanupResult = await performComprehensiveCleanup();
+          console.log('[JobFetcher] Periodic auto-refresh cleanup:', cleanupResult);
+          lastAutoRefreshCheck = now;
+        } catch (_error) {
+          console.warn('[JobFetcher] Auto-refresh monitoring error:', _error);
+        }
+      }
+
       if (!cachedRequest) {
         console.warn("[JobFetcher] No cached request — skipping fetch.");
         await delay(INTERVAL_MS);
@@ -92,13 +120,13 @@ export const JobFetcher = (() => {
       let response = null;
       try {
         response = await Promise.any(fetches);
-      } catch (err) {
+      } catch { // suppress specific variable to satisfy linter
         console.warn("[JobFetcher] All fetches failed or timed out.");
         chrome.runtime.sendMessage({ type: "NETWORK_ERROR" });
       }
 
       if (response) {
-        const bestJob = JobProcessor.getBestJob(response, appData);
+        const bestJob = await JobProcessor.getBestJob(response, appData);
         if (bestJob) {
           console.log("[JobFetcher] Best job found:", bestJob);
           const schedule = await JobProcessor.getJobSchedule(bestJob.jobId, appData, exhaustedPairs);
@@ -112,12 +140,12 @@ export const JobFetcher = (() => {
 
           if (schedule && !hasRedirected) {
             const key = `${bestJob.jobId}-${schedule.scheduleId}`;
-            exhaustedPairs = loadExhaustedPairs(); // clean before use
+            exhaustedPairs = await loadExhaustedPairs(); // clean before use
             if (exhaustedPairs[key]) {
-              console.log("[JobFetcher] Skipping exhausted job-schedule pair:", key);
+              console.log('[JobFetcher] Skipping exhausted job-schedule pair:', key);
             } else {
               hasRedirected = true;
-              markPairAsExhausted(key); // adds with expiry
+              await markPairAsExhaustedEnhanced(key); // ensure persistence before redirect
 
               controllers.forEach((c) => c.abort());
               playJobFoundAlert();
@@ -135,6 +163,14 @@ export const JobFetcher = (() => {
       await delay(INTERVAL_MS);
     }
 
+    // Cleanup auto-refresh system when scheduler stops
+    try {
+      AutoRefreshManager.stop();
+      console.log('[JobFetcher] Auto-refresh system stopped for content script');
+    } catch (error) {
+      console.warn('[JobFetcher] Error stopping auto-refresh system:', error);
+    }
+
     schedulerRunning = false;
   }
 
@@ -142,11 +178,17 @@ export const JobFetcher = (() => {
     if (isActive) return;
     isActive = true;
     hasRedirected = false;
-
-    exhaustedPairs = loadExhaustedPairs(); // auto-cleans expired
-
-    console.log("[JobFetcher] Starting job fetch loop");
-    runScheduler();
+    (async ()=> {
+      try {
+        exhaustedPairs = await loadExhaustedPairs();
+        const cleanupResult = await performComprehensiveCleanup();
+        console.log('[JobFetcher] Initial cleanup on start:', cleanupResult);
+        console.log('[JobFetcher] Starting job fetch loop with auto-refresh system');
+        await runScheduler();
+      } catch (e) {
+        console.error('[JobFetcher] Failed during start sequence', e);
+      }
+    })();
   }
 
 

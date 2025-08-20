@@ -12,6 +12,7 @@ export default defineConfig({
   build: {
     assetsInlineLimit: 0,
     outDir: 'target',
+    modulePreload: { polyfill: false }, // disable polyfill that injects window/document usage (service worker safe)
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),

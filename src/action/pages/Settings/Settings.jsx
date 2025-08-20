@@ -4,6 +4,7 @@ import { useAppContext } from "../../context/AppContext";
 import { useState } from "react";
 import styles from "./Settings.module.css";
 import GlassCountrySelector from "../../components/settings/GlassCountrySelector.jsx";
+import { AutoRefreshControls } from "../../components/settings/AutoRefreshControls.jsx";
 
 export function Settings() {
   const { appData, updateAppData } = useAppContext();
@@ -39,6 +40,8 @@ export function Settings() {
         onClick={handleToggleShiftPriority}
         title={"Strict Order for Shifts"}
       />
+
+      <AutoRefreshControls />
 
     </div>
   );

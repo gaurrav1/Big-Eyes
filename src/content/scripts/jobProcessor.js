@@ -123,22 +123,14 @@ export const JobProcessor = {
     }
   },
 
-  getBestJob: (response, appData) => {
+  getBestJob: async (response, appData) => {
     const jobCardsRaw = response?.data?.searchJobCardsByLocation?.jobCards ?? [];
-
-    // Don't filter by exhausted job IDs anymore
-    const jobCards = jobCardsRaw;
-
+    const jobCards = jobCardsRaw; // no filtering yet
     if (jobCards.length === 0) return null;
-
     const availableJobIds = jobCards.map(j => j.jobId);
-    const exhaustedPairs = loadExhaustedPairs();
-
-    // Use rotation to get next job to try
-    const nextJobId = getNextJobFromRotation(availableJobIds, exhaustedPairs);
-
+    const exhaustedPairs = await loadExhaustedPairs();
+    const nextJobId = await getNextJobFromRotation(availableJobIds, exhaustedPairs);
     if (!nextJobId) {
-        // Fallback to scoring if rotation fails
         const filter = {
             shifts: appData.shiftPriorities || [],
             isShiftPrioritized: appData.shiftPrioritized || false,
@@ -152,12 +144,10 @@ export const JobProcessor = {
             ],
             isCityPrioritized: appData.cityPrioritized || false,
         };
-
         console.log(`[JobScoring] Fallback to scoring, filter=${JSON.stringify(filter)}`);
         const bestJobId = JobProcessor.selectBestJobIdRaw(jobCards, filter);
         return jobCards.find((j) => j.jobId === bestJobId) || null;
     }
-
     console.log(`[JobRotation] Selected jobId=${nextJobId} from rotation`);
     return jobCards.find((j) => j.jobId === nextJobId) || null;
   },
