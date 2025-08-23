@@ -10,7 +10,6 @@ export function MyOutlet() {
 
   return (
     <div className="layout">
-
         <Outlet />
       {showFooter && <Footer />}
     </div>
